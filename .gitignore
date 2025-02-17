@@ -1,9 +1,9 @@
 # Visual Studio 2015 user specific files
 .vs/
-
+.vscode/
 # Jetbrain Rider specific files
 .idea/
-
+*.ipch
 # Compiled Object files
 *.slo
 *.lo
@@ -43,6 +43,11 @@
 *.sdf
 *.VC.db
 *.VC.opendb
+*.VC.VC.opendb
+
+*.log
+*.tmp
+.DS_Store
 
 # Precompiled Assets
 SourceArt/**/*.png
