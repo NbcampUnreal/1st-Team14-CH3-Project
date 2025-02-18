@@ -28,7 +28,7 @@ void ACInteractable::OnInteractableOverlap(UPrimitiveComponent* OverlapPrimitive
 		OverlapActivate(OtherActor);
 		//키를 누르면
 		KeyPressedActivate(OtherActor);
-		DestroyInteractable();
+		//DestroyInteractable();
 	}
 }
 
