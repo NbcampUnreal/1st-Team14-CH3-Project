@@ -1,6 +1,5 @@
 #include "Components/CWeaponComponent.h"
-
-//#include "Characters/CCharacter.h"
+#include "CCharacter.h"
 #include "Weapon/CWeapon.h"
 
 UCWeaponComponent::UCWeaponComponent()
@@ -10,7 +9,7 @@ UCWeaponComponent::UCWeaponComponent()
 void UCWeaponComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	/*Owner = Cast<ACCharacter>(GetOwner());
+	Owner = Cast<ACCharacter>(GetOwner());
 	if (Owner == nullptr)
 		return;
 
@@ -24,7 +23,7 @@ void UCWeaponComponent::BeginPlay()
 			ACWeapon* weapon = Owner->GetWorld()->SpawnActor<ACWeapon>(weaponClass,params);
 			Weapons.Add(weapon);
 		}
-	}*/
+	}
 }
 
 void UCWeaponComponent::TickComponent(float DeltaTime, enum ELevelTick TickType,
