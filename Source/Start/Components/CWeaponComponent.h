@@ -15,7 +15,7 @@ enum class EWeaponType : uint8
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FWeaponTypeChanged, EWeaponType, InPrevType, EWeaponType, InNewType);
 
 UCLASS()
-class FPS_API UCWeaponComponent : public UActorComponent
+class START_API UCWeaponComponent : public UActorComponent
 {
 	GENERATED_BODY()
 private:

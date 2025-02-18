@@ -15,7 +15,7 @@ enum class ESpeedType : uint8
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class FPS_API UCMovementComponent : public UActorComponent
+class START_API UCMovementComponent : public UActorComponent
 {
 	GENERATED_BODY()
 private:

@@ -20,7 +20,7 @@ enum class EStateType : uint8
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FStateTypeChanged, EStateType, InPrevType, EStateType, InNewType);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class FPS_API UCStateComponent : public UActorComponent
+class START_API UCStateComponent : public UActorComponent
 {
 	GENERATED_BODY()
 

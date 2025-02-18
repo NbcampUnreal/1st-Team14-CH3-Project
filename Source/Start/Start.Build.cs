@@ -7,8 +7,9 @@ public class Start : ModuleRules
 	public Start(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-	
+
 		// 이 프로젝트에서 사용하는 공개된 종속 모듈
+		PublicIncludePaths.Add(ModuleDirectory);
 		PublicDependencyModuleNames.AddRange(new string[]
 		{
 			"Core", // 코어 엔진의 기본 기능
