@@ -38,71 +38,16 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 	if (EnhancedInput)
 	{
-		// ?? 컨트롤러 가져오기
+		// 컨트롤러 가져오기
 		ACPlayerController* PC = Cast<ACPlayerController>(GetController());
 		if (PC)
 		{
-			EnhancedInput->BindAction(PC->MoveAction, ETriggerEvent::Triggered, this, &ACPlayer::Move);
-			EnhancedInput->BindAction(PC->LookAction, ETriggerEvent::Triggered, this, &ACPlayer::Look);
-			EnhancedInput->BindAction(PC->JumpAction, ETriggerEvent::Started, this, &ACPlayer::StartJump);
-			EnhancedInput->BindAction(PC->JumpAction, ETriggerEvent::Completed, this, &ACPlayer::StopJump);
-			EnhancedInput->BindAction(PC->RunAction, ETriggerEvent::Started, this, &ACPlayer::StartRun);
-			EnhancedInput->BindAction(PC->RunAction, ETriggerEvent::Completed, this, &ACPlayer::StopRun);
+			EnhancedInput->BindAction(PC->MoveAction, ETriggerEvent::Triggered, MovementComponent, &UCMovementComponent::OnMove);
+			EnhancedInput->BindAction(PC->LookAction, ETriggerEvent::Triggered, MovementComponent, &UCMovementComponent::OnLook);
+			EnhancedInput->BindAction(PC->JumpAction, ETriggerEvent::Started, MovementComponent, &UCMovementComponent::OnJump);
+			EnhancedInput->BindAction(PC->JumpAction, ETriggerEvent::Completed, MovementComponent, &UCMovementComponent::EndJump);
+			EnhancedInput->BindAction(PC->RunAction, ETriggerEvent::Started, MovementComponent, &UCMovementComponent::OnRun);
+			EnhancedInput->BindAction(PC->RunAction, ETriggerEvent::Completed, MovementComponent, &UCMovementComponent::OnWark);
 		}
-	}
-}
-
-//  이동 (UCMovementComponent 사용)
-void ACPlayer::Move(const FInputActionValue& Value)
-{
-	if (MovementComponent)
-	{
-		MovementComponent->OnMove(Value);
-	}
-}
-
-//  카메라 회전 (UCMovementComponent 사용)
-void ACPlayer::Look(const FInputActionValue& Value)
-{
-	if (MovementComponent)
-	{
-		MovementComponent->OnLook(Value);
-	}
-}
-
-//  점프 시작 (UCMovementComponent 사용)
-void ACPlayer::StartJump()
-{
-	if (MovementComponent)
-	{
-		FInputActionValue DummyValue = FInputActionValue(true); // 점프 입력 더미 값
-		MovementComponent->OnJump(DummyValue);
-	}
-}
-
-//  점프 종료
-void ACPlayer::StopJump()
-{
-	if (MovementComponent)
-	{
-		MovementComponent->EndJump();
-	}
-}
-
-//  달리기 시작
-void ACPlayer::StartRun()
-{
-	if (MovementComponent)
-	{
-		MovementComponent->OnRun();
-	}
-}
-
-//  달리기 종료 (걷기로 변경)
-void ACPlayer::StopRun()
-{
-	if (MovementComponent)
-	{
-		MovementComponent->OnWark();
 	}
 }
