@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -11,19 +9,25 @@ class START_API ACCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-public:
-	// Sets default values for this character's properties
-	ACCharacter();
-
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+    // 체력 변수
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Stats")
+    int Health;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+public:
+    ACCharacter();
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+    // HP 관련 함수
+    UFUNCTION(BlueprintCallable, Category = "Character Stats")
+    int GetHP() const;
 
+    UFUNCTION(BlueprintCallable, Category = "Character Stats")
+    void SetHP(int HP);
+
+    // 공격 관련 함수
+    UFUNCTION(BlueprintCallable, Category = "Combat")
+    virtual void Attack();
+
+    UFUNCTION(BlueprintCallable, Category = "Combat")
+    virtual void TakeDamaged(int Amount);
 };

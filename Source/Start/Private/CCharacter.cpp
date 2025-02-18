@@ -1,34 +1,31 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "CCharacter.h"
 
-// Sets default values
 ACCharacter::ACCharacter()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
+	// 초기 체력 설정
+	Health = 100;
 }
 
-// Called when the game starts or when spawned
-void ACCharacter::BeginPlay()
+int ACCharacter::GetHP() const
 {
-	Super::BeginPlay();
-	
+    return Health;
 }
 
-// Called every frame
-void ACCharacter::Tick(float DeltaTime)
+void ACCharacter::SetHP(int HP)
 {
-	Super::Tick(DeltaTime);
-
+    Health = FMath::Clamp(HP, 0, 100);
 }
 
-// Called to bind functionality to input
-void ACCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void ACCharacter::Attack()
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
+    UE_LOG(LogTemp, Warning, TEXT("Character Attacked!"));
 }
 
+void ACCharacter::TakeDamaged(int Amount)
+{
+    Health -= Amount;
+    if (Health <= 0)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Character Died!"));
+    }
+}
