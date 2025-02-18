@@ -1,10 +1,8 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-#include "MineItem.h"
+#include "CGrenadesItem.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
 
-AMineItem::AMineItem()
+ACGrenadesItem::ACGrenadesItem()
 {
 	ExplosiveDelay = 3;
 	ExplosiveRadius = 300;
@@ -17,29 +15,25 @@ AMineItem::AMineItem()
 	MineCollision->SetupAttachment(Scene);
 }
 
-void AMineItem::KeyPressedActivate(AActor* Activator)
+void ACGrenadesItem::KeyPressedActivate(AActor* Activator)
 {
+	Super::KeyPressedActivate(Activator);
+	GEngine->AddOnScreenDebugMessage(3, 1.0f, FColor::Green, FString::Printf(TEXT("Add GrenadesItem To Inventory")));
+}
+
+void ACGrenadesItem::Use()
+{
+	GEngine->AddOnScreenDebugMessage(4, 1.0f, FColor::Green, FString::Printf(TEXT("Use GrenadesItem")));
 
 }
 
-void AMineItem::Use()
-{
-	//// 게임 월드에는 타이머 핸들러들을 관리하는 타이머 매니저가 있다.
-	//GetWorld()->GetTimerManager().SetTimer(
-	//	ExplosiveTimerHandle, // 타이머 핸들러
-	//	this, // 해당 객체
-	//	&AMineItem::Explode, // 동작 메서드
-	//	ExplosiveDelay, // 시간
-	//	false); // 반복할 것인가?
-}
-
-void AMineItem::Explode()
+void ACGrenadesItem::Explode()
 {
 	TArray<AActor*> OverlappingActors; // 범위 내에 겹친 액터들을 저장해 줄 배열
 	MineCollision->GetOverlappingActors(OverlappingActors);
 	for (AActor* Actor : OverlappingActors)
 	{
-		if (Actor && Actor->ActorHasTag("Player"))
+		if (Actor && Actor->ActorHasTag("Enemy"))
 		{
 			UGameplayStatics::ApplyDamage(
 				Actor, // 데미지 대상

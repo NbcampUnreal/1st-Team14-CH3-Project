@@ -1,5 +1,6 @@
 
 #include "CInteractable.h"
+#include "Components/InputComponent.h"
 #include "Components/BoxComponent.h"
 
 ACInteractable::ACInteractable()
@@ -17,6 +18,18 @@ ACInteractable::ACInteractable()
 	InteractableCollision->OnComponentBeginOverlap.AddDynamic(this, &ACInteractable::OnInteractableOverlap);
 	InteractableCollision->OnComponentEndOverlap.AddDynamic(this, &ACInteractable::OnInteractableEndOverlap);
 
+	/*
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	if (PlayerController)
+	{
+		EnableInput(PlayerController);
+	}
+	if(InputComponent)
+	{
+		InputComponent->BindAction(EKeys::F, IE_Pressed, this, &ACInteractable::KeyPressedActivate);
+	}
+	*/
+
 }
 
 void ACInteractable::OnInteractableOverlap(UPrimitiveComponent* OverlapPrimitiveComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -24,23 +37,32 @@ void ACInteractable::OnInteractableOverlap(UPrimitiveComponent* OverlapPrimitive
 	
 	if (OtherActor && OtherActor->ActorHasTag("Player")) //캐릭터로 캐스트되면
 	{
-		
+		//위젯 활성화
 		OverlapActivate(OtherActor);
-		//키를 누르면
+		//APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+		//if (PlayerController)
+		//{
+		//	EnableInput(PlayerController);
+		//}
+
 		KeyPressedActivate(OtherActor);
-		//DestroyInteractable();
 	}
 }
 
 void ACInteractable::OnInteractableEndOverlap(UPrimitiveComponent* OverlapPrimitiveComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	
+	//위젯 비활성화
+	//APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	//if (PlayerController)
+	//{
+	//	DisableInput(PlayerController);
+	//}
 }
 
 void ACInteractable::OverlapActivate(AActor* Activator)
 {
 	GEngine->AddOnScreenDebugMessage(2, 1.0f, FColor::Green, FString::Printf(TEXT("CInteractableOverlap")));
-	// F키 위젯 띄우기
+	
 }
 
 void ACInteractable::KeyPressedActivate(AActor* Activator)
