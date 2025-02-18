@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "ItemInterface.h"
+#include "IInteractableInterface.h"
 #include "BaseItem.generated.h"
 
 class USphereComponent;
 
 UCLASS()
-class START_API ABaseItem : public AActor, public IItemInterface
+class START_API ABaseItem : public AActor, public IIInteractableInterface
 {
 	GENERATED_BODY()
 	
@@ -42,8 +42,8 @@ protected:
 		UPrimitiveComponent* OtherComp,
 		int32 OtherBodyIndex) override;
 	
-	virtual void ActivateItem (AActor* Activator) override;
-	virtual FName GetItemType() const override;
+	virtual void OverlapActivate(AActor* Activator) override;
+	virtual FName GetItemType() const ;
 
 	virtual void DestroyItem(); // 아이템 제거 함수
 };

@@ -9,7 +9,7 @@ ACoinItem::ACoinItem()
 	ItemType = "DefaultCoinItem";
 }
 
-void ACoinItem::ActivateItem(AActor* Activator)
+void ACoinItem::OverlapActivate(AActor* Activator)
 {
 	if (Activator && Activator->ActorHasTag("Player"))
 	{

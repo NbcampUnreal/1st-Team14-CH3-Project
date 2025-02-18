@@ -25,7 +25,7 @@ protected:
 
 	FTimerHandle ExplosiveTimerHandle;
 
-	virtual void ActivateItem (AActor* Activator) override;
+	virtual void OverlapActivate(AActor* Activator) override;
 	
 	void Explode();
 };

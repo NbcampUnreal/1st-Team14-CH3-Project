@@ -13,5 +13,5 @@ class START_API ASmallCoinItem : public ACoinItem
 
 public:
 	ASmallCoinItem();
-	virtual void ActivateItem (AActor* Activator) override;
+	virtual void OverlapActivate(AActor* Activator) override;
 };

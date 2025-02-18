@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "IInteractable.generated.h"
+#include "IInteractableInterface.generated.h"
 
 UINTERFACE(MinimalAPI)
 class UIInteractableInterface : public UInterface
@@ -18,7 +18,7 @@ class START_API IIInteractableInterface
 
 public:
 	UFUNCTION()
-	virtual void OnItemOverlap(
+	virtual void OnInteractableOverlap(
 		UPrimitiveComponent* OverlapPrimitiveComp, 
 		AActor* OtherActor, 
 		UPrimitiveComponent* OtherComp, 
@@ -26,7 +26,7 @@ public:
 		bool bFromSweep,
 		const FHitResult& SweepResult) = 0;
 	UFUNCTION()
-	virtual void OnItemEndOverlap(
+	virtual void OnInteractableEndOverlap(
 		UPrimitiveComponent* OverlapPrimitiveComp,
 		AActor* OtherActor,
 		UPrimitiveComponent* OtherComp,

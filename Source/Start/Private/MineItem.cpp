@@ -17,7 +17,7 @@ AMineItem::AMineItem()
 	MineCollision->SetupAttachment(Scene);
 }
 
-void AMineItem::ActivateItem(AActor* Activator)
+void AMineItem::OverlapActivate(AActor* Activator)
 {
 	// 게임 월드에는 타이머 핸들러들을 관리하는 타이머 매니저가 있다.
 	GetWorld()->GetTimerManager().SetTimer(

@@ -37,7 +37,7 @@ void ABaseItem::OnItemOverlap(UPrimitiveComponent* OverlapPrimitiveComp,
 {
 	if (OtherActor && OtherActor->ActorHasTag("Player"))
 	{
-		ActivateItem(OtherActor);
+		OverlapActivate(OtherActor);
 		//디버그
 		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, FString::Printf(TEXT("Overlap!!!"))); 
 	}
@@ -51,7 +51,7 @@ void ABaseItem::OnItemEndOverlap(UPrimitiveComponent* OverlapPrimitiveComp,
 	
 }
 
-void ABaseItem::ActivateItem(AActor* Activator)
+void ABaseItem::OverlapActivate(AActor* Activator)
 {
 }
 

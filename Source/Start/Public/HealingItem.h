@@ -13,7 +13,7 @@ class START_API AHealingItem : public ABaseItem
 
 public:
 	AHealingItem();
-	virtual void ActivateItem (AActor* Activator) override;
+	virtual void OverlapActivate(AActor* Activator) override;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Item)

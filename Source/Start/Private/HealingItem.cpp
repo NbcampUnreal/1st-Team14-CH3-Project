@@ -11,7 +11,7 @@ AHealingItem::AHealingItem()
 	ItemType = "Healing Item";
 }
 
-void AHealingItem::ActivateItem(AActor* Activator)
+void AHealingItem::OverlapActivate(AActor* Activator)
 {
 	if (Activator && Activator->ActorHasTag("Player"))
 	{
