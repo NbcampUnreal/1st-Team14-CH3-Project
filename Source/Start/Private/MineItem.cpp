@@ -17,15 +17,20 @@ AMineItem::AMineItem()
 	MineCollision->SetupAttachment(Scene);
 }
 
-void AMineItem::ActivateItem(AActor* Activator)
+void AMineItem::KeyPressedActivate(AActor* Activator)
 {
-	// 게임 월드에는 타이머 핸들러들을 관리하는 타이머 매니저가 있다.
-	GetWorld()->GetTimerManager().SetTimer(
-		ExplosiveTimerHandle, // 타이머 핸들러
-		this, // 해당 객체
-		&AMineItem::Explode, // 동작 메서드
-		ExplosiveDelay, // 시간
-		false); // 반복할 것인가?
+
+}
+
+void AMineItem::Use()
+{
+	//// 게임 월드에는 타이머 핸들러들을 관리하는 타이머 매니저가 있다.
+	//GetWorld()->GetTimerManager().SetTimer(
+	//	ExplosiveTimerHandle, // 타이머 핸들러
+	//	this, // 해당 객체
+	//	&AMineItem::Explode, // 동작 메서드
+	//	ExplosiveDelay, // 시간
+	//	false); // 반복할 것인가?
 }
 
 void AMineItem::Explode()
@@ -44,6 +49,5 @@ void AMineItem::Explode()
 				UDamageType::StaticClass()); // 데미지 유형, 기본 데미지 유형으로 설정
 		}
 	}
-	DestroyItem();
 }
 

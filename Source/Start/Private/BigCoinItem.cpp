@@ -9,9 +9,14 @@ ABigCoinItem::ABigCoinItem()
 	ItemType = "Big Coin";
 }
 
-void ABigCoinItem::ActivateItem(AActor* Activator)
+void ABigCoinItem::KeyPressedActivate(AActor* Activator)
 {
-	Super::ActivateItem(Activator);
+	Super::KeyPressedActivate(Activator);
+}
+
+void ABigCoinItem::Use()
+{
+
 }
 
 

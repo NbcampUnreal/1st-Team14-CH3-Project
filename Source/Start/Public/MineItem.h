@@ -2,11 +2,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BaseItem.h"
+#include "CBaseItem.h"
 #include "MineItem.generated.h"
 
 UCLASS()
-class START_API AMineItem : public ABaseItem
+class START_API AMineItem : public ACBaseItem
 {
 	GENERATED_BODY()
 
@@ -25,7 +25,8 @@ protected:
 
 	FTimerHandle ExplosiveTimerHandle;
 
-	virtual void ActivateItem (AActor* Activator) override;
+	virtual void KeyPressedActivate(AActor* Activator) override;
+	virtual void Use(/*플레이어 클래스*/) override;
 	
 	void Explode();
 };
