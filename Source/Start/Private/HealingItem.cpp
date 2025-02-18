@@ -11,14 +11,20 @@ AHealingItem::AHealingItem()
 	ItemType = "Healing Item";
 }
 
-void AHealingItem::OverlapActivate(AActor* Activator)
+void AHealingItem::KeyPressedActivate(AActor* Activator)
 {
-	if (Activator && Activator->ActorHasTag("Player"))
-	{
-		if (ASP_Pawn* PlayerCharacter = Cast<ASP_Pawn>(Activator))
-		{
-			PlayerCharacter->AddHealth(HealAmount);
-		}
-		DestroyItem();
-	}
+	Super::KeyPressedActivate(Activator);
+	GEngine->AddOnScreenDebugMessage(1, 1.0f, FColor::Green, FString::Printf(TEXT("AddHealingItemToInventory")));
+}
+
+void AHealingItem::Use(/*플레이어 클래스*/)
+{
+	GEngine->AddOnScreenDebugMessage(1, 1.0f, FColor::Green, FString::Printf(TEXT("Use Item")));
+	//if (Activator && Activator->ActorHasTag("Player"))
+	//{
+	//	if (ASP_Pawn* PlayerCharacter = Cast<ASP_Pawn>(Activator))
+	//	{
+	//		PlayerCharacter->AddHealth(HealAmount);
+	//	}
+	//}
 }

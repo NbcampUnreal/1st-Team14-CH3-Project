@@ -9,9 +9,13 @@ ASmallCoinItem::ASmallCoinItem()
 	ItemType = "Small Coin";
 }
 
-void ASmallCoinItem::OverlapActivate(AActor* Activator)
+void ASmallCoinItem::KeyPressedActivate(AActor* Activator)
 {
-	Super::OverlapActivate(Activator);
+	Super::KeyPressedActivate(Activator);
+}
+
+void ASmallCoinItem::Use()
+{
 }
 
 

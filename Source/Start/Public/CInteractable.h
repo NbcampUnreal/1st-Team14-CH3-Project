@@ -35,7 +35,8 @@ protected:
 		int32 OtherBodyIndex) override;
 
 	virtual void OverlapActivate(AActor* Activator) override;
+	virtual void KeyPressedActivate(AActor* Activator) override;
 
-	virtual void DestroyInteractable(); // 아이템 제거 함수
+	virtual void DestroyInteractable(); 
 
 };

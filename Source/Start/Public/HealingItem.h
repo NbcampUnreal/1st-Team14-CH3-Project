@@ -3,17 +3,18 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BaseItem.h"
+#include "CBaseItem.h"
 #include "HealingItem.generated.h"
 
 UCLASS()
-class START_API AHealingItem : public ABaseItem
+class START_API AHealingItem : public ACBaseItem
 {
 	GENERATED_BODY()
 
 public:
 	AHealingItem();
-	virtual void OverlapActivate(AActor* Activator) override;
+	virtual void KeyPressedActivate(AActor* Activator) override;
+	virtual void Use(/*플레이어 클래스*/) override;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Item)

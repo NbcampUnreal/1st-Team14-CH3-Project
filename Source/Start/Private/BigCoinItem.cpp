@@ -9,9 +9,14 @@ ABigCoinItem::ABigCoinItem()
 	ItemType = "Big Coin";
 }
 
-void ABigCoinItem::OverlapActivate(AActor* Activator)
+void ABigCoinItem::KeyPressedActivate(AActor* Activator)
 {
-	Super::OverlapActivate(Activator);
+	Super::KeyPressedActivate(Activator);
+}
+
+void ABigCoinItem::Use()
+{
+
 }
 
 

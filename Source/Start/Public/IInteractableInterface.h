@@ -33,4 +33,5 @@ public:
 		int32 OtherBodyIndex) = 0;
 
 	virtual void OverlapActivate(AActor* Activator) = 0;
+	virtual void KeyPressedActivate(AActor* Activator) = 0;
 };
