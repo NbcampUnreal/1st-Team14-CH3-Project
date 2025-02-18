@@ -9,18 +9,22 @@ ACoinItem::ACoinItem()
 	ItemType = "DefaultCoinItem";
 }
 
-void ACoinItem::ActivateItem(AActor* Activator)
+void ACoinItem::KeyPressedActivate(AActor* Activator)
 {
-	if (Activator && Activator->ActorHasTag("Player"))
-	{
-		if (UWorld* World = GetWorld())
-		{
-			if (AMyGameState* GameState = World->GetGameState<AMyGameState>())
-			{
-				GameState->AddScore(PointValue);
-				GameState->OnCoinCollected();
-			}
-		}
-		DestroyItem();
-	}
+
+}
+
+void ACoinItem::Use()
+{
+	//if (Activator && Activator->ActorHasTag("Player"))
+	//{
+	//	if (UWorld* World = GetWorld())
+	//	{
+	//		if (AMyGameState* GameState = World->GetGameState<AMyGameState>())
+	//		{
+	//			GameState->AddScore(PointValue);
+	//			GameState->OnCoinCollected();
+	//		}
+	//	}
+	//}
 }

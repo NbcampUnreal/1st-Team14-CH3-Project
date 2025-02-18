@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BaseItem.h"
+#include "CBaseItem.h"
 #include "CoinItem.generated.h"
 
 UCLASS()
-class START_API ACoinItem : public ABaseItem
+class START_API ACoinItem : public ACBaseItem
 {
 	GENERATED_BODY()
 
@@ -18,5 +18,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Item)
 	int32 PointValue;
 
-	virtual void ActivateItem(AActor* Activator) override;
+	virtual void KeyPressedActivate(AActor* Activator) override;
+	virtual void Use(/*플레이어 클래스*/) override;
 };

@@ -9,9 +9,13 @@ ASmallCoinItem::ASmallCoinItem()
 	ItemType = "Small Coin";
 }
 
-void ASmallCoinItem::ActivateItem(AActor* Activator)
+void ASmallCoinItem::KeyPressedActivate(AActor* Activator)
 {
-	Super::ActivateItem(Activator);
+	Super::KeyPressedActivate(Activator);
+}
+
+void ASmallCoinItem::Use()
+{
 }
 
 
