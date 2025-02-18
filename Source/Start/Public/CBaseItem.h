@@ -25,6 +25,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Item")
 	bool bCanUse;
 
+	virtual void KeyPressedActivate(AActor* Activator) override;
 	virtual void PutIntoInventory(AActor* PlayerHavingInventory) override;
 	virtual FName GetItemType() const override;
 	virtual void Use(/*플레이어 클래스*/) override;
