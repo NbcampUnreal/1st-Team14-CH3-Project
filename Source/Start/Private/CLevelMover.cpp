@@ -14,7 +14,6 @@ void ACLevelMover::KeyPressedActivate(AActor* Activator)
 {
 	if (!LevelToMove.IsNull())
 	{
-		GEngine->AddOnScreenDebugMessage(3, 1.0f, FColor::Green, FString::Printf(TEXT("CLevelMoverKeyPressed")));
 		//UGameplayStatics::OpenLevel(GetWorld(), LevelToMove);
 		UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), LevelToMove);
 	}//상호작용

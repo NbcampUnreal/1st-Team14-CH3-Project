@@ -4,15 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "CBaseItem.h"
-#include "HealingItem.generated.h"
+#include "CHealthPotionItem.generated.h"
 
 UCLASS()
-class START_API AHealingItem : public ACBaseItem
+class START_API ACHealthPotionItem : public ACBaseItem
 {
 	GENERATED_BODY()
 
 public:
-	AHealingItem();
+	ACHealthPotionItem();
 	virtual void KeyPressedActivate(AActor* Activator) override;
 	virtual void Use(/*플레이어 클래스*/) override;
 
