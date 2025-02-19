@@ -6,7 +6,6 @@
 ABigCoinItem::ABigCoinItem()
 {
 	PointValue = 50;
-	ItemType = "Big Coin";
 }
 
 void ABigCoinItem::KeyPressedActivate(AActor* Activator)
@@ -14,7 +13,7 @@ void ABigCoinItem::KeyPressedActivate(AActor* Activator)
 	Super::KeyPressedActivate(Activator);
 }
 
-void ABigCoinItem::Use()
+void ABigCoinItem::Use(AActor* Target)
 {
 
 }

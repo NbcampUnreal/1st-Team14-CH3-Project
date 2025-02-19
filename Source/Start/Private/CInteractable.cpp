@@ -2,6 +2,7 @@
 #include "CInteractable.h"
 #include "Components/InputComponent.h"
 #include "Components/BoxComponent.h"
+#include "Components/AudioComponent.h"
 
 ACInteractable::ACInteractable()
 {
@@ -17,6 +18,7 @@ ACInteractable::ACInteractable()
 
 	InteractableCollision->OnComponentBeginOverlap.AddDynamic(this, &ACInteractable::OnInteractableOverlap);
 	InteractableCollision->OnComponentEndOverlap.AddDynamic(this, &ACInteractable::OnInteractableEndOverlap);
+
 
 	/*
 	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
@@ -35,7 +37,7 @@ ACInteractable::ACInteractable()
 void ACInteractable::OnInteractableOverlap(UPrimitiveComponent* OverlapPrimitiveComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	
-	if (OtherActor && OtherActor->ActorHasTag("Player")) //캐릭터로 캐스트되면
+	if (OtherActor && OtherActor->ActorHasTag("Player") || OtherComp && OtherComp->ComponentHasTag("Player")) //캐릭터로 캐스트되면
 	{
 		//위젯 활성화
 		OverlapActivate(OtherActor);
@@ -61,7 +63,7 @@ void ACInteractable::OnInteractableEndOverlap(UPrimitiveComponent* OverlapPrimit
 
 void ACInteractable::OverlapActivate(AActor* Activator)
 {
-	GEngine->AddOnScreenDebugMessage(2, 1.0f, FColor::Green, FString::Printf(TEXT("CInteractableOverlap")));
+	//GEngine->AddOnScreenDebugMessage(2, 1.0f, FColor::Green, FString::Printf(TEXT("CInteractableOverlap")));
 	
 }
 
