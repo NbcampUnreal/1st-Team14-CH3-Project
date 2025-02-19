@@ -1,4 +1,4 @@
-#include "CPlayer.h"
+ï»¿#include "CPlayer.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
@@ -9,26 +9,28 @@
 
 ACPlayer::ACPlayer()
 {
-	//  ½ºÇÁ¸µ¾Ï ¼³Á¤ (1ÀÎÄªÀÌ¹Ç·Î ±æÀÌ´Â 0)
+	PrimaryActorTick.bCanEverTick = true;
+	//  ìŠ¤í”„ë§ì•” ì„¤ì • (1ì¸ì¹­ì´ë¯€ë¡œ ê¸¸ì´ëŠ” 0)
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(RootComponent);
-	SpringArm->TargetArmLength = 0.0f; // 1ÀÎÄªÀÌ¹Ç·Î 0
+	SpringArm->TargetArmLength = 300.0f; // 1ì¸ì¹­ì´ë¯€ë¡œ 0
 	SpringArm->bUsePawnControlRotation = true;
 
-	//  FPS Ä«¸Ş¶ó ¼³Á¤
+	//  FPS ì¹´ë©”ë¼ ì„¤ì •
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm);
 	Camera->bUsePawnControlRotation = false;
 
-	//  ÀÌµ¿ ÄÄÆ÷³ÍÆ® Ãß°¡
+	bIsFirstPerson = true;
+	//  ì´ë™ ì»´í¬ë„ŒíŠ¸ ì¶”ê°€
 	MovementComponent = CreateDefaultSubobject<UCMovementComponent>(TEXT("MovementComponent"));
 }
 
 void ACPlayer::BeginPlay()
 {
 	Super::BeginPlay();
-
-	//  `ACPlayerController`°¡ ÀÔ·Â ¸ÅÇÎÀ» °ü¸®ÇÏ¹Ç·Î º°µµ ¼³Á¤ ºÒÇÊ¿ä
+	ToggleView(); // ì´ˆê¸° ì‹œì  ì„¤ì •
+	//  `ACPlayerController`ê°€ ì…ë ¥ ë§¤í•‘ì„ ê´€ë¦¬í•˜ë¯€ë¡œ ë³„ë„ ì„¤ì • ë¶ˆí•„ìš”
 }
 
 void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -38,7 +40,7 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 	if (EnhancedInput)
 	{
-		// ÄÁÆ®·Ñ·¯ °¡Á®¿À±â
+		// ì»¨íŠ¸ë¡¤ëŸ¬ ê°€ì ¸ì˜¤ê¸°
 		ACPlayerController* PC = Cast<ACPlayerController>(GetController());
 		if (PC)
 		{
@@ -48,6 +50,29 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 			EnhancedInput->BindAction(PC->JumpAction, ETriggerEvent::Completed, MovementComponent, &UCMovementComponent::EndJump);
 			EnhancedInput->BindAction(PC->RunAction, ETriggerEvent::Started, MovementComponent, &UCMovementComponent::OnRun);
 			EnhancedInput->BindAction(PC->RunAction, ETriggerEvent::Completed, MovementComponent, &UCMovementComponent::OnWark);
+
+			// ğŸ”¹ ì‹œì  ì „í™˜ ì•¡ì…˜ ë°”ì¸ë”©
+			EnhancedInput->BindAction(PC->SwitchViewAction, ETriggerEvent::Started, this, &ACPlayer::ToggleView);
 		}
+	}
+}
+
+void ACPlayer::ToggleView()
+{
+	bIsFirstPerson = !bIsFirstPerson; // ì‹œì  ì „í™˜
+
+	if (bIsFirstPerson)
+	{
+		// ğŸ”¹ 1ì¸ì¹­(FPS) ì„¤ì •
+		Camera->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+		Camera->SetRelativeLocation(FVector(0, 0, 80)); // ìºë¦­í„°ì˜ ëˆˆ ìœ„ì¹˜
+		Camera->bUsePawnControlRotation = true;
+	}
+	else
+	{
+		// ğŸ”¹ 3ì¸ì¹­(TPS) ì„¤ì •
+		Camera->AttachToComponent(SpringArm, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+		SpringArm->TargetArmLength = 300.0f;
+		Camera->bUsePawnControlRotation = false;
 	}
 }
