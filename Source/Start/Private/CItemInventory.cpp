@@ -46,7 +46,10 @@ void CItemInventory::AddToInventory(IIItemInterface* ItemToAdd)
 
 void CItemInventory::UseHealthPotion(AActor* Target)
 {
-
+	if (HealthPotionItemNum > 0)
+	{
+		
+	}
 }
 
 void CItemInventory::UseStaminaPotion(AActor* Target)

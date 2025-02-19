@@ -1,6 +1,7 @@
 #include "CHealthPotionItem.h"
 
 #include "SP_Pawn.h"
+#include "CCharacter.h"
 
 ACHealthPotionItem::ACHealthPotionItem()
 {
@@ -17,11 +18,9 @@ void ACHealthPotionItem::KeyPressedActivate(AActor* Activator)
 void ACHealthPotionItem::Use(AActor* Target)
 {
 	GEngine->AddOnScreenDebugMessage(4, 1.0f, FColor::Green, FString::Printf(TEXT("Use HealthPotionItem")));
-	//if (Activator && Activator->ActorHasTag("Player"))
-	//{
-	//	if (ASP_Pawn* PlayerCharacter = Cast<ASP_Pawn>(Activator))
-	//	{
-	//		PlayerCharacter->AddHealth(HealAmount);
-	//	}
-	//}
+	if (ACCharacter* CCharacter = Cast<ACCharacter>(Target))
+	{		
+		CCharacter->Heal(HealAmount);
+		
+	}
 }

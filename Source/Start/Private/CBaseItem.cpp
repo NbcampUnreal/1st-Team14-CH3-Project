@@ -2,8 +2,9 @@
 #include "CBaseItem.h"
 #include "Components/BoxComponent.h"
 #include "Components/SphereComponent.h"
+#include "CInventoryComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "TestHuman.h" //플레이어로 교체 필요
+#include "CPlayer.h" 
 #include "CItemInventory.h"
 
 // Sets default values
@@ -24,6 +25,7 @@ ACBaseItem::ACBaseItem() :
 	UseSound = nullptr;
 }
 
+
 void ACBaseItem::KeyPressedActivate(AActor* Activator)
 {
 	if (KeyPressedSound)
@@ -31,18 +33,20 @@ void ACBaseItem::KeyPressedActivate(AActor* Activator)
 		UGameplayStatics::PlaySoundAtLocation(this, KeyPressedSound, GetActorLocation());
 	}
 	PutIntoInventory(Activator); // Inventory를 가져와야 함. 일단 Player 가져오기
+	Use(Activator); //원래는 인벤토리 ui에서 사용해야 함
+	
 	DestroyInteractable();
 }
 
 void ACBaseItem::PutIntoInventory(AActor* Player)
 {
-	ATestHuman* Human = Cast<ATestHuman>(Player);
-	if (Human)
+	ACPlayer* CPlayer = Cast<ACPlayer>(Player);
+	if (CPlayer)
 	{
-		TSharedPtr<CItemInventory> Inventory = Human->GetInventory();
-		if (Inventory.IsValid())
+		UCInventoryComponent* Inventory = Player->FindComponentByClass<UCInventoryComponent>();
+		if (Inventory)
 		{
-			Inventory->AddToInventory(this);
+			Inventory->AddToInventory(GetItemType());
 		}
 	}
 }
@@ -51,6 +55,7 @@ EItemType ACBaseItem::GetItemType() const
 {
 	return ItemType;
 }
+
 
 void ACBaseItem::Use(AActor* Target)
 {

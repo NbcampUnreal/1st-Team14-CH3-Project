@@ -17,7 +17,6 @@ protected:
 	virtual void KeyPressedActivate(AActor* Activator) override;
 	virtual void Use(AActor* Target) override;
 
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Item)
 	float HealAmount;
 };

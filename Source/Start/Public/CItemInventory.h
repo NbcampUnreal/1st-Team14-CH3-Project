@@ -27,18 +27,18 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void UseHealthPotion(AActor* Target);
+	UFUNCTION(BlueprintCallable)
 	void UseStaminaPotion(AActor* Target);
+	UFUNCTION(BlueprintCallable)
 	void UseGrenades(AActor* Target);
-protected:
-	class CHealthPotionItem* HealthPotion;
-	class CStaminaPotionItem* StaminaPotion;
-	class CGrenadesItem* Grenades;
 
-	UPROPERTY(VisibleAnywhere)
+protected:
+
+	UPROPERTY(VisibleAnywhere, Category="Item")
 	int HealthPotionItemNum;
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "Item")
 	int StaminaPoitionItemNum;
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "Item")
 	int GrenadesItemNum;
 
 	

@@ -30,6 +30,7 @@ protected:
 	USoundBase* UseSound;
 
 
+
 	virtual void Use(AActor* Target) override;
 	virtual void KeyPressedActivate(AActor* Activator) override;
 	virtual void PutIntoInventory(AActor* PlayerHavingInventory) override;
