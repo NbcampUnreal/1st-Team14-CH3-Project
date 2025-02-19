@@ -17,15 +17,15 @@ class START_API UCHUDWidget : public UUserWidget
 public:
 	// 체력 업데이트: 0.0f ~ 1.0f 사이의 값
 	UFUNCTION(BlueprintCallable, Category = "HUD")
-	void UpdateHealth(float HealthPercent);
+	void UpdateHealth(float fHealthPercent);
 
 	// 스태미너(의지력) 업데이트: 0.0f ~ 1.0f 사이의 값
 	UFUNCTION(BlueprintCallable, Category = "HUD")
-	void UpdateStamina(float StaminaPercent);
+	void UpdateStamina(float fStaminaPercent);
 
 	// 탄약 정보 업데이트: 현재 탄약과 최대 탄약을 표시
 	UFUNCTION(BlueprintCallable, Category = "HUD")
-	void UpdateAmmo(int32 CurrentAmmo, int32 MaxAmmo);
+	void UpdateAmmo(int32 iCurrentAmmo, int32 iMaxAmmo);
 
 	// 현재 무기 이름 업데이트
 	UFUNCTION(BlueprintCallable, Category = "HUD")
@@ -33,7 +33,7 @@ public:
 
 	// 점수 업데이트
 	UFUNCTION(BlueprintCallable, Category = "HUD")
-	void UpdateScore(int32 NewScore);
+	void UpdateScore(int32 iNewScore);
 
 	// 피해 효과를 표시 (예: 화면 붉게 깜빡임, Blood 비네트 같은 이미지 활용)
 	UFUNCTION(BlueprintCallable, Category = "HUD")

@@ -24,29 +24,29 @@ void UCHUDWidget::NativeConstruct()
 }
 
 // 체력 업데이트
-void UCHUDWidget::UpdateHealth(float HealthPercent)
+void UCHUDWidget::UpdateHealth(float fHealthPercent)
 {
 	if (HealthBar)
 	{
-		HealthBar->SetPercent(HealthPercent);
+		HealthBar->SetPercent(fHealthPercent);
 	}
 }
 
 // 스태미너 업데이트
-void UCHUDWidget::UpdateStamina(float StaminaPercent)
+void UCHUDWidget::UpdateStamina(float fStaminaPercent)
 {
 	if (StaminaBar)
 	{
-		StaminaBar->SetPercent(StaminaPercent);
+		StaminaBar->SetPercent(fStaminaPercent);
 	}
 }
 
 // 탄약 정보 업데이트
-void UCHUDWidget::UpdateAmmo(int32 CurrentAmmo, int32 MaxAmmo)
+void UCHUDWidget::UpdateAmmo(int32 iCurrentAmmo, int32 iMaxAmmo)
 {
 	if (AmmoText)
 	{
-		FString AmmoString = FString::Printf(TEXT("%d / %d"), CurrentAmmo, MaxAmmo);
+		FString AmmoString = FString::Printf(TEXT("%d / %d"), iCurrentAmmo, iMaxAmmo);
 		AmmoText->SetText(FText::FromString(AmmoString));
 	}
 }
@@ -61,11 +61,11 @@ void UCHUDWidget::UpdateWeapon(FText WeaponName)
 }
 
 // 점수 업데이트
-void UCHUDWidget::UpdateScore(int32 NewScore)
+void UCHUDWidget::UpdateScore(int32 iNewScore)
 {
 	if (ScoreText)
 	{
-		ScoreText->SetText(FText::AsNumber(NewScore));
+		ScoreText->SetText(FText::AsNumber(iNewScore));
 	}
 }
 
