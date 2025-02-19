@@ -5,10 +5,11 @@
 
 ACBulletBoxItem::ACBulletBoxItem()
 {
+	ItemType = EItemType::EIT_Bullet;
 }
 
 void ACBulletBoxItem::KeyPressedActivate(AActor* Activator)
 {
 	Super::KeyPressedActivate(Activator);
-	GEngine->AddOnScreenDebugMessage(3, 1.0f, FColor::Green, FString::Printf(TEXT("Add BulletBoxItem To Inventory")));
+	//GEngine->AddOnScreenDebugMessage(3, 1.0f, FColor::Green, FString::Printf(TEXT("Add BulletBoxItem To Inventory")));
 }

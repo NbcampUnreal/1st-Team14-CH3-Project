@@ -22,6 +22,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Interactable|Component")
 	class UBoxComponent* InteractableCollision;
 
+
+
 	virtual void OnInteractableOverlap(UPrimitiveComponent* OverlapPrimitiveComp,
 		AActor* OtherActor,
 		UPrimitiveComponent* OtherComp,
