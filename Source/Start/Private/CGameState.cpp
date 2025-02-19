@@ -26,7 +26,7 @@ void ACGameState::SetGameState(EGameState NewState)
 
     case EGameState::CityMap:
         UE_LOG(LogTemp, Warning, TEXT("도시 맵 로드"));
-        UGameplayStatics::OpenLevel(this, TEXT("/Game/PA_UrbanCity/Maps/Map_Post-Apocalyptic_NightLight"));
+        UGameplayStatics::OpenLevel(this, TEXT("/Game/Map/PA_UrbanCity/Maps/Map_Post-Apocalyptic_NightLight"));
         break;
 
     case EGameState::MercenaryBattle:
@@ -43,12 +43,12 @@ void ACGameState::SetGameState(EGameState NewState)
 
     case EGameState::Labyrinth:
         UE_LOG(LogTemp, Warning, TEXT("연구소 미로 맵 로드"));
-        UGameplayStatics::OpenLevel(this, TEXT("/Game/LapMap/ModSci_Engineer/Maps/MAIN_MAP"));
+        UGameplayStatics::OpenLevel(this, TEXT("/Game/Map/LapMap/ModSci_Engineer/Maps/MAIN_MAP"));
         break;
 
     case EGameState::BossArea:
         UE_LOG(LogTemp, Warning, TEXT("보스가 있는 연구소 맵 로드"));
-        UGameplayStatics::OpenLevel(this, TEXT("/Game/LapMap/ModSci_Engineer/Maps/MAIN_MAP"));
+        UGameplayStatics::OpenLevel(this, TEXT("/Game/Map/LapMap/ModSci_Engineer/Maps/MAIN_MAP"));
         break;
 
     case EGameState::BossFight:
