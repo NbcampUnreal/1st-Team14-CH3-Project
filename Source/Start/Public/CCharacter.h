@@ -4,6 +4,8 @@
 #include "GameFramework/Character.h"
 #include "CCharacter.generated.h"
 
+class UCWeaponComponent;
+
 UCLASS()
 class START_API ACCharacter : public ACharacter
 {
@@ -38,6 +40,10 @@ public:
 
     UFUNCTION(BlueprintCallable, Category = "Character Stats")
     void Heal(float HealAmount);
+
+protected:
+    UPROPERTY(VisibleAnywhere, Category = "Component")
+	UCWeaponComponent* WeaponComponent;
 
 private:
     void Die();  // 🔹 사망 처리 함수
