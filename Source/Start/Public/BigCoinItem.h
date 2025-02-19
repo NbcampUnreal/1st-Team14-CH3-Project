@@ -14,5 +14,5 @@ class START_API ABigCoinItem : public ACoinItem
 public:
 	ABigCoinItem();
 	virtual void KeyPressedActivate(AActor* Activator) override;
-	virtual void Use(/*플레이어 클래스*/) override;
+	virtual void Use(AActor* Target) override;
 };

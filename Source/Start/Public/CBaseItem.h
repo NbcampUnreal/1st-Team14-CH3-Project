@@ -20,15 +20,22 @@ public:
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Item|Component")
 	UStaticMeshComponent* StaticMesh;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
-	FName ItemType;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Item")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item|Attribute")
+	EItemType ItemType;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Item|Attribute")
 	bool bCanUse;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item|Sound")
+	USoundBase* KeyPressedSound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item|Sound")
+	USoundBase* UseSound;
 
+
+
+	virtual void Use(AActor* Target) override;
 	virtual void KeyPressedActivate(AActor* Activator) override;
 	virtual void PutIntoInventory(AActor* PlayerHavingInventory) override;
-	virtual FName GetItemType() const override;
-	virtual void Use(/*플레이어 클래스*/) override;
+	virtual EItemType GetItemType() const override;
+	
 
 
 };

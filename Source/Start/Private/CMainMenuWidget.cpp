@@ -30,6 +30,17 @@ void UCMainMenuWidget::NativeConstruct()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("QuitButton is not bound!"));
 	}
+
+	// 메뉴 레벨일 때는 UI 입력 전용 모드로 전환 (마우스 커서를 보이게 하고 캐릭터 입력 무시)
+	if (APlayerController* PC = GetOwningPlayer())
+	{
+		FInputModeUIOnly InputMode;
+		// 현재 위젯에 포커스를 할당
+		InputMode.SetWidgetToFocus(this->TakeWidget());
+		PC->SetInputMode(InputMode);
+		PC->bShowMouseCursor = true;
+	}
+
 }
 
 void UCMainMenuWidget::OnStartGameButtonClicked()
@@ -37,11 +48,15 @@ void UCMainMenuWidget::OnStartGameButtonClicked()
 	// 게임 시작 요청 발생
 	OnStartGameRequested.Broadcast();
 
+	// XX초 뒤에 게임 레벨로 전환하면서 입력 모드를 게임 전용으로 변경
 	UWorld* World = GetWorld();
 	if (World)
 	{
-		UE_LOG(LogTemp, Log, TEXT("Opening level: %s"), *LevelName.ToString());
-		UGameplayStatics::OpenLevel(World, LevelName);
+		FTimerHandle TimerHandle;
+		World->GetTimerManager().SetTimer(TimerHandle, [this, World]()
+			{
+				UGameplayStatics::OpenLevel(World, LevelName);
+			}, 1.0f, false);
 	}
 	else
 	{
@@ -54,12 +69,15 @@ void UCMainMenuWidget::OnQuitClicked()
 	// 게임 종료 요청 발생
 	OnQuitGameRequested.Broadcast();
 
-	UWorld* World = GetWorld();
-	if (World)
+	// 게임 종료를 위해 0.8초 딜레이 적용
+	if (UWorld* World = GetWorld())
 	{
-		APlayerController* PC = GetOwningPlayer();
-		UE_LOG(LogTemp, Log, TEXT("Quitting game"));
-		UKismetSystemLibrary::QuitGame(World, PC, EQuitPreference::Quit, false);
+		FTimerHandle TimerHandle;
+		World->GetTimerManager().SetTimer(TimerHandle, [this, World]()
+			{
+				APlayerController* PC = GetOwningPlayer();
+				UKismetSystemLibrary::QuitGame(World, PC, EQuitPreference::Quit, false);
+			}, 1.0f, false);
 	}
 	else
 	{

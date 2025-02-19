@@ -5,27 +5,48 @@
 
 ACGameState::ACGameState()
 {
-    CurrentState = EGameState::Menu; // 게임 시작 시 메뉴 상태
+    CurrentState = EGameState::MenuMap; // 게임 시작 시 메뉴 상태
 }
 
 void ACGameState::BeginPlay()
 {
     Super::BeginPlay();
-    SetGameState(EGameState::Menu); // 게임 시작 시 메뉴 상태로 초기화
+    SetGameState(EGameState::MenuMap); // 게임 시작 시 메뉴 상태로 초기화
 }
 
 void ACGameState::SetGameState(EGameState NewState)
 {
+    if (CurrentState == NewState)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("이미 현재 상태입니다: %d"), static_cast<int32>(NewState));
+        return; // 🔹 동일한 상태로 변경 시 다시 실행하지 않도록 방지
+    }
+
     CurrentState = NewState;
+
+    FString CurrentMapName = GetWorld()->GetMapName();
 
     switch (CurrentState)
     {
-    case EGameState::Menu:
+    case EGameState::MenuMap:
         UE_LOG(LogTemp, Warning, TEXT("게임 상태: 메뉴"));
+        // 🔹 현재 맵이 이미 MenuLevel이면 다시 로드하지 않음
+        if (CurrentMapName.Contains(TEXT("MenuLevel")))
+        {
+            return;
+        }
+
+        UGameplayStatics::OpenLevel(this, TEXT("/Game/Map/MenuLevel"));
         break;
 
     case EGameState::CityMap:
         UE_LOG(LogTemp, Warning, TEXT("도시 맵 로드"));
+        // 🔹 현재 맵이 이미 CityMap이면 다시 로드하지 않음
+        if (CurrentMapName.Contains(TEXT("Map_Post-Apocalyptic_NightLight")))
+        {
+            return;
+        }
+
         UGameplayStatics::OpenLevel(this, TEXT("/Game/Map/PA_UrbanCity/Maps/Map_Post-Apocalyptic_NightLight"));
         break;
 

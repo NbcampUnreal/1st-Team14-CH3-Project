@@ -6,7 +6,6 @@
 ASmallCoinItem::ASmallCoinItem()
 {
 	PointValue = 10;
-	ItemType = "Small Coin";
 }
 
 void ASmallCoinItem::KeyPressedActivate(AActor* Activator)
@@ -14,7 +13,7 @@ void ASmallCoinItem::KeyPressedActivate(AActor* Activator)
 	Super::KeyPressedActivate(Activator);
 }
 
-void ASmallCoinItem::Use()
+void ASmallCoinItem::Use(AActor* Target)
 {
 }
 

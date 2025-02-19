@@ -7,7 +7,7 @@
 UENUM(BlueprintType)
 enum class EGameState : uint8
 {
-    Menu UMETA(DisplayName = "메뉴"),
+    MenuMap UMETA(DisplayName = "메뉴"),
     CityMap UMETA(DisplayName = "도시 맵"),
     MercenaryBattle UMETA(DisplayName = "용병단과 전투"),
     ScoreCheck UMETA(DisplayName = "점수 체크"),
