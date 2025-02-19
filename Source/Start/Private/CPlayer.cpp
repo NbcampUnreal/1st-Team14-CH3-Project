@@ -22,8 +22,7 @@ ACPlayer::ACPlayer()
 	Camera->bUsePawnControlRotation = false;
 
 	bIsFirstPerson = true;
-	//  이동 컴포넌트 추가
-	MovementComponent = CreateDefaultSubobject<UCMovementComponent>(TEXT("MovementComponent"));
+
 }
 
 void ACPlayer::BeginPlay()
@@ -31,6 +30,7 @@ void ACPlayer::BeginPlay()
 	Super::BeginPlay();
 	ToggleView(); // 초기 시점 설정
 	//  `ACPlayerController`가 입력 매핑을 관리하므로 별도 설정 불필요
+	
 }
 
 void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -45,7 +45,7 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		if (PC)
 		{
 			EnhancedInput->BindAction(PC->MoveAction, ETriggerEvent::Triggered, MovementComponent, &UCMovementComponent::OnMove);
-			EnhancedInput->BindAction(PC->LookAction, ETriggerEvent::Triggered, MovementComponent, &UCMovementComponent::OnLook);
+//			EnhancedInput->BindAction(PC->LookAction, ETriggerEvent::Triggered, MovementComponent, &UCMovementComponent::OnLook);
 			EnhancedInput->BindAction(PC->JumpAction, ETriggerEvent::Started, MovementComponent, &UCMovementComponent::OnJump);
 			EnhancedInput->BindAction(PC->JumpAction, ETriggerEvent::Completed, MovementComponent, &UCMovementComponent::EndJump);
 			EnhancedInput->BindAction(PC->RunAction, ETriggerEvent::Started, MovementComponent, &UCMovementComponent::OnRun);

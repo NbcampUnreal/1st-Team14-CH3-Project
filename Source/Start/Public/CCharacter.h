@@ -4,7 +4,9 @@
 #include "GameFramework/Character.h"
 #include "CCharacter.generated.h"
 
+class UCMovementComponent;
 class UCWeaponComponent;
+class UCCameraComponent;
 
 UCLASS()
 class START_API ACCharacter : public ACharacter
@@ -43,8 +45,11 @@ public:
 
 protected:
     UPROPERTY(VisibleAnywhere, Category = "Component")
+    UCCameraComponent* CameraComponent;
+    UPROPERTY(VisibleAnywhere, Category = "Component")
+    UCMovementComponent* MovementComponent;
+    UPROPERTY(VisibleAnywhere, Category = "Component")
 	UCWeaponComponent* WeaponComponent;
-
 private:
     void Die();  // 🔹 사망 처리 함수
     void SaveHealthToGameInstance();
