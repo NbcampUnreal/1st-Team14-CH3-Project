@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
@@ -9,25 +9,38 @@ class START_API ACCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-protected:
-    // Ã¼·Â º¯¼ö
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Stats")
-    int Health;
-
 public:
     ACCharacter();
 
-    // HP °ü·Ã ÇÔ¼ö
+protected:
+    virtual void BeginPlay() override;
+
+private:
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Stats", meta = (AllowPrivateAccess = "true"))
+    float Health;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Stats", meta = (AllowPrivateAccess = "true"))
+    float MaxHealth;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Character Stats", meta = (AllowPrivateAccess = "true"))
+    bool bIsDead;  // ğŸ”¹ ìºë¦­í„°ê°€ ì‚¬ë§í–ˆëŠ”ì§€ ì—¬ë¶€
+
+public:
     UFUNCTION(BlueprintCallable, Category = "Character Stats")
-    int GetHP() const;
+    float GetHealth() const;
 
     UFUNCTION(BlueprintCallable, Category = "Character Stats")
-    void SetHP(int HP);
+    void ModifyHealth(float Amount);
 
-    // °ø°İ °ü·Ã ÇÔ¼ö
-    UFUNCTION(BlueprintCallable, Category = "Combat")
-    virtual void Attack();
+    UFUNCTION(BlueprintCallable, Category = "Character Stats")
+    virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser) override;
 
-    UFUNCTION(BlueprintCallable, Category = "Combat")
-    virtual void TakeDamaged(int Amount);
+
+    UFUNCTION(BlueprintCallable, Category = "Character Stats")
+    void Heal(float HealAmount);
+
+private:
+    void Die();  // ğŸ”¹ ì‚¬ë§ ì²˜ë¦¬ í•¨ìˆ˜
+    void SaveHealthToGameInstance();
+    void LoadHealthFromGameInstance();
 };
