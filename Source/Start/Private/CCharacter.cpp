@@ -2,8 +2,7 @@
 
 ACCharacter::ACCharacter()
 {
-	// 초기 체력 설정
-	Health = 100;
+    Health = 100;
 }
 
 int ACCharacter::GetHP() const

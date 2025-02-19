@@ -10,21 +10,21 @@ class START_API ACCharacter : public ACharacter
 	GENERATED_BODY()
 
 protected:
-    // Ã¼·Â º¯¼ö
+    // ì²´ë ¥ ë³€ìˆ˜
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Stats")
     int Health;
 
 public:
     ACCharacter();
 
-    // HP °ü·Ã ÇÔ¼ö
+    // HP ê´€ë ¨ í•¨ìˆ˜
     UFUNCTION(BlueprintCallable, Category = "Character Stats")
     int GetHP() const;
 
     UFUNCTION(BlueprintCallable, Category = "Character Stats")
     void SetHP(int HP);
 
-    // °ø°Ý °ü·Ã ÇÔ¼ö
+    // ê³µê²© ê´€ë ¨ í•¨ìˆ˜
     UFUNCTION(BlueprintCallable, Category = "Combat")
     virtual void Attack();
 
