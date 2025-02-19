@@ -6,6 +6,7 @@
 #include "Camera/CameraComponent.h"
 #include "CPlayer.generated.h"
 
+class UCWeaponComponent;
 class UCameraComponent;
 class USpringArmComponent;
 class UCMovementComponent;
@@ -24,18 +25,15 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+
 private:
-	//  FPS 카메라 & 스프링암 설정
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	UCameraComponent* Camera;
-
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	USpringArmComponent* SpringArm;
-
-	bool bIsFirstPerson;
-	void ToggleView();
-
-	//  이동 컴포넌트 추가
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 	UCMovementComponent* MovementComponent;
+	
+	bool bIsFirstPerson;
+	void ToggleView();
 };
