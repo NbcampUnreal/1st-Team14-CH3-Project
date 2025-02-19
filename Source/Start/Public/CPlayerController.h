@@ -30,6 +30,8 @@ public:
 	UInputAction* CrouchAction;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
     UInputAction* SwitchViewAction;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UInputAction* QuitAction;
 protected:
 
 	virtual void BeginPlay() override;
