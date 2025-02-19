@@ -1,13 +1,14 @@
 #include "CGrenadesItem.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "CCharacter.h"
 
 ACGrenadesItem::ACGrenadesItem()
 {
 	ExplosiveDelay = 3;
 	ExplosiveRadius = 300;
 	ExplosiveDamage = 30;
-	ItemType = "Mine";
+	ItemType = EItemType::EIT_Grenades;
 	
 	MineCollision = CreateDefaultSubobject<USphereComponent>(TEXT("MineCollision"));
 	MineCollision->InitSphereRadius(ExplosiveRadius);
@@ -18,13 +19,21 @@ ACGrenadesItem::ACGrenadesItem()
 void ACGrenadesItem::KeyPressedActivate(AActor* Activator)
 {
 	Super::KeyPressedActivate(Activator);
-	GEngine->AddOnScreenDebugMessage(3, 1.0f, FColor::Green, FString::Printf(TEXT("Add GrenadesItem To Inventory")));
+	//GEngine->AddOnScreenDebugMessage(3, 1.0f, FColor::Green, FString::Printf(TEXT("Add GrenadesItem To Inventory")));
 }
 
-void ACGrenadesItem::Use()
+void ACGrenadesItem::Use(AActor* Target)
 {
 	GEngine->AddOnScreenDebugMessage(4, 1.0f, FColor::Green, FString::Printf(TEXT("Use GrenadesItem")));
-
+	if (ACCharacter* CCharacter = Cast<ACCharacter>(Target))
+	{
+		UGameplayStatics::ApplyDamage(
+			Target, 
+			ExplosiveDamage,
+			nullptr, 
+			this,
+			UDamageType::StaticClass());
+	}
 }
 
 void ACGrenadesItem::Explode()

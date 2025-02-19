@@ -5,7 +5,15 @@
 #include "UObject/Interface.h"
 #include "IItemInterface.generated.h"
 
-// This class does not need to be modified.
+UENUM(BlueprintType)
+enum class EItemType : uint8
+{
+	EIT_HealthPotion UMETA(DispalyName = "HealthPotion"),
+	EIT_StaminaPotion UMETA(DispalyName = "StaminaPotion"),
+	EIT_Bullet UMETA(DispalyName = "Bullet"),
+	EIT_Grenades UMETA(DispalyName = "Grenades")
+};
+
 UINTERFACE(MinimalAPI)
 class UIItemInterface : public UInterface
 {
@@ -18,6 +26,6 @@ class START_API IIItemInterface
 
 public:
 	virtual void PutIntoInventory(AActor* PlayerHavingInventory) = 0;
-	virtual void Use (/*플레이어 클래스*/) = 0;
-	virtual FName GetItemType() const = 0;
+	virtual void Use (AActor* Target) = 0;
+	virtual EItemType GetItemType() const = 0;
 };

@@ -19,5 +19,5 @@ protected:
 	int32 PointValue;
 
 	virtual void KeyPressedActivate(AActor* Activator) override;
-	virtual void Use(/*플레이어 클래스*/) override;
+	virtual void Use(AActor* Activator) override;
 };

@@ -12,15 +12,17 @@ class START_API UCGameInstance : public UGameInstance
 public:
     UCGameInstance();
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
-    float MaxHealth;
+protected:
+    virtual void Init() override;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
-    float Health;
+private:
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Stats", meta = (AllowPrivateAccess = "true"))
+    float PlayerHealth;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
-    float MaxStamina;
+public:
+    UFUNCTION(BlueprintCallable, Category = "Player Stats")
+    float GetPlayerHealth() const;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
-    float Stamina;
+    UFUNCTION(BlueprintCallable, Category = "Player Stats")
+    void SetPlayerHealth(float NewHealth);
 };

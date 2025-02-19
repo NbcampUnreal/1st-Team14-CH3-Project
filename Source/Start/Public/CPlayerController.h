@@ -6,6 +6,7 @@
 
 class UInputMappingContext;
 class UInputAction;
+class UUserWidget;
 
 UCLASS()
 class START_API ACPlayerController : public APlayerController
@@ -28,8 +29,24 @@ public:
 	UInputAction* RunAction;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	UInputAction* CrouchAction;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+    UInputAction* SwitchViewAction;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UInputAction* QuitAction;
+
+	// HUD 위젯 블루프린트 클래스 (게임 플레이 시)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<UUserWidget> HUDWidgetClass;
+
+	// 메인 메뉴 위젯 블루프린트 클래스 (메인 메뉴 레벨 시)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<UUserWidget> MainMenuWidgetClass;
 
 protected:
 
 	virtual void BeginPlay() override;
+
+	UPROPERTY(BlueprintReadOnly, Category = "UI")
+	UUserWidget* CurrentWidget; //	현재 화면에 보이는 위젯
+
 };

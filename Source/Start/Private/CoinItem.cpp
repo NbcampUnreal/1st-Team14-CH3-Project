@@ -6,7 +6,6 @@
 ACoinItem::ACoinItem()
 {
 	PointValue = 0;
-	ItemType = "DefaultCoinItem";
 }
 
 void ACoinItem::KeyPressedActivate(AActor* Activator)
@@ -14,7 +13,7 @@ void ACoinItem::KeyPressedActivate(AActor* Activator)
 
 }
 
-void ACoinItem::Use()
+void ACoinItem::Use(AActor* Activator)
 {
 	//if (Activator && Activator->ActorHasTag("Player"))
 	//{

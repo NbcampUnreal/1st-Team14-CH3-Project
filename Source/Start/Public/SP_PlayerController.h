@@ -8,6 +8,8 @@
 
 class UInputMappingContext;
 class UInputAction;
+class UUserWidget;
+class UCMainMenuWidget;
 
 UCLASS()
 class START_API ASP_PlayerController : public APlayerController
@@ -17,9 +19,9 @@ class START_API ASP_PlayerController : public APlayerController
 public:
 	ASP_PlayerController();
 
+	// Input 관련
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	UInputMappingContext* InputMappingContext;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	UInputAction* MoveAction;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
@@ -41,6 +43,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	UInputAction* FlightHoldAction;  // Roll 회전 (마우스 휠 또는 키 입력)
 
+	// HUD 관련
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
 	TSubclassOf<UUserWidget> HUDWidgetClass;
 
@@ -50,6 +53,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "HUD")
 	UUserWidget* GetHUDWidget() const;
 
+	// 메인 메뉴 관련
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Menu")
 	TSubclassOf<UUserWidget> MainMenuWidgetClass;
 

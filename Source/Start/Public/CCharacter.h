@@ -1,33 +1,52 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "CCharacter.generated.h"
+
+class UCWeaponComponent;
 
 UCLASS()
 class START_API ACCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-protected:
-    // 체력 변수
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Stats")
-    int Health;
-
 public:
     ACCharacter();
 
-    // HP 관련 함수
+protected:
+    virtual void BeginPlay() override;
+
+private:
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Stats", meta = (AllowPrivateAccess = "true"))
+    float Health;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Stats", meta = (AllowPrivateAccess = "true"))
+    float MaxHealth;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Character Stats", meta = (AllowPrivateAccess = "true"))
+    bool bIsDead;  // 🔹 캐릭터가 사망했는지 여부
+
+public:
     UFUNCTION(BlueprintCallable, Category = "Character Stats")
-    int GetHP() const;
+    float GetHealth() const;
 
     UFUNCTION(BlueprintCallable, Category = "Character Stats")
-    void SetHP(int HP);
+    void ModifyHealth(float Amount);
 
-    // 공격 관련 함수
-    UFUNCTION(BlueprintCallable, Category = "Combat")
-    virtual void Attack();
+    UFUNCTION(BlueprintCallable, Category = "Character Stats")
+    virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser) override;
 
-    UFUNCTION(BlueprintCallable, Category = "Combat")
-    virtual void TakeDamaged(int Amount);
+
+    UFUNCTION(BlueprintCallable, Category = "Character Stats")
+    void Heal(float HealAmount);
+
+protected:
+    UPROPERTY(VisibleAnywhere, Category = "Component")
+	UCWeaponComponent* WeaponComponent;
+
+private:
+    void Die();  // 🔹 사망 처리 함수
+    void SaveHealthToGameInstance();
+    void LoadHealthFromGameInstance();
 };
