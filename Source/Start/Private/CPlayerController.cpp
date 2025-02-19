@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "CPlayerController.h"
 #include "EnhancedInputSubsystems.h"
@@ -37,14 +37,14 @@ void ACPlayerController::BeginPlay()
 		}
 	}
 
-	// ÇöÀç ·¹º§ ÀÌ¸§¿¡ µû¶ó ¾Ë¸Â´Â À§Á¬ »ı¼º
+	// í˜„ì¬ ë ˆë²¨ ì´ë¦„ì— ë”°ë¼ ì•Œë§ëŠ” ìœ„ì ¯ ìƒì„±
 	UWorld* World = GetWorld();
 	if (!World) return;
 
 	FString CurrentLevelName = World->GetMapName();
 	UE_LOG(LogTemp, Log, TEXT("Current Level: %s"), *CurrentLevelName);
 
-	// ¸¸¾à ·¹º§ ÀÌ¸§¿¡ "MenuLevel"°¡ Æ÷ÇÔµÇ¾î ÀÖ´Ù¸é ¸ŞÀÎ ¸Ş´º À§Á¬À» »ı¼º
+	// ë§Œì•½ ë ˆë²¨ ì´ë¦„ì— "MenuLevel"ê°€ í¬í•¨ë˜ì–´ ìˆë‹¤ë©´ ë©”ì¸ ë©”ë‰´ ìœ„ì ¯ì„ ìƒì„±
 	if (CurrentLevelName.Contains(TEXT("MenuLevel")))
 	{
 		if (MainMenuWidgetClass)
@@ -52,17 +52,21 @@ void ACPlayerController::BeginPlay()
 			CurrentWidget = CreateWidget<UUserWidget>(this, MainMenuWidgetClass);
 			if (CurrentWidget)
 			{
-				CurrentWidget->AddToViewport();
+				CurrentWidget->AddToViewport(100);
 
-				// UI ¸ğµå ¼³Á¤: ¸¶¿ì½º Ä¿¼­ È°¼ºÈ­, UI Àü¿ë ÀÔ·Â ¸ğµå µî
+				// ğŸ”¹ UIê°€ ì´ˆì ì„ ë°›ì„ ìˆ˜ ìˆë„ë¡ ì„¤ì •
+				CurrentWidget->SetIsFocusable(true);
+
+				// ğŸ”¹ InputMode ì„¤ì • ê°œì„ 
 				FInputModeUIOnly InputMode;
 				InputMode.SetWidgetToFocus(CurrentWidget->TakeWidget());
+				InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 				SetInputMode(InputMode);
 				bShowMouseCursor = true;
 			}
 		}
 	}
-	else  // ±×·¸Áö ¾Ê´Ù¸é HUD À§Á¬À» »ı¼º
+	else  // ê·¸ë ‡ì§€ ì•Šë‹¤ë©´ HUD ìœ„ì ¯ì„ ìƒì„±
 	{
 		if (HUDWidgetClass)
 		{
