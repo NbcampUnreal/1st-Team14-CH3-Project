@@ -38,6 +38,8 @@ void ASP_PlayerController::BeginPlay()
 			}
 		}
 	}
+
+	// HUD 생성
 	if (HUDWidgetClass)
 	{
 		HUDWidgetInstance = CreateWidget<UUserWidget>(this, HUDWidgetClass);
@@ -48,12 +50,27 @@ void ASP_PlayerController::BeginPlay()
 	{
 		MyGameState->UpdateHUD();
 	}
+
+	// 메인 메뉴 위젯 생성 및 추가 (게임 시작 시 최초 표시)
+	if (MainMenuWidgetClass)
+	{
+		MainMenuWidgetInstance = CreateWidget<UUserWidget>(this, MainMenuWidgetClass);
+		if (MainMenuWidgetInstance)
+		{
+			MainMenuWidgetInstance->AddToViewport();
+
+			// 메뉴 위젯 상호작용을 위해 마우스 커서를 보이게 하고 입력 모드를 UI 전용으로 설정합니다.
+			bShowMouseCursor = true;
+			SetInputMode(FInputModeUIOnly());
+		}
+	}
 }
 
 UUserWidget* ASP_PlayerController::GetHUDWidget() const
 {
 	return HUDWidgetInstance;
 }
+
 
 // void ASP_PlayerController::ShowMainMenu(bool bIsRestart)
 // {

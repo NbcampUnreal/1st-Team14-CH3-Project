@@ -3,6 +3,7 @@
 
 #include "CPlayerController.h"
 #include "EnhancedInputSubsystems.h"
+#include "Blueprint/UserWidget.h"
 
 ACPlayerController::ACPlayerController()
 {
