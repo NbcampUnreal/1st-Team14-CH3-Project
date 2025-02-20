@@ -2,6 +2,7 @@
 
 
 #include "Weapon/CWeapon.h"
+#include "CCharacter.h"
 
 // Sets default values
 ACWeapon::ACWeapon()
@@ -17,7 +18,13 @@ ACWeapon::ACWeapon()
 void ACWeapon::BeginPlay()
 {
 	Super::BeginPlay();
-	Mesh->SetVisibility(false);
+
+	OwnerCharacter = Cast<ACCharacter>(GetOwner());
+	if (OwnerCharacter == nullptr)
+		return;
+	
+	if (HolsterSocketName.IsValid() == true)
+		AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative,true), HolsterSocketName);
 }
 
 // Called every frame

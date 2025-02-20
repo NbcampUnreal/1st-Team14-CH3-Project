@@ -5,6 +5,7 @@
 #include "CPlayerController.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CMovementComponent.h"
+#include "InputActionValue.h"
 #include "Components/CCameraComponent.h"
 
 ACPlayer::ACPlayer()
@@ -21,7 +22,7 @@ ACPlayer::ACPlayer()
 	Camera->SetupAttachment(SpringArm);
 	Camera->bUsePawnControlRotation = false;
 
-	CameraComponent = CreateDefaultSubobject<UCCameraComponent>("CameraComponent");
+	CameraComponent = CreateDefaultSubobject<UCCameraComponent>(TEXT("CameraComponent"));
 
 	bIsFirstPerson = true;
 

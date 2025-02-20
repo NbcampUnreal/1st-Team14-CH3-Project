@@ -6,10 +6,9 @@
 #include "Camera/CameraComponent.h"
 #include "CPlayer.generated.h"
 
-class UCWeaponComponent;
+class UCCameraComponent;
 class UCameraComponent;
 class USpringArmComponent;
-class UCMovementComponent;
 class ACPlayerController;
 struct FInputActionValue;
 
