@@ -21,7 +21,7 @@ ACCharacter::ACCharacter()
 void ACCharacter::BeginPlay()
 {
     Super::BeginPlay();
-	
+
     LoadHealthFromGameInstance();
 }
 void ACCharacter::SaveHealthToGameInstance()
