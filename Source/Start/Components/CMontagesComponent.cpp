@@ -11,7 +11,7 @@ UCMontagesComponent::UCMontagesComponent()
 void UCMontagesComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	if(DataTable == nullptr)
+	if (DataTable == nullptr)
 	{
 		UE_LOG(LogTemp, Error, TEXT("DataTable is not Selected"));
 		return;
@@ -24,7 +24,7 @@ void UCMontagesComponent::BeginPlay()
 
 	for (int i = 0; i < (int32)EStateType::Max; i++)
 		for (FMontagesData* data : datas)
-			if((EStateType)i == data->Type)
+			if ((EStateType)i == data->Type)
 			{
 				Datas[i] = data;
 				continue;
@@ -38,12 +38,12 @@ void UCMontagesComponent::PlayDeadMode()
 
 void UCMontagesComponent::PlayAinMontage(EStateType InType)
 {
-	if(OwnerCharacter == nullptr)
+	if (OwnerCharacter == nullptr)
 		return;
 
 	FMontagesData* data = Datas[(int32)InType];
 
-	if(data == nullptr || data->Montage == nullptr)
+	if (data == nullptr || data->Montage == nullptr)
 	{
 		UE_LOG(LogTemp, Error, TEXT("None Montage data"));
 		return;

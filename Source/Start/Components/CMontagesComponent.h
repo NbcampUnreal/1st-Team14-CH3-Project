@@ -23,15 +23,15 @@ public:
 };
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class START_API UCMontagesComponent : public UActorComponent
 {
 	GENERATED_BODY()
-	
+
 private:
 	UPROPERTY(EditAnywhere, Category = "Data Table")
 	UDataTable* DataTable;
-public:	
+public:
 	UCMontagesComponent();
 
 protected:
@@ -46,5 +46,5 @@ private:
 private:
 	ACharacter* OwnerCharacter;
 	FMontagesData* Datas[(int32)EStateType::Max];
-		
+
 };
