@@ -28,7 +28,7 @@ protected:
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	UCameraComponent* Camera;
-	UPROPERTY(EditAnywhere, Category = "Camera")
+	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	USpringArmComponent* SpringArm;
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 	UCCameraComponent* CameraComponent;
