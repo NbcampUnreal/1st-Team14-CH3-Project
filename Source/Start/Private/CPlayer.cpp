@@ -5,6 +5,7 @@
 #include "CPlayerController.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CMovementComponent.h"
+#include "InputActionValue.h"
 #include "Components/CCameraComponent.h"
 
 ACPlayer::ACPlayer()
@@ -13,7 +14,7 @@ ACPlayer::ACPlayer()
 	//  스프링암 설정 (1인칭이므로 길이는 0)
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(RootComponent);
-	SpringArm->TargetArmLength = 300.0f; // 1인칭이므로 0
+	SpringArm->TargetArmLength = 100.0f; // 1인칭이므로 0
 	SpringArm->bUsePawnControlRotation = true;
 
 	//  FPS 카메라 설정
@@ -21,7 +22,7 @@ ACPlayer::ACPlayer()
 	Camera->SetupAttachment(SpringArm);
 	Camera->bUsePawnControlRotation = false;
 
-	CameraComponent = CreateDefaultSubobject<UCCameraComponent>("CameraComponent");
+	CameraComponent = CreateDefaultSubobject<UCCameraComponent>(TEXT("CameraComponent"));
 
 	bIsFirstPerson = true;
 

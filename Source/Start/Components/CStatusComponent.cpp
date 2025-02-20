@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Components/CStatusComponent.h"
@@ -25,4 +25,10 @@ void UCStatusComponent::Damage(float Amount)
 {
 	Health += (Amount * -1);
 	Health = FMath::Clamp(Health, 0.0f, MaxHealth);
+}
+
+void UCStatusComponent::UseStamina(float Amount)
+{
+	Stamina +=(Amount *-1);
+	Stamina = FMath::Clamp(MaxStamina, 0.0f, MaxStamina);
 }

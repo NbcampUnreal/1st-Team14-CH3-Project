@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -15,9 +15,12 @@ class START_API UCStatusComponent : public UActorComponent
 private:
 	UPROPERTY(EditAnywhere, Category = "Health")
 	float MaxHealth = 100.0f;
+	UPROPERTY(EditAnywhere, Category = "Stamina")
+	float MaxStamina = 100.0f;
 
 public:
 	FORCEINLINE float GetHealth() { return Health; }
+	FORCEINLINE float GetStamina() { return Stamina; }
 	FORCEINLINE bool IsDead() { return Health <= 0.0f; }
 public:	
 	UCStatusComponent();
@@ -27,11 +30,12 @@ protected:
 
 public:
 	void Damage(float Amount);
+	void UseStamina(float Amount);
 
 private:
 	ACharacter* OwnerCharacter;
 
 private:
 	float Health;
-		
+	float Stamina;
 };

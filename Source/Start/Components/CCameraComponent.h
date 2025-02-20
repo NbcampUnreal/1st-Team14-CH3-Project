@@ -8,7 +8,7 @@
 #include "CCameraComponent.generated.h"
 
 class ACharacter;
-UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
+UCLASS()
 class START_API UCCameraComponent : public UActorComponent
 {
 	GENERATED_BODY()
