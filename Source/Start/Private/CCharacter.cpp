@@ -21,11 +21,8 @@ ACCharacter::ACCharacter()
 void ACCharacter::BeginPlay()
 {
     Super::BeginPlay();
-<<<<<<< HEAD
-
-=======
+    
 	CameraComponent->DisableControlRoation();
->>>>>>> parent of b2d4093 (add Component,)
     LoadHealthFromGameInstance();
 }
 void ACCharacter::SaveHealthToGameInstance()
