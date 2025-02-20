@@ -44,21 +44,6 @@ void UCMovementComponent::OnMove(const FInputActionValue& Value)
 	OwnerCharacter->AddMovementInput(right, value.Y);
 }
 
-void UCMovementComponent::OnLook(const FInputActionValue& Value)
-{
-	if (OwnerCharacter == nullptr)
-		return;
-	if(bFixednCamera == true)
-		return;
-	FVector2D input = Value.Get<FVector2D>();
-
-	if (OwnerCharacter->GetController() != nullptr)
-	{
-		OwnerCharacter->AddControllerYawInput(input.X * HorizontalLook *GetWorld()->GetDeltaSeconds());
-		OwnerCharacter->AddControllerPitchInput(input.Y * VerticalLook * GetWorld()->GetDeltaSeconds());
-	}
-}
-
 void UCMovementComponent::OnJump(const FInputActionValue& Value)
 {
 	bool value = Value.Get<bool>();
@@ -73,18 +58,4 @@ void UCMovementComponent::EndJump()
 	if(OwnerCharacter->GetController() == nullptr)
 		return;
 	OwnerCharacter->StopJumping();
-}
-
-void UCMovementComponent::EnableControlRotation()
-{
-	bControlRotation = true;
-	OwnerCharacter->bUseControllerRotationYaw = true;
-	OwnerCharacter->GetCharacterMovement()->bOrientRotationToMovement = false;
-}
-
-void UCMovementComponent::DisableControlRoation()
-{
-	bControlRotation = false;
-	OwnerCharacter->bUseControllerRotationYaw = false;
-	OwnerCharacter->GetCharacterMovement()->bOrientRotationToMovement = true;
 }

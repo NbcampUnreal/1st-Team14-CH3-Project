@@ -1,31 +1,39 @@
-
+﻿
 #pragma once
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
 #include "IItemInterface.generated.h"
 
+// 🔹 아이템 타입 열거형
 UENUM(BlueprintType)
 enum class EItemType : uint8
 {
-	EIT_HealthPotion UMETA(DispalyName = "HealthPotion"),
-	EIT_StaminaPotion UMETA(DispalyName = "StaminaPotion"),
-	EIT_Bullet UMETA(DispalyName = "Bullet"),
-	EIT_Grenades UMETA(DispalyName = "Grenades")
+	EIT_HealthPotion UMETA(DisplayName = "HealthPotion"),
+	EIT_StaminaPotion UMETA(DisplayName = "StaminaPotion"),
+	EIT_Bullet UMETA(DisplayName = "Bullet"),
+	EIT_Grenades UMETA(DisplayName = "Grenades")
 };
 
-UINTERFACE(MinimalAPI)
+// 🔹 블루프린트에서도 사용 가능하도록 인터페이스 추가
+UINTERFACE(BlueprintType)
 class UIItemInterface : public UInterface
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 };
 
+// 🔹 인터페이스 클래스 (구현해야 할 함수 목록)
 class START_API IIItemInterface
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	virtual void PutIntoInventory(AActor* PlayerHavingInventory) = 0;
-	virtual void Use (AActor* Target) = 0;
-	virtual EItemType GetItemType() const = 0;
+    // 🔹 아이템을 인벤토리에 추가 (추가 성공 여부 반환)
+    virtual bool PutIntoInventory(AActor* PlayerHavingInventory) = 0;
+
+    // 🔹 아이템 사용 기능
+    virtual void Use(AActor* Target) = 0;
+
+    // 🔹 아이템 타입 반환
+    virtual EItemType GetItemType() const = 0;
 };
