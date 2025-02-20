@@ -21,6 +21,8 @@ bool UCInventoryComponent::AddToInventory(EItemType ItemType)
 
     // 아이템 추가
     InventoryItems.FindOrAdd(ItemType)++;
+
+    OnInventoryUpdated.Broadcast();
     // 🔹 디버깅 로그 추가 (아이템 추가 확인)
     UE_LOG(LogTemp, Warning, TEXT("아이템 추가됨: %d (현재 개수: %d)"), static_cast<int32>(ItemType), InventoryItems[ItemType]);
     return true;
@@ -35,7 +37,7 @@ bool UCInventoryComponent::RemoveItem(EItemType ItemType)
         {
             InventoryItems.Remove(ItemType);
         }
-
+        OnInventoryUpdated.Broadcast();
         // 🔹 디버깅 로그 추가 (아이템 제거 확인)
         UE_LOG(LogTemp, Warning, TEXT("아이템 제거됨: %d (남은 개수: %d)"), static_cast<int32>(ItemType), InventoryItems.Contains(ItemType) ? InventoryItems[ItemType] : 0);
 
@@ -66,6 +68,7 @@ bool UCInventoryComponent::DropItem(EItemType ItemType)
 
             FString ItemName = UEnum::GetValueAsString(ItemType);
             GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Blue, FString::Printf(TEXT("%s 드롭됨!"), *ItemName));
+            OnInventoryUpdated.Broadcast();
         }
         return true;
     }

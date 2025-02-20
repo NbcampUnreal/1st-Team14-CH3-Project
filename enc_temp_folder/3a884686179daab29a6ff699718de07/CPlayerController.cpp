@@ -46,43 +46,43 @@ void ACPlayerController::BeginPlay()
 	FString CurrentLevelName = World->GetMapName();
 	UE_LOG(LogTemp, Log, TEXT("Current Level: %s"), *CurrentLevelName);
 
-	//// 만약 레벨 이름에 "MenuLevel"가 포함되어 있다면 메인 메뉴 위젯을 생성
-	//if (CurrentLevelName.Contains(TEXT("MenuLevel")))
-	//{
-	//	if (MainMenuWidgetClass)
-	//	{
-	//		CurrentWidget = CreateWidget<UUserWidget>(this, MainMenuWidgetClass);
-	//		if (CurrentWidget)
-	//		{
-	//			CurrentWidget->AddToViewport(100);
+	// 만약 레벨 이름에 "MenuLevel"가 포함되어 있다면 메인 메뉴 위젯을 생성
+	if (CurrentLevelName.Contains(TEXT("MenuLevel")))
+	{
+		if (MainMenuWidgetClass)
+		{
+			CurrentWidget = CreateWidget<UUserWidget>(this, MainMenuWidgetClass);
+			if (CurrentWidget)
+			{
+				CurrentWidget->AddToViewport(100);
 
-	//			// 🔹 UI가 초점을 받을 수 있도록 설정
-	//			CurrentWidget->SetIsFocusable(true);
+				// 🔹 UI가 초점을 받을 수 있도록 설정
+				CurrentWidget->SetIsFocusable(true);
 
-	//			// 🔹 InputMode 설정 개선
-	//			FInputModeUIOnly InputMode;
-	//			InputMode.SetWidgetToFocus(CurrentWidget->TakeWidget());
-	//			InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-	//			SetInputMode(InputMode);
-	//			bShowMouseCursor = true;
-	//		}
-	//	}
-	//}
-	//else  // 그렇지 않다면 HUD 위젯을 생성
-	//{
-	//	if (HUDWidgetClass)
-	//	{
-	//		CurrentWidget = CreateWidget<UUserWidget>(this, HUDWidgetClass);
-	//		if (CurrentWidget)
-	//		{
-	//			CurrentWidget->AddToViewport();
+				// 🔹 InputMode 설정 개선
+				FInputModeUIOnly InputMode;
+				InputMode.SetWidgetToFocus(CurrentWidget->TakeWidget());
+				InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+				SetInputMode(InputMode);
+				bShowMouseCursor = true;
+			}
+		}
+	}
+	else  // 그렇지 않다면 HUD 위젯을 생성
+	{
+		if (HUDWidgetClass)
+		{
+			CurrentWidget = CreateWidget<UUserWidget>(this, HUDWidgetClass);
+			if (CurrentWidget)
+			{
+				CurrentWidget->AddToViewport();
 
-	//			FInputModeGameOnly InputMode;
-	//			SetInputMode(InputMode);
-	//			bShowMouseCursor = false;
-	//		}
-	//	}
-	//}
+				FInputModeGameOnly InputMode;
+				SetInputMode(InputMode);
+				bShowMouseCursor = false;
+			}
+		}
+	}
 }
 
 void ACPlayerController::SetupInputComponent()
@@ -120,7 +120,7 @@ void ACPlayerController::ToggleInventory()
 	{
 		/*if (InventoryWidget && InventoryWidget->IsInViewport())*/  // 🔹 UI가 화면에 떠 있을 경우
 		{
-			/*InventoryWidget->RemoveFromParent();*/  // 🔹 인벤토리 UI 제거
+			InventoryWidget->RemoveFromParent();  // 🔹 인벤토리 UI 제거
 			/*SetInputMode(FInputModeGameOnly());*/  // 🔹 다시 게임 모드로 변경
 			bShowMouseCursor = false;
 			UE_LOG(LogTemp, Warning, TEXT("인벤토리 닫기"));
