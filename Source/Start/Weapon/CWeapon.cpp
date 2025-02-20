@@ -3,6 +3,8 @@
 
 #include "Weapon/CWeapon.h"
 
+#include "GameFramework/Character.h"
+
 // Sets default values
 ACWeapon::ACWeapon()
 {
@@ -17,6 +19,9 @@ ACWeapon::ACWeapon()
 void ACWeapon::BeginPlay()
 {
 	Super::BeginPlay();
+
+	OwnerCharacter = Cast<ACharacter>(GetOwner());
+
 	Mesh->SetVisibility(false);
 }
 

@@ -23,7 +23,7 @@ public:
 };
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS()
 class START_API UCMontagesComponent : public UActorComponent
 {
 	GENERATED_BODY()

@@ -37,4 +37,7 @@ public:
 	bool CanUnequip();
 	void Unequip();
 
+private:
+	ACharacter* OwnerCharacter;
+
 };

@@ -7,7 +7,7 @@
 #include "CStatusComponent.generated.h"
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS()
 class START_API UCStatusComponent : public UActorComponent
 {
 	GENERATED_BODY()
