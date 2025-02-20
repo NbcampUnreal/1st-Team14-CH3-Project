@@ -4,7 +4,6 @@
 #include "GameFramework/Character.h"
 #include "CCharacter.generated.h"
 
-class UCMontagesComponent;
 class UCMovementComponent;
 class UCWeaponComponent;
 class UCCameraComponent;
@@ -46,11 +45,11 @@ public:
 
 protected:
     UPROPERTY(VisibleAnywhere, Category = "Component")
+    UCCameraComponent* CameraComponent;
+    UPROPERTY(VisibleAnywhere, Category = "Component")
     UCMovementComponent* MovementComponent;
     UPROPERTY(VisibleAnywhere, Category = "Component")
 	UCWeaponComponent* WeaponComponent;
-    UPROPERTY(VisibleAnywhere, Category = "Component")
-    UCMontagesComponent* MontagesComponent;
 private:
     void Die();  // 🔹 사망 처리 함수
     void SaveHealthToGameInstance();

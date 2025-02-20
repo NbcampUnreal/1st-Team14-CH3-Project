@@ -1,6 +1,5 @@
 ﻿#include "CCameraComponent.h"
 
-#include "CCharacter.h"
 #include "InputActionValue.h"
 #include "InputTriggers.h"
 #include "GameFramework/Character.h"
@@ -13,7 +12,7 @@ UCCameraComponent::UCCameraComponent()
 void UCCameraComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	OwnerCharacter = Cast<ACCharacter>(GetOwner());
+	
 }
 
 void UCCameraComponent::OnLook(const FInputActionValue& Value)

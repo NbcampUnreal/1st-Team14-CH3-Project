@@ -31,8 +31,7 @@ private:
 	UCameraComponent* Camera;
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	USpringArmComponent* SpringArm;
-	UPROPERTY(VisibleAnywhere, Category = "Component")
-	UCCameraComponent* CameraComponent;
+
 	
 	bool bIsFirstPerson;
 	void ToggleView();
