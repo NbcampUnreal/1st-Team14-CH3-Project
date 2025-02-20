@@ -22,6 +22,9 @@ public:
     virtual void Use(AActor* Target) override;
     virtual EItemType GetItemType() const override;
 
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+    UTexture2D* ItemIcon;
+
 protected:
     virtual void BeginPlay() override;
 
