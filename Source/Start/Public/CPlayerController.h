@@ -1,7 +1,9 @@
-#pragma once
+ï»¿#pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "CInventoryComponent.h"
+#include "CWBP_CInventory.h"
 #include "CPlayerController.generated.h"
 
 class UInputMappingContext;
@@ -37,16 +39,19 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	UInputAction* ToggleInventoryAction;
 
-	// HUD À§Á¬ ºí·çÇÁ¸°Æ® Å¬·¡½º (°ÔÀÓ ÇÃ·¹ÀÌ ½Ã)
+	// HUD ìœ„ì ¯ ë¸”ë£¨í”„ë¦°íŠ¸ í´ë˜ìŠ¤ (ê²Œì„ í”Œë ˆì´ ì‹œ)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<UUserWidget> HUDWidgetClass;
 
-	// ¸ŞÀÎ ¸Ş´º À§Á¬ ºí·çÇÁ¸°Æ® Å¬·¡½º (¸ŞÀÎ ¸Ş´º ·¹º§ ½Ã)
+	// ë©”ì¸ ë©”ë‰´ ìœ„ì ¯ ë¸”ë£¨í”„ë¦°íŠ¸ í´ë˜ìŠ¤ (ë©”ì¸ ë©”ë‰´ ë ˆë²¨ ì‹œ)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<UUserWidget> MainMenuWidgetClass;
 
 	UFUNCTION(BlueprintCallable)
 	void ToggleInventory();
+
+	UFUNCTION()
+	void UpdateInventoryUI();  // ğŸ”¹ UI ì—…ë°ì´íŠ¸ í•¨ìˆ˜ ì¶”ê°€
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<UCWBP_CInventory> InventoryWidgetClass;
@@ -61,6 +66,6 @@ protected:
 	virtual void SetupInputComponent() override;
 
 	UPROPERTY(BlueprintReadOnly, Category = "UI")
-	UUserWidget* CurrentWidget; //	ÇöÀç È­¸é¿¡ º¸ÀÌ´Â À§Á¬
+	UUserWidget* CurrentWidget; //	í˜„ì¬ í™”ë©´ì— ë³´ì´ëŠ” ìœ„ì ¯
 
 };

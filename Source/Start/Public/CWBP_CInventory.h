@@ -22,6 +22,6 @@ protected:
     UPROPERTY(meta = (BindWidget))
     UUniformGridPanel* InventoryGrid;
 
-    UPROPERTY(EditDefaultsOnly, Category = "UI")
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
     TSubclassOf<UCWBP_CInventorySlot> SlotWidgetClass;
 };
