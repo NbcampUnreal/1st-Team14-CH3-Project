@@ -8,34 +8,43 @@
 #include "CBaseItem.generated.h"
 
 class USphereComponent;
+class UCInventoryComponent;
 
 UCLASS()
 class START_API ACBaseItem : public ACInteractable, public IIItemInterface
 {
 	GENERATED_BODY()
 	
-public:	
-	ACBaseItem();
+public:
+    ACBaseItem();
+
+    virtual bool PutIntoInventory(AActor* PlayerHavingInventory) override;
+    virtual void Use(AActor* Target) override;
+    virtual EItemType GetItemType() const override;
 
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Item|Component")
-	UStaticMeshComponent* StaticMesh;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item|Attribute")
-	EItemType ItemType;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Item|Attribute")
-	bool bCanUse;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item|Sound")
-	USoundBase* KeyPressedSound;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item|Sound")
-	USoundBase* UseSound;
+    virtual void BeginPlay() override;
 
+    UFUNCTION()
+    void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+        UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+        const FHitResult& SweepResult);
 
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Item|Component")
+    UStaticMeshComponent* StaticMesh;
 
-	virtual void Use(AActor* Target) override;
-	virtual void KeyPressedActivate(AActor* Activator) override;
-	virtual void PutIntoInventory(AActor* PlayerHavingInventory) override;
-	virtual EItemType GetItemType() const override;
-	
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item|Attribute")
+    EItemType ItemType;
 
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Item|Attribute")
+    bool bCanUse;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item|Attribute")
+    bool bConsumable;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item|Sound")
+    USoundBase* KeyPressedSound;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item|Sound")
+    USoundBase* UseSound;
 };
