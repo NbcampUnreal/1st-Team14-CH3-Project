@@ -7,6 +7,7 @@
 class UInputMappingContext;
 class UInputAction;
 class UUserWidget;
+class UCWBP_CInventory;
 
 UCLASS()
 class START_API ACPlayerController : public APlayerController
@@ -33,6 +34,8 @@ public:
     UInputAction* SwitchViewAction;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	UInputAction* QuitAction;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UInputAction* ToggleInventoryAction;
 
 	// HUD 위젯 블루프린트 클래스 (게임 플레이 시)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
@@ -42,9 +45,20 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<UUserWidget> MainMenuWidgetClass;
 
+	UFUNCTION(BlueprintCallable)
+	void ToggleInventory();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<UCWBP_CInventory> InventoryWidgetClass;
+
+	UPROPERTY()
+	UCWBP_CInventory* InventoryWidget;
+
+	bool bIsInventoryOpen;
 protected:
 
 	virtual void BeginPlay() override;
+	virtual void SetupInputComponent() override;
 
 	UPROPERTY(BlueprintReadOnly, Category = "UI")
 	UUserWidget* CurrentWidget; //	현재 화면에 보이는 위젯

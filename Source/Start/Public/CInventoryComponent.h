@@ -3,7 +3,10 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "IItemInterface.h"
+#include "Delegates/DelegateCombinations.h" 
 #include "CInventoryComponent.generated.h"
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInventoryUpdated);
 
 class ACBaseItem;
 
@@ -31,6 +34,12 @@ public:
     UFUNCTION(BlueprintCallable)
     void PrintInventory();
 
+    // 인벤토리 변경 이벤트 (UI에서 바인딩하여 사용)
+    UPROPERTY(BlueprintAssignable, Category = "Inventory")
+    FOnInventoryUpdated OnInventoryUpdated;
+
+    UFUNCTION(BlueprintCallable)
+    const TMap<EItemType, int32>& GetInventoryItems() const { return InventoryItems; }
 protected:
     // 인벤토리 슬롯 개수 제한
     UPROPERTY(EditDefaultsOnly, Category = "Inventory")
