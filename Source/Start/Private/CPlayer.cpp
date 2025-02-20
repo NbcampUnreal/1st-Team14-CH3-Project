@@ -6,6 +6,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CMovementComponent.h"
 #include "InputActionValue.h"
+#include "Components/CCameraComponent.h"
 
 ACPlayer::ACPlayer()
 {
@@ -21,6 +22,8 @@ ACPlayer::ACPlayer()
 	Camera->SetupAttachment(SpringArm);
 	Camera->bUsePawnControlRotation = false;
 
+	CameraComponent = CreateDefaultSubobject<UCCameraComponent>(TEXT("CameraComponent"));
+
 	bIsFirstPerson = true;
 
 }
@@ -28,6 +31,7 @@ ACPlayer::ACPlayer()
 void ACPlayer::BeginPlay()
 {
 	Super::BeginPlay();
+	CameraComponent->DisableControlRoation();
 	ToggleView(); // 초기 시점 설정
 	//  `ACPlayerController`가 입력 매핑을 관리하므로 별도 설정 불필요
 	

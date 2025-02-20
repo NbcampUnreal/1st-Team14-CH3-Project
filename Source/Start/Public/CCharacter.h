@@ -2,14 +2,15 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Interface/ICharacter.h"
 #include "CCharacter.generated.h"
 
+class UCMontagesComponent;
 class UCMovementComponent;
 class UCWeaponComponent;
-class UCCameraComponent;
 
 UCLASS()
-class START_API ACCharacter : public ACharacter
+class START_API ACCharacter : public ACharacter, public IICharacter
 {
 	GENERATED_BODY()
 
@@ -45,11 +46,11 @@ public:
 
 protected:
     UPROPERTY(VisibleAnywhere, Category = "Component")
-    UCCameraComponent* CameraComponent;
-    UPROPERTY(VisibleAnywhere, Category = "Component")
     UCMovementComponent* MovementComponent;
     UPROPERTY(VisibleAnywhere, Category = "Component")
 	UCWeaponComponent* WeaponComponent;
+    UPROPERTY(VisibleAnywhere, Category = "Component")
+    UCMontagesComponent* MontagesComponent;
 private:
     void Die();  // 🔹 사망 처리 함수
     void SaveHealthToGameInstance();

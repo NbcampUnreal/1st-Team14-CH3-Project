@@ -6,10 +6,9 @@
 #include "Camera/CameraComponent.h"
 #include "CPlayer.generated.h"
 
-class UCWeaponComponent;
+class UCCameraComponent;
 class UCameraComponent;
 class USpringArmComponent;
-class UCMovementComponent;
 class ACPlayerController;
 struct FInputActionValue;
 
@@ -31,7 +30,8 @@ private:
 	UCameraComponent* Camera;
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	USpringArmComponent* SpringArm;
-
+	UPROPERTY(VisibleAnywhere, Category = "Component")
+	UCCameraComponent* CameraComponent;
 	
 	bool bIsFirstPerson;
 	void ToggleView();

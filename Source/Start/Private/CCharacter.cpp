@@ -1,6 +1,7 @@
 ﻿#include "CCharacter.h"
 #include "CGameInstance.h"
 #include "Components/CCameraComponent.h"
+#include "Components/CMontagesComponent.h"
 #include "Components/CMovementComponent.h"
 #include "Components/CWeaponComponent.h"
 #include "GameFramework/Actor.h"
@@ -8,10 +9,9 @@
 ACCharacter::ACCharacter()
 {
     //  이동 컴포넌트 추가
-    CameraComponent = CreateDefaultSubobject<UCCameraComponent>("CameraComponent");
     MovementComponent = CreateDefaultSubobject<UCMovementComponent>(TEXT("MovementComponent"));
     WeaponComponent = CreateDefaultSubobject<UCWeaponComponent>(TEXT("WeaponComponent"));
-    
+    MontagesComponent = CreateDefaultSubobject<UCMontagesComponent>(TEXT("MontagesComponent"));
     // 🔹 기본 체력 값 설정
     MaxHealth = 100.0f;
     Health = MaxHealth;
@@ -21,9 +21,8 @@ ACCharacter::ACCharacter()
 void ACCharacter::BeginPlay()
 {
     Super::BeginPlay();
-    
-	CameraComponent->DisableControlRoation();
-    LoadHealthFromGameInstance();
+
+	LoadHealthFromGameInstance();
 }
 void ACCharacter::SaveHealthToGameInstance()
 {
