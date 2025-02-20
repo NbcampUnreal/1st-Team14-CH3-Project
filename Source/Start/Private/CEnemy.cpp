@@ -2,4 +2,10 @@
 
 
 #include "CEnemy.h"
+#include "CEnemyAIController.h"
 
+ACEnemy::ACEnemy()
+{
+	AIControllerClass = ACEnemyAIController::StaticClass();
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+}

@@ -13,5 +13,8 @@ UCLASS()
 class START_API ACEnemy : public ACCharacter
 {
 	GENERATED_BODY()
+
+public:
+	ACEnemy();
 	
 };
