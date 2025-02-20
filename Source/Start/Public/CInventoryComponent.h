@@ -1,50 +1,45 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "IItemInterface.h"
 #include "CInventoryComponent.generated.h"
 
 class ACBaseItem;
-class IIItemInterface;
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class START_API UCInventoryComponent : public UActorComponent
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
-public:	
-	UCInventoryComponent();
+public:
+    UCInventoryComponent();
 
-	//UFUNCTION(BlueprintCallable)
-	//int GetHealthPotionItemNum();
-	//UFUNCTION(BlueprintCallable)
-	//int GetStaminaPotionItemNum();
-	//UFUNCTION(BlueprintCallable)
-	//int GetGrenadesNum();
-	//UFUNCTION(BlueprintCallable)
-	//void PrintInventory();
+    // 아이템 추가
+    UFUNCTION(BlueprintCallable)
+    bool AddToInventory(EItemType ItemType);
 
-	UFUNCTION(BlueprintCallable)
-	void AddToInventory(EItemType ItemType);
+    // 아이템 제거
+    UFUNCTION(BlueprintCallable)
+    bool RemoveItem(EItemType ItemType);
 
-	UFUNCTION(BlueprintCallable)
-	void UseHealthPotion();
-	//UFUNCTION(BlueprintCallable)
-	//void UseStaminaPotion();
-	//UFUNCTION(BlueprintCallable)
-	//void UseGrenades(AActor* Target);
+    // 아이템 드롭 (바닥에 아이템 생성)
+    UFUNCTION(BlueprintCallable)
+    bool DropItem(EItemType ItemType);
+
+    // 현재 인벤토리 상태 출력
+    UFUNCTION(BlueprintCallable)
+    void PrintInventory();
 
 protected:
+    // 인벤토리 슬롯 개수 제한
+    UPROPERTY(EditDefaultsOnly, Category = "Inventory")
+    int MaxSlots;
 
-	UPROPERTY(VisibleAnywhere, Category = "Item")
-	int HealthPotionItemNum;
-	UPROPERTY(VisibleAnywhere, Category = "Item")
-	int StaminaPoitionItemNum;
-	UPROPERTY(VisibleAnywhere, Category = "Item")
-	int GrenadesItemNum;
-	UPROPERTY(VisibleAnywhere, Category = "Item")
-	int BulletItemNum;
-		
+    // 현재 인벤토리에 있는 아이템 (종류별 개수 저장)
+    UPROPERTY(VisibleAnywhere, Category = "Inventory")
+    TMap<EItemType, int32> InventoryItems;
+
+    UPROPERTY(EditDefaultsOnly, Category = "Inventory")
+    TMap<EItemType, TSubclassOf<ACBaseItem>> DropItemClasses;
 };
