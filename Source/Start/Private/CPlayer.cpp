@@ -49,7 +49,7 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		if (PC)
 		{
 			EnhancedInput->BindAction(PC->MoveAction, ETriggerEvent::Triggered, MovementComponent, &UCMovementComponent::OnMove);
-//			EnhancedInput->BindAction(PC->LookAction, ETriggerEvent::Triggered, MovementComponent, &UCMovementComponent::OnLook);
+			EnhancedInput->BindAction(PC->LookAction, ETriggerEvent::Triggered, CameraComponent, &UCCameraComponent::OnLook);
 			EnhancedInput->BindAction(PC->JumpAction, ETriggerEvent::Started, MovementComponent, &UCMovementComponent::OnJump);
 			EnhancedInput->BindAction(PC->JumpAction, ETriggerEvent::Completed, MovementComponent, &UCMovementComponent::EndJump);
 			EnhancedInput->BindAction(PC->RunAction, ETriggerEvent::Started, MovementComponent, &UCMovementComponent::OnRun);

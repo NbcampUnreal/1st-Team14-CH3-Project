@@ -6,6 +6,10 @@ ACWeapon_AK47::ACWeapon_AK47()
 	if (asset.Succeeded() == true)
 		Mesh->SetSkeletalMesh(asset.Object);
 
+	//Equip
+	{
+		HolsterSocketName = "Spine_Rifle";
+	}
 }
 
 void ACWeapon_AK47::BeginPlay()

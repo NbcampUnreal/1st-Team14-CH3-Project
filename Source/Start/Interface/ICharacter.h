@@ -17,5 +17,5 @@ class START_API IICharacter
 	GENERATED_BODY()
 
 public:
-	virtual void End_Dead() = 0;
+	virtual void End_Dead() {};
 };

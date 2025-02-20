@@ -6,13 +6,19 @@
 #include "GameFramework/Actor.h"
 #include "CWeapon.generated.h"
 
+class ACCharacter;
+
 UCLASS(Abstract)
 class START_API ACWeapon : public AActor
 {
 	GENERATED_BODY()
 
-	
+protected:
+	UPROPERTY(EditDefaultsOnly, Category = "Equip")
+	FName HolsterSocketName;
 private:
+	UPROPERTY(VisibleAnywhere)
+	UStaticMesh* m;
 	UPROPERTY(VisibleAnywhere)
 	USceneComponent* Root;
 
@@ -38,6 +44,6 @@ public:
 	void Unequip();
 
 private:
-	ACharacter* OwnerCharacter;
+	ACCharacter* OwnerCharacter;
 
 };
