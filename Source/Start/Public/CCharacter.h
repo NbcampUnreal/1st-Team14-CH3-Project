@@ -5,6 +5,7 @@
 #include "Interface/ICharacter.h"
 #include "CCharacter.generated.h"
 
+class UCStatusComponent;
 class UCMontagesComponent;
 class UCMovementComponent;
 class UCWeaponComponent;
@@ -51,6 +52,8 @@ protected:
 	UCWeaponComponent* WeaponComponent;
     UPROPERTY(VisibleAnywhere, Category = "Component")
     UCMontagesComponent* MontagesComponent;
+    UPROPERTY(VisibleAnywhere, Category = "Component")
+    UCStatusComponent* StatusComponent;
 private:
     void Die();  // 🔹 사망 처리 함수
     void SaveHealthToGameInstance();
