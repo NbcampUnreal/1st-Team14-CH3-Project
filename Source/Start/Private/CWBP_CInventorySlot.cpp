@@ -28,28 +28,57 @@ void UCWBP_CInventorySlot::SetItem(EItemType ItemType, int32 ItemCount)
         ItemCountText->SetText(FText::AsNumber(StoredItemCount));
     }
 
-    // 블루프린트에서 아이콘 가져오기
+    // 블루프린트에서 아이콘 가져오기 (디버그 로그 추가)
     if (ItemImage)
     {
         if (ItemBlueprintMap.Contains(ItemType))
         {
-            UTexture2D* ItemTexture = ItemBlueprintMap[ItemType].GetDefaultObject()->ItemIcon;
-            if (ItemTexture)
+            TSubclassOf<ACBaseItem> BPClass = ItemBlueprintMap[ItemType];
+            if (BPClass)
             {
-                ItemImage->SetBrushFromTexture(ItemTexture);
-                return;
+                ACBaseItem* DefaultObj = BPClass.GetDefaultObject();
+                if (DefaultObj && DefaultObj->ItemIcon)
+                {
+                    UE_LOG(LogTemp, Warning, TEXT("▶ 아이콘 텍스처: %s"), *DefaultObj->ItemIcon->GetName());
+                    ItemImage->SetBrushFromTexture(DefaultObj->ItemIcon);
+                }
             }
         }
-
-        UE_LOG(LogTemp, Error, TEXT("❌ 블루프린트에서 아이콘을 가져올 수 없음!"));
     }
+}
+
+void UCWBP_CInventorySlot::SetInventoryComponent(UCInventoryComponent* InInventoryComponent)
+{
+    InventoryComponent = InInventoryComponent;
 }
 
 void UCWBP_CInventorySlot::OnSlotClicked()
 {
-    UE_LOG(LogTemp, Warning, TEXT("아이템 사용: %d"), static_cast<int32>(StoredItemType));
+    UE_LOG(LogTemp, Warning, TEXT("아이템 버리기: %d"), static_cast<int32>(StoredItemType));
 
-    // 🔹 인벤토리에서 아이템 사용 로직 추가 가능
+    // 만약 InventoryComponent 포인터가 있다면 실제 인벤토리 상태 재확인
+    if (InventoryComponent)
+    {
+        // 인벤토리에 이 아이템이 존재하는지 확인
+        const TMap<EItemType, int32>& CurrentItems = InventoryComponent->GetInventoryItems();
+        if (CurrentItems.Contains(StoredItemType))
+        {
+            UE_LOG(LogTemp, Warning, TEXT("RemoveItem 호출됨: %d"), static_cast<int32>(StoredItemType));
+            bool bRemoved = InventoryComponent->RemoveItem(StoredItemType);
+            if (!bRemoved)
+            {
+                UE_LOG(LogTemp, Warning, TEXT("슬롯에 표시된 아이템이 실제 인벤토리에 존재하지 않습니다!"));
+            }
+        }
+        else
+        {
+            UE_LOG(LogTemp, Warning, TEXT("슬롯에 표시된 아이템(%d)은 인벤토리에 없습니다!"), static_cast<int32>(StoredItemType));
+        }
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("InventoryComponent가 슬롯에 할당되어 있지 않습니다!"));
+    }
 }
 
 void UCWBP_CInventorySlot::OnSlotRightClicked()
@@ -58,3 +87,4 @@ void UCWBP_CInventorySlot::OnSlotRightClicked()
 
     // 🔹 아이템 버리기 로직 추가 가능
 }
+
