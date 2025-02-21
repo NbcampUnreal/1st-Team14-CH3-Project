@@ -14,7 +14,7 @@ ACPlayer::ACPlayer()
 	//  스프링암 설정 (1인칭이므로 길이는 0)
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(RootComponent);
-	SpringArm->TargetArmLength = 300.0f; // 1인칭이므로 0
+	SpringArm->TargetArmLength = 100.0f; // 1인칭이므로 0
 	SpringArm->bUsePawnControlRotation = true;
 
 	//  FPS 카메라 설정

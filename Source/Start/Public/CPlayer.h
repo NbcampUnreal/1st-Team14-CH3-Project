@@ -24,11 +24,10 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	UCameraComponent* Camera;
-	UPROPERTY(VisibleAnywhere, Category = "Camera")
+	UPROPERTY(EditAnywhere, Category = "Camera")
 	USpringArmComponent* SpringArm;
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 	UCCameraComponent* CameraComponent;
