@@ -1,7 +1,7 @@
 #include "CGrenadesItem.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "CCharacter.h"
+#include "CEnemy.h"
 
 ACGrenadesItem::ACGrenadesItem()
 {
@@ -25,7 +25,7 @@ void ACGrenadesItem::KeyPressedActivate(AActor* Activator)
 void ACGrenadesItem::Use(AActor* Target)
 {
 	GEngine->AddOnScreenDebugMessage(4, 1.0f, FColor::Green, FString::Printf(TEXT("Use GrenadesItem")));
-	if (ACCharacter* CCharacter = Cast<ACCharacter>(Target))
+	if (ACEnemy* CEnemy = Cast<ACEnemy>(Target))
 	{
 		UGameplayStatics::ApplyDamage(
 			Target, 
