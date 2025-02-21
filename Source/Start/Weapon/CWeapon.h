@@ -12,10 +12,14 @@ UCLASS(Abstract)
 class START_API ACWeapon : public AActor
 {
 	GENERATED_BODY()
-
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Equip")
 	FName HolsterSocketName;
+	UPROPERTY(EditDefaultsOnly, Category = "Equip")
+	UAnimMontage* EquipMontage;
+	UPROPERTY(EditDefaultsOnly, Category = "Equip")
+	float Equip_PlayRate;
+
 private:
 	UPROPERTY(VisibleAnywhere)
 	UStaticMesh* m;
@@ -46,4 +50,9 @@ public:
 private:
 	ACCharacter* OwnerCharacter;
 
+	bool bEquipping;
+	bool bInAim;
+	bool bFiring;
+	bool bReload;
+	bool bAutoFire;
 };

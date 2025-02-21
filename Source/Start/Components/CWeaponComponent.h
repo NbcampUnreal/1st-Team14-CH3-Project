@@ -47,10 +47,15 @@ private:
 	void ChangeType(EWeaponType InType);
 
 public:
+	void Begin_Equip();
+	void End_Equip();
+
+public:
 	FWeaponTypeChanged OnWeaponTypeChanged;
 	
 private:
 	EWeaponType Type = EWeaponType::Knife;
 	ACCharacter* Owner;
 	TArray<ACWeapon*> Weapons;
+
 };

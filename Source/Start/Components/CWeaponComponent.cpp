@@ -82,3 +82,17 @@ void UCWeaponComponent::ChangeType(EWeaponType InType)
 		OnWeaponTypeChanged.Broadcast(prevType, Type);
 }
 
+void UCWeaponComponent::Begin_Equip()
+{
+	if (GetCurrentWeapon() == nullptr)
+		return;
+	GetCurrentWeapon()->BeginEquip();
+}
+
+void UCWeaponComponent::End_Equip()
+{
+	if (GetCurrentWeapon() == nullptr)
+		return;
+	GetCurrentWeapon()->EndEquip();
+}
+

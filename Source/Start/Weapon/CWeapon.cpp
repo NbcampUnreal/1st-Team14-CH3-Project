@@ -36,12 +36,21 @@ void ACWeapon::Tick(float DeltaTime)
 
 bool ACWeapon::CanEquip()
 {
-	return true;
+	bool b = false;
+	b |= bEquipping;
+	b |= bReload;
+	b |= bFiring;
+
+	
+	return !b;
 }
 
 void ACWeapon::Equip()
 {
-	Mesh->SetVisibility(true);
+	bEquipping = true;
+	if (EquipMontage == nullptr)
+		return;
+	OwnerCharacter->PlayAnimMontage(EquipMontage,Equip_PlayRate);
 }
 
 void ACWeapon::BeginEquip()
