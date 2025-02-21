@@ -36,29 +36,47 @@ void ACWeapon::Tick(float DeltaTime)
 
 bool ACWeapon::CanEquip()
 {
-	return true;
+	bool b = false;
+	b |= bEquipping;
+	b |= bReload;
+	b |= bFiring;
+	
+	return !b;
 }
 
 void ACWeapon::Equip()
 {
-	Mesh->SetVisibility(true);
+	bEquipping = true;
+	if (EquipMontage == nullptr)
+		return;
+	
+	OwnerCharacter->PlayAnimMontage(EquipMontage,Equip_PlayRate);
 }
 
 void ACWeapon::BeginEquip()
 {
+	if (RightHandSokcetName.IsValid())
+		AttachToComponent(OwnerCharacter->GetMesh(),FAttachmentTransformRules(EAttachmentRule::KeepRelative,true), RightHandSokcetName);
 }
 
 void ACWeapon::EndEquip()
 {
+	bEquipping =false;
 }
 
 bool ACWeapon::CanUnequip()
 {
-	return true;
+	bool b = false;
+	b |= bEquipping;
+	b |= bReload;
+	b |= bFiring;
+	
+	return !b;
 }
 
 void ACWeapon::Unequip()
 {
-	Mesh->SetVisibility(false);
+	if (HolsterSocketName.IsValid() == true)
+		AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative,true), HolsterSocketName);
 }
 

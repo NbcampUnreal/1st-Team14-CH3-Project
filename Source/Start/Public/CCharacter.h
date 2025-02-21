@@ -5,6 +5,7 @@
 #include "Interface/ICharacter.h"
 #include "CCharacter.generated.h"
 
+class UCStateComponent;
 class UCStatusComponent;
 class UCMontagesComponent;
 class UCMovementComponent;
@@ -48,6 +49,8 @@ public:
     void Heal(float HealAmount);
 
 protected:
+    UPROPERTY(VisibleAnywhere, Category = "Component")
+    UCStateComponent* StateComponent;
     UPROPERTY(VisibleAnywhere, Category = "Component")
     UCMovementComponent* MovementComponent;
     UPROPERTY(VisibleAnywhere, Category = "Component")
