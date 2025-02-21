@@ -22,6 +22,7 @@ private:
 	UPROPERTY(EditAnywhere, Category ="Settings")
 	TArray<TSubclassOf<class ACWeapon>> WeaponClasses;
 public:
+	FORCEINLINE bool IsUnarmedModeMode(){return Type == EWeaponType::Max;}
 	FORCEINLINE bool IsRifleMode(){return Type == EWeaponType::Rifle;}
 	FORCEINLINE bool IsPistolMode(){return Type == EWeaponType::Pistol;}
 	FORCEINLINE bool IsKnifeMode(){return Type == EWeaponType::Knife;}
@@ -38,6 +39,7 @@ private:
 	ACWeapon* GetCurrentWeapon();
 	
 public:
+	void SetUnarmedMode();
 	void SetPistolMode();
 	void SetRifleMode();
 	void SetKnifeMode();
@@ -54,7 +56,7 @@ public:
 	FWeaponTypeChanged OnWeaponTypeChanged;
 	
 private:
-	EWeaponType Type = EWeaponType::Knife;
+	EWeaponType Type = EWeaponType::Max;
 	ACCharacter* Owner;
 	TArray<ACWeapon*> Weapons;
 

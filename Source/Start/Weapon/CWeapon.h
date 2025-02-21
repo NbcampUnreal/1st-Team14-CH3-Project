@@ -16,6 +16,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Equip")
 	FName HolsterSocketName;
 	UPROPERTY(EditDefaultsOnly, Category = "Equip")
+	FName RightHandSokcetName;
+	UPROPERTY(EditDefaultsOnly, Category = "Equip")
 	UAnimMontage* EquipMontage;
 	UPROPERTY(EditDefaultsOnly, Category = "Equip")
 	float Equip_PlayRate;
