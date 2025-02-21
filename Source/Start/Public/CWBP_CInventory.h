@@ -37,6 +37,9 @@ protected:
     UPROPERTY(meta = (BindWidget))
     UUniformGridPanel* InventoryGrid;
 
+    // Delegate가 바인딩되어 있는지 여부를 추적하는 플래그
+    bool bDelegateBound = false;
+
     // 위젯 파괴 시 델리게이트 해제를 위한 오버라이드 함수
     virtual void NativeDestruct() override;
 };

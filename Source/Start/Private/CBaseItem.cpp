@@ -105,6 +105,6 @@ void ACBaseItem::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
         GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Yellow, TEXT("아이템 감지됨!"));
 
         // ✅ 아이템을 자동으로 인벤토리에 추가
-        PutIntoInventory(Player);
+       /* PutIntoInventory(Player);*/
     }
 }
