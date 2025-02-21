@@ -5,6 +5,7 @@
 #include "CPlayerController.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CMovementComponent.h"
+#include "Components/CWeaponComponent.h"
 #include "InputActionValue.h"
 #include "Components/CCameraComponent.h"
 
@@ -34,7 +35,10 @@ void ACPlayer::BeginPlay()
 	CameraComponent->DisableControlRoation();
 	ToggleView(); // 초기 시점 설정
 	//  `ACPlayerController`가 입력 매핑을 관리하므로 별도 설정 불필요
-	
+	if (!WeaponComponent)
+	{
+		WeaponComponent = FindComponentByClass<UCWeaponComponent>();
+	}
 }
 
 void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -55,6 +59,9 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 			EnhancedInput->BindAction(PC->RunAction, ETriggerEvent::Started, MovementComponent, &UCMovementComponent::OnRun);
 			EnhancedInput->BindAction(PC->RunAction, ETriggerEvent::Completed, MovementComponent, &UCMovementComponent::OnWark);
 
+			EnhancedInput->BindAction(PC->EquipRifleAction, ETriggerEvent::Triggered, WeaponComponent, &UCWeaponComponent::SetRifleMode);
+			EnhancedInput->BindAction(PC->EquipPistolAction, ETriggerEvent::Triggered, WeaponComponent, &UCWeaponComponent::SetPistolMode);
+			EnhancedInput->BindAction(PC->EquipKnifeAction, ETriggerEvent::Triggered, WeaponComponent, &UCWeaponComponent::SetKnifeMode);
 			// 🔹 시점 전환 액션 바인딩
 			EnhancedInput->BindAction(PC->SwitchViewAction, ETriggerEvent::Started, this, &ACPlayer::ToggleView);
 		}

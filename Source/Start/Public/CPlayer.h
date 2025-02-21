@@ -11,6 +11,8 @@ class UCameraComponent;
 class USpringArmComponent;
 class ACPlayerController;
 struct FInputActionValue;
+class UCWeaponComponent;
+enum class EWeaponType : uint8;
 
 UCLASS()
 class START_API ACPlayer : public ACCharacter
@@ -31,7 +33,8 @@ private:
 	USpringArmComponent* SpringArm;
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 	UCCameraComponent* CameraComponent;
-	
+
+
 	bool bIsFirstPerson;
 	void ToggleView();
 };
