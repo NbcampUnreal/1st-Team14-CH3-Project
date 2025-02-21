@@ -16,12 +16,27 @@ class START_API UCWBP_CInventory : public UUserWidget
 	GENERATED_BODY()
 
 public:
-    void UpdateInventory(UCInventoryComponent* InventoryComponent);
+    // 인벤토리 컴포넌트를 초기화하고 이벤트에 바인딩하는 함수
+    UFUNCTION(BlueprintCallable, Category = "Inventory")
+    void InitializeInventory(UCInventoryComponent* InInventoryComponent);
+
+    // 인벤토리 갱신 함수 (델리게이트와 바인딩)
+    UFUNCTION()
+    void UpdateInventory();
 
 protected:
+    // 인벤토리 컴포넌트 참조
+    UPROPERTY()
+    UCInventoryComponent* InventoryComponent;
+
+    // 슬롯 위젯 클래스 (블루프린트에서 할당)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+    TSubclassOf<class UCWBP_CInventorySlot> SlotWidgetClass;
+
+    // 인벤토리 항목들을 배치할 그리드 패널
     UPROPERTY(meta = (BindWidget))
     UUniformGridPanel* InventoryGrid;
 
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
-    TSubclassOf<UCWBP_CInventorySlot> SlotWidgetClass;
+    // 위젯 파괴 시 델리게이트 해제를 위한 오버라이드 함수
+    virtual void NativeDestruct() override;
 };
