@@ -21,7 +21,20 @@ protected:
 	UAnimMontage* EquipMontage;
 	UPROPERTY(EditDefaultsOnly, Category = "Equip")
 	float Equip_PlayRate;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Hit")
+	float HitDistance = 3000;
 
+public:
+	UPROPERTY(EditDefaultsOnly, Category = "Debug")
+	bool Debug = false;
+	UPROPERTY(EditDefaultsOnly, Category = "Debug")
+	FColor DebugColor = FColor::Red;
+	UPROPERTY(EditDefaultsOnly, Category = "Debug")
+	float LifeTime = 5.0f;
+	UPROPERTY(EditDefaultsOnly, Category = "Debug")
+	bool bPersistentLine = true;
+	
 private:
 	UPROPERTY(VisibleAnywhere)
 	UStaticMesh* m;
@@ -49,6 +62,14 @@ public:
 	bool CanUnequip();
 	void Unequip();
 
+public:
+	bool CanFire();
+	void BeginFire();
+	void EndFire();
+private:
+	UFUNCTION()
+	void OnFireing();
+
 private:
 	ACCharacter* OwnerCharacter;
 
@@ -56,5 +77,5 @@ private:
 	bool bInAim;
 	bool bFiring;
 	bool bReload;
-	bool bAutoFire;
+	bool bAutoFire = true;
 };

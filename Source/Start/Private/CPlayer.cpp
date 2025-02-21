@@ -62,6 +62,10 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 			EnhancedInput->BindAction(PC->EquipRifleAction, ETriggerEvent::Triggered, WeaponComponent, &UCWeaponComponent::SetRifleMode);
 			EnhancedInput->BindAction(PC->EquipPistolAction, ETriggerEvent::Triggered, WeaponComponent, &UCWeaponComponent::SetPistolMode);
 			EnhancedInput->BindAction(PC->EquipKnifeAction, ETriggerEvent::Triggered, WeaponComponent, &UCWeaponComponent::SetKnifeMode);
+
+			EnhancedInput->BindAction(PC->FireAction, ETriggerEvent::Started, WeaponComponent, &UCWeaponComponent::Begin_Fire);
+			EnhancedInput->BindAction(PC->FireAction, ETriggerEvent::Completed, WeaponComponent, &UCWeaponComponent::End_Fire);
+			
 			// 🔹 시점 전환 액션 바인딩
 			EnhancedInput->BindAction(PC->SwitchViewAction, ETriggerEvent::Started, this, &ACPlayer::ToggleView);
 		}

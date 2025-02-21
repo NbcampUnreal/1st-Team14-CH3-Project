@@ -3,6 +3,7 @@
 
 #include "Notify/CAnimNotifyState_Equip.h"
 
+#include "Components/CStateComponent.h"
 #include "Components/CWeaponComponent.h"
 
 FString UCAnimNotifyState_Equip::GetNotifyName_Implementation() const
@@ -24,13 +25,19 @@ void UCAnimNotifyState_Equip::NotifyBegin(USkeletalMeshComponent* MeshComp, UAni
 		UE_LOG(LogTemp,Error,TEXT("Mesh's Owner is NULL"));
 		return;
 	}
+	UCStateComponent* state = Cast<UCStateComponent>(MeshComp->GetOwner()->GetComponentByClass(UCStateComponent::StaticClass()));
+	if (state == nullptr)
+	{
+		UE_LOG(LogTemp,Error,TEXT("Weapon Component is NULL"));
+		return;
+	}
 	UCWeaponComponent* weapon = Cast<UCWeaponComponent>(MeshComp->GetOwner()->GetComponentByClass(UCWeaponComponent::StaticClass()));
 	if (weapon == nullptr)
 	{
 		UE_LOG(LogTemp,Error,TEXT("Weapon Component is NULL"));
 		return;
 	}
-
+	state->SetEquipMode();
 	weapon->Begin_Equip();
 }
 
@@ -49,12 +56,18 @@ void UCAnimNotifyState_Equip::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimS
 		UE_LOG(LogTemp,Error,TEXT("Mesh's Owner is NULL"));
 		return;
 	}
+	UCStateComponent* state = Cast<UCStateComponent>(MeshComp->GetOwner()->GetComponentByClass(UCStateComponent::StaticClass()));
+	if (state == nullptr)
+	{
+		UE_LOG(LogTemp,Error,TEXT("Weapon Component is NULL"));
+		return;
+	}
 	UCWeaponComponent* weapon = Cast<UCWeaponComponent>(MeshComp->GetOwner()->GetComponentByClass(UCWeaponComponent::StaticClass()));
 	if (weapon == nullptr)
 	{
 		UE_LOG(LogTemp,Error,TEXT("Weapon Component is NULL"));
 		return;
 	}
-
+	state->SetIdleMode();
 	weapon->End_Equip();
 }

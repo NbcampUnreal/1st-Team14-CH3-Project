@@ -110,3 +110,21 @@ void UCWeaponComponent::End_Equip()
 	GetCurrentWeapon()->EndEquip();
 }
 
+void UCWeaponComponent::Begin_Fire()
+{
+	if (GetCurrentWeapon() == nullptr)
+		return;
+	if (GetCurrentWeapon()->CanFire() == false)
+		return;
+
+	GetCurrentWeapon()->BeginFire();
+}
+
+void UCWeaponComponent::End_Fire()
+{
+	if (GetCurrentWeapon() == nullptr)
+		return;;
+
+	GetCurrentWeapon()->EndFire();
+}
+

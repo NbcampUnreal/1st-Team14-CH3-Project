@@ -3,6 +3,7 @@
 
 #include "Weapon/CWeapon.h"
 #include "CCharacter.h"
+#include "Camera/CameraComponent.h"
 
 // Sets default values
 ACWeapon::ACWeapon()
@@ -78,5 +79,42 @@ void ACWeapon::Unequip()
 {
 	if (HolsterSocketName.IsValid() == true)
 		AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative,true), HolsterSocketName);
+}
+
+bool ACWeapon::CanFire()
+{
+	bool b = false;
+	b |= bEquipping;
+	b |= bReload;
+	b |= bFiring;
+
+	return !b;
+}
+
+void ACWeapon::BeginFire()
+{
+	bFiring = true;
+
+	OnFireing();
+}
+
+void ACWeapon::EndFire()
+{
+	bFiring = false;
+}
+
+void ACWeapon::OnFireing()
+{
+	UCameraComponent* camera = Cast<UCameraComponent>(OwnerCharacter->GetComponentByClass(UCameraComponent::StaticClass()));
+	if (camera == nullptr)
+		return;
+
+	FVector direction = camera->GetForwardVector();
+	FTransform transform = camera->GetComponentToWorld();
+
+	FVector start = transform.GetLocation() + direction;
+	FVector end = transform.GetLocation()+ direction*HitDistance;
+	if (Debug == true)	
+		DrawDebugLine(GetWorld(),start,end,DebugColor,true,LifeTime);
 }
 
