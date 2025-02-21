@@ -4,6 +4,7 @@
 #include "Components/TextBlock.h"
 #include "CInventoryComponent.h"
 
+
 void UCWBP_CInventorySlot::NativeConstruct()
 {
     Super::NativeConstruct();
@@ -20,15 +21,27 @@ void UCWBP_CInventorySlot::SetItem(EItemType ItemType, int32 ItemCount)
     StoredItemType = ItemType;
     StoredItemCount = ItemCount;
 
+    UE_LOG(LogTemp, Warning, TEXT("✅ 슬롯에 아이템 추가: %d (수량: %d)"), (int32)ItemType, ItemCount);
+
     if (ItemCountText)
     {
         ItemCountText->SetText(FText::AsNumber(StoredItemCount));
     }
 
-    // 🔹 아이템 이미지 설정 (여기서는 임시로 설정, 블루프린트에서 아이콘 설정 가능)
+    // 블루프린트에서 아이콘 가져오기
     if (ItemImage)
     {
-        // ItemImage->SetBrushFromTexture(YourItemTexture); // 블루프린트에서 설정 가능
+        if (ItemBlueprintMap.Contains(ItemType))
+        {
+            UTexture2D* ItemTexture = ItemBlueprintMap[ItemType].GetDefaultObject()->ItemIcon;
+            if (ItemTexture)
+            {
+                ItemImage->SetBrushFromTexture(ItemTexture);
+                return;
+            }
+        }
+
+        UE_LOG(LogTemp, Error, TEXT("❌ 블루프린트에서 아이콘을 가져올 수 없음!"));
     }
 }
 
