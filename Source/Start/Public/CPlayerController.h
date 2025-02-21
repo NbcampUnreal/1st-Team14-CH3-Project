@@ -38,6 +38,12 @@ public:
 	UInputAction* QuitAction;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	UInputAction* ToggleInventoryAction;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UInputAction* EquipRifleAction;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UInputAction* EquipPistolAction;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UInputAction* EquipKnifeAction;
 
 	// HUD 위젯 블루프린트 클래스 (게임 플레이 시)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")

@@ -9,10 +9,10 @@
 UENUM(BlueprintType)
 enum class EItemType : uint8
 {
-	EIT_HealthPotion UMETA(DisplayName = "HealthPotion"),
-	EIT_StaminaPotion UMETA(DisplayName = "StaminaPotion"),
-	EIT_Bullet UMETA(DisplayName = "Bullet"),
-	EIT_Grenades UMETA(DisplayName = "Grenades")
+    EIT_HealthPotion = 0 UMETA(DisplayName = "HealthPotion"),
+    EIT_StaminaPotion = 1 UMETA(DisplayName = "StaminaPotion"),
+    EIT_Bullet = 2 UMETA(DisplayName = "Bullet"),
+    EIT_Grenades = 3 UMETA(DisplayName = "Grenades")
 };
 
 // 🔹 블루프린트에서도 사용 가능하도록 인터페이스 추가
