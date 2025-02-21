@@ -10,6 +10,7 @@
 ACCharacter::ACCharacter()
 {
     //  이동 컴포넌트 추가
+    StateComponent = CreateDefaultSubobject<UCStateComponent>(TEXT("StateComponent"));
     MovementComponent = CreateDefaultSubobject<UCMovementComponent>(TEXT("MovementComponent"));
     WeaponComponent = CreateDefaultSubobject<UCWeaponComponent>(TEXT("WeaponComponent"));
     MontagesComponent = CreateDefaultSubobject<UCMontagesComponent>(TEXT("MontagesComponent"));

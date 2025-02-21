@@ -9,12 +9,15 @@ ACWeapon_AK47::ACWeapon_AK47()
 	//Equip
 	{
 		HolsterSocketName = "Spine_Rifle";
+		static ConstructorHelpers::FObjectFinder<UAnimMontage> montage(TEXT("/Script/Engine.AnimMontage'/Game/Assets/Montages/Rifle/Equip_Rifle_Standing_Montage1.Equip_Rifle_Standing_Montage1'"));
+		if (montage.Succeeded() == true)
+			EquipMontage = montage.Object;
+		Equip_PlayRate = 1.0f;
+		RightHandSokcetName = "Rifle_Hand";
 	}
 }
 
 void ACWeapon_AK47::BeginPlay()
 {
 	Super::BeginPlay();
-
-
 }
