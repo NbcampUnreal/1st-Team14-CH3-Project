@@ -99,7 +99,7 @@ void ACPlayerController::UpdateInventoryUI()
 		UCInventoryComponent* InventoryComponent = GetPawn()->FindComponentByClass<UCInventoryComponent>();
 		if (InventoryComponent)
 		{
-			InventoryWidget->UpdateInventory(InventoryComponent);
+			InventoryWidget->UpdateInventory();
 			UE_LOG(LogTemp, Warning, TEXT("🔹 인벤토리 UI 업데이트됨"));
 		}
 	}
@@ -124,6 +124,13 @@ void ACPlayerController::ToggleInventory()
 		return;
 	}
 
+	// Pawn 변수명을 MyPawn으로 변경하여 AController::Pawn과 충돌하지 않도록 합니다.
+	UCInventoryComponent* PawnInventoryComponent = nullptr;
+	if (APawn* MyPawn = GetPawn())
+	{
+		PawnInventoryComponent = MyPawn->FindComponentByClass<UCInventoryComponent>();
+	}
+
 	if (!InventoryWidget)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("🔹 InventoryWidget 새로 생성 중..."));
@@ -135,29 +142,38 @@ void ACPlayerController::ToggleInventory()
 			UE_LOG(LogTemp, Error, TEXT("❌ InventoryWidget 생성 실패!"));
 			return;
 		}
+
+		// 인벤토리 위젯 초기화: Pawn의 InventoryComponent 전달
+		if (PawnInventoryComponent)
+		{
+			InventoryWidget->InitializeInventory(PawnInventoryComponent);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("❌ Pawn의 InventoryComponent를 찾지 못함!"));
+		}
 	}
 
 	if (bIsInventoryOpen)
 	{
-		if (InventoryWidget && InventoryWidget->IsInViewport())  // 🔹 UI가 화면에 떠 있을 경우
+		if (InventoryWidget && InventoryWidget->IsInViewport())
 		{
-			InventoryWidget->RemoveFromParent();  // 🔹 인벤토리 UI 제거
+			InventoryWidget->RemoveFromParent();
 			bShowMouseCursor = false;
 			UE_LOG(LogTemp, Warning, TEXT("인벤토리 닫기"));
 		}
 	}
 	else
 	{
-		if (InventoryWidget && !InventoryWidget->IsInViewport())  // 🔹 UI가 떠 있지 않을 경우
+		if (InventoryWidget && !InventoryWidget->IsInViewport())
 		{
-			InventoryWidget->AddToViewport(100);  // 🔹 인벤토리 UI 화면에 추가
+			InventoryWidget->AddToViewport();
 			InventoryWidget->SetVisibility(ESlateVisibility::Visible);
 			bShowMouseCursor = true;
 			UE_LOG(LogTemp, Warning, TEXT("InventoryWidget 화면에 추가"));
 		}
 	}
 
-	bIsInventoryOpen = !bIsInventoryOpen;  // 🔹 UI 상태 변경을 가장 마지막에 실행
+	bIsInventoryOpen = !bIsInventoryOpen;
 	UE_LOG(LogTemp, Warning, TEXT("현재 인벤토리 상태: %s"), bIsInventoryOpen ? TEXT("열림") : TEXT("닫힘"));
 }
-
