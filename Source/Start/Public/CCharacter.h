@@ -34,6 +34,8 @@ private:
 public:
     UFUNCTION(BlueprintCallable, Category = "Character Stats")
     float GetHealth() const;
+    UFUNCTION(BlueprintCallable, Category = "Character Stats")
+    float GetMaxHealth() const;
 
     UFUNCTION(BlueprintCallable, Category = "Character Stats")
     void ModifyHealth(float Amount);

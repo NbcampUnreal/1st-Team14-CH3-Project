@@ -51,6 +51,11 @@ float ACCharacter::GetHealth() const
     return Health;
 }
 
+float ACCharacter::GetMaxHealth() const
+{
+    return MaxHealth;
+}
+
 void ACCharacter::ModifyHealth(float Amount)
 {
     if (bIsDead) return;
