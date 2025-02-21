@@ -19,16 +19,19 @@ public:
     UCInventoryComponent();
 
     // 아이템 추가
-    UFUNCTION(BlueprintCallable)
+    UFUNCTION(BlueprintCallable, Category = "Inventory")
     bool AddToInventory(EItemType ItemType);
 
     // 아이템 제거
-    UFUNCTION(BlueprintCallable)
+    UFUNCTION(BlueprintCallable, Category = "Inventory")
     bool RemoveItem(EItemType ItemType);
 
     // 아이템 드롭 (바닥에 아이템 생성)
-    UFUNCTION(BlueprintCallable)
+    UFUNCTION(BlueprintCallable, Category = "Inventory")
     bool DropItem(EItemType ItemType);
+
+    UFUNCTION(BlueprintCallable, Category = "Inventory")
+    bool RemoveItemAndUpdateUI(EItemType ItemType);
 
     // 현재 인벤토리 상태 출력
     UFUNCTION(BlueprintCallable)

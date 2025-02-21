@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
@@ -19,7 +19,7 @@ public:
     void SetItem(EItemType ItemType, int32 ItemCount);
     virtual void NativeConstruct() override;
 
-    // ÀÎº¥Åä¸® ÄÄÆ÷³ÍÆ® Æ÷ÀÎÅÍ¸¦ ½½·Ô¿¡ ¼³Á¤ÇÏ´Â ÇÔ¼ö
+    // ì¸ë²¤í† ë¦¬ ì»´í¬ë„ŒíŠ¸ í¬ì¸í„°ë¥¼ ìŠ¬ë¡¯ì— ì„¤ì •í•˜ëŠ” í•¨ìˆ˜
     UFUNCTION(BlueprintCallable, Category = "Inventory")
     void SetInventoryComponent(UCInventoryComponent* InInventoryComponent);
 protected:
@@ -32,25 +32,32 @@ protected:
     UPROPERTY(meta = (BindWidget))
     UTextBlock* ItemCountText;
 
-    // ÀúÀåµÈ ¾ÆÀÌÅÛ À¯Çü ¹× °³¼ö
+    // ì €ì¥ëœ ì•„ì´í…œ ìœ í˜• ë° ê°œìˆ˜
     EItemType StoredItemType;
     int32 StoredItemCount;
 
     UPROPERTY()
     UCInventoryComponent* InventoryComponent;
 
-    // **¾ÆÀÌÅÛ°ú ºí·çÇÁ¸°Æ® ¿¬°á (¾ÆÀÌÄÜ Æ÷ÇÔ)**
+    // **ì•„ì´í…œê³¼ ë¸”ë£¨í”„ë¦°íŠ¸ ì—°ê²° (ì•„ì´ì½˜ í¬í•¨)**
     UPROPERTY(EditDefaultsOnly, Category = "Inventory")
     TMap<EItemType, TSubclassOf<ACBaseItem>> ItemBlueprintMap;
 
-    // **¾ÆÀÌÄÜ °¡Á®¿À´Â ÇÔ¼ö**
-    UTexture2D* GetItemTexture(EItemType ItemType);
-
-    // ½½·Ô Å¬¸¯ ÀÌº¥Æ® (¾ÆÀÌÅÛ »ç¿ë)
+    // ìŠ¬ë¡¯ í´ë¦­ ì´ë²¤íŠ¸ (ì•„ì´í…œ ì‚¬ìš©)
     UFUNCTION()
     void OnSlotClicked();
 
-    // ½½·Ô ¿ìÅ¬¸¯ ÀÌº¥Æ® (¾ÆÀÌÅÛ ¹ö¸®±â)
+    // ìŠ¬ë¡¯ ìš°í´ë¦­ ì´ë²¤íŠ¸ (ì•„ì´í…œ ë²„ë¦¬ê¸°)
     UFUNCTION()
     void OnSlotRightClicked();
+
+    /* ğŸ”¹ ì•„ì´í…œì´ ë“œë ì¤‘ì¸ì§€ ì—¬ë¶€ */
+    bool bIsDropping;
+
+    /*ğŸ”¹ ì•„ì´í…œ ë“œë ì¿¨ë‹¤ìš´ */
+    FTimerHandle DropCooldownTimerHandle;
+
+    /*ğŸ”¹ ë“œë í”Œë˜ê·¸ ì´ˆê¸°í™” */
+    UFUNCTION()
+    void ResetDropFlag();
 };

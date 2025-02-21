@@ -14,10 +14,13 @@ void UCWBP_CInventory::InitializeInventory(UCInventoryComponent* InInventoryComp
     InventoryComponent = InInventoryComponent;
     UE_LOG(LogTemp, Warning, TEXT("✅ InventoryComponent가 초기화되었습니다."));
 
-    // 인벤토리 업데이트 이벤트에 UpdateInventory 함수를 바인딩
-    InventoryComponent->OnInventoryUpdated.AddDynamic(this, &UCWBP_CInventory::UpdateInventory);
+    // delegate를 바인딩 (이미 바인딩되어 있지 않은지 확인)
+    if (!bDelegateBound)
+    {
+        InventoryComponent->OnInventoryUpdated.AddDynamic(this, &UCWBP_CInventory::UpdateInventory);
+        bDelegateBound = true;
+    }
 
-    // 초기 UI 업데이트
     UpdateInventory();
 }
 
@@ -72,6 +75,7 @@ void UCWBP_CInventory::NativeDestruct()
     if (InventoryComponent)
     {
         InventoryComponent->OnInventoryUpdated.RemoveDynamic(this, &UCWBP_CInventory::UpdateInventory);
+        bDelegateBound = false;
         UE_LOG(LogTemp, Warning, TEXT("🛑 InventoryComponent와의 델리게이트 연결 해제됨."));
     }
     Super::NativeDestruct();

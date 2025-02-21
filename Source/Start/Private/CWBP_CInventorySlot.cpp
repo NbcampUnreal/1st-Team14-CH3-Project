@@ -12,7 +12,7 @@ void UCWBP_CInventorySlot::NativeConstruct()
     if (SlotButton)
     {
         SlotButton->OnClicked.AddDynamic(this, &UCWBP_CInventorySlot::OnSlotClicked);
-        SlotButton->OnReleased.AddDynamic(this, &UCWBP_CInventorySlot::OnSlotRightClicked);
+       /* SlotButton->OnReleased.AddDynamic(this, &UCWBP_CInventorySlot::OnSlotRightClicked);*/
     }
 }
 
@@ -41,9 +41,11 @@ void UCWBP_CInventorySlot::SetItem(EItemType ItemType, int32 ItemCount)
                 {
                     UE_LOG(LogTemp, Warning, TEXT("▶ 아이콘 텍스처: %s"), *DefaultObj->ItemIcon->GetName());
                     ItemImage->SetBrushFromTexture(DefaultObj->ItemIcon);
+                    return;
                 }
             }
         }
+        UE_LOG(LogTemp, Error, TEXT("❌ 블루프린트에서 아이콘을 가져올 수 없음!"));
     }
 }
 
@@ -54,31 +56,55 @@ void UCWBP_CInventorySlot::SetInventoryComponent(UCInventoryComponent* InInvento
 
 void UCWBP_CInventorySlot::OnSlotClicked()
 {
-    UE_LOG(LogTemp, Warning, TEXT("아이템 버리기: %d"), static_cast<int32>(StoredItemType));
-
-    // 만약 InventoryComponent 포인터가 있다면 실제 인벤토리 상태 재확인
     if (InventoryComponent)
     {
-        // 인벤토리에 이 아이템이 존재하는지 확인
-        const TMap<EItemType, int32>& CurrentItems = InventoryComponent->GetInventoryItems();
-        if (CurrentItems.Contains(StoredItemType))
+        UE_LOG(LogTemp, Warning, TEXT("아이템 버리기: %d"), static_cast<int32>(StoredItemType));
+
+        if (InventoryComponent->DropItem(StoredItemType))
         {
-            UE_LOG(LogTemp, Warning, TEXT("RemoveItem 호출됨: %d"), static_cast<int32>(StoredItemType));
-            bool bRemoved = InventoryComponent->RemoveItem(StoredItemType);
-            if (!bRemoved)
-            {
-                UE_LOG(LogTemp, Warning, TEXT("슬롯에 표시된 아이템이 실제 인벤토리에 존재하지 않습니다!"));
-            }
+            UE_LOG(LogTemp, Warning, TEXT("✅ 아이템 정상 드랍됨: %d"), static_cast<int32>(StoredItemType));
+
+            // ✅ UI 업데이트 강제 실행
+            InventoryComponent->OnInventoryUpdated.Broadcast();
         }
         else
         {
-            UE_LOG(LogTemp, Warning, TEXT("슬롯에 표시된 아이템(%d)은 인벤토리에 없습니다!"), static_cast<int32>(StoredItemType));
+            UE_LOG(LogTemp, Warning, TEXT("❌ 아이템 드랍 실패: %d"), static_cast<int32>(StoredItemType));
         }
+    }
+
+    // ✅ 현재 슬롯의 아이템이 인벤토리에 있는지 다시 확인
+    const TMap<EItemType, int32>& CurrentItems = InventoryComponent->GetInventoryItems();
+    if (CurrentItems.Contains(StoredItemType))
+    {
+        UE_LOG(LogTemp, Warning, TEXT("RemoveItem 호출됨: %d"), static_cast<int32>(StoredItemType));
+
+        // ✅ 중복 실행 방지
+        if (bIsDropping)
+        {
+            UE_LOG(LogTemp, Warning, TEXT("❌ 이미 드랍 중인 아이템입니다."));
+            return;
+        }
+        bIsDropping = true;
+
+        bool bRemoved = InventoryComponent->RemoveItem(StoredItemType);
+        if (!bRemoved)
+        {
+            UE_LOG(LogTemp, Warning, TEXT("슬롯에 표시된 아이템이 실제 인벤토리에 존재하지 않습니다!"));
+        }
+
+        // ✅ 0.1초 후 다시 클릭 가능
+        GetWorld()->GetTimerManager().SetTimer(DropCooldownTimerHandle, this, &UCWBP_CInventorySlot::ResetDropFlag, 0.1f, false);
     }
     else
     {
-        UE_LOG(LogTemp, Warning, TEXT("InventoryComponent가 슬롯에 할당되어 있지 않습니다!"));
+        UE_LOG(LogTemp, Warning, TEXT("슬롯에 표시된 아이템(%d)은 인벤토리에 없습니다!"), static_cast<int32>(StoredItemType));
     }
+}
+
+void UCWBP_CInventorySlot::ResetDropFlag()
+{
+    bIsDropping = false;
 }
 
 void UCWBP_CInventorySlot::OnSlotRightClicked()
