@@ -113,7 +113,7 @@ void ACWeapon::OnFireing()
 	FTransform transform = camera->GetComponentToWorld();
 
 	FVector start = transform.GetLocation() + direction;
-	FVector end = transform.GetLocation()+ direction*HitDistance;
+	FVector end = transform.GetLocation() + direction*HitDistance;
 	if (Debug == true)	
 		DrawDebugLine(GetWorld(),start,end,DebugColor,true,LifeTime);
 }

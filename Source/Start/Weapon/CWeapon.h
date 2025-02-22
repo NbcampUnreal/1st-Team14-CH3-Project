@@ -37,8 +37,6 @@ public:
 	
 private:
 	UPROPERTY(VisibleAnywhere)
-	UStaticMesh* m;
-	UPROPERTY(VisibleAnywhere)
 	USceneComponent* Root;
 
 protected:

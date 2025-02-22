@@ -14,6 +14,8 @@ class START_API ACWeapon_AK47 : public ACWeapon
 {
 	GENERATED_BODY()
 public:
+	/*UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* m;*/
 	ACWeapon_AK47();
 protected:
 	virtual void BeginPlay() override;
