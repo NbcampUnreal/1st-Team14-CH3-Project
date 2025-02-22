@@ -14,7 +14,7 @@ CItemInventory::CItemInventory() :
 
 CItemInventory::~CItemInventory()
 {
-
+ 
 }
 
 void CItemInventory::PrintInventory()
