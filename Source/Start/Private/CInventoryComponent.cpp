@@ -46,7 +46,8 @@ bool UCInventoryComponent::RemoveItem(EItemType ItemType)
             InventoryItems.Contains(ItemType) ? InventoryItems[ItemType] : 0);
 
         // 🔹 UI 업데이트 무조건 실행
-        OnInventoryUpdated.Broadcast();
+        if (OnInventoryUpdated.IsBound())
+            OnInventoryUpdated.Broadcast();
 
         return true;
     }

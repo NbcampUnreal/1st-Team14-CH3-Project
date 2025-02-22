@@ -46,6 +46,8 @@ public:
 	UInputAction* EquipKnifeAction;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	UInputAction* FireAction;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UInputAction* PickupItemAction;
 
 	// HUD 위젯 블루프린트 클래스 (게임 플레이 시)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
@@ -57,7 +59,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void ToggleInventory();
-
+	UFUNCTION()
+	void PickupItem();
 	UFUNCTION()
 	void UpdateInventoryUI();  // 🔹 UI 업데이트 함수 추가
 
@@ -76,4 +79,16 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "UI")
 	UUserWidget* CurrentWidget; //	현재 화면에 보이는 위젯
 
+	// ✅ 클래스 멤버 변수로 InventoryComponent 추가
+	UPROPERTY()
+	UCInventoryComponent* InventoryComponent;
+
+	// ✅ Pawn 변경 시 델리게이트 재설정용 캐시 변수
+	APawn* CachedPawn;
+
+	// ✅ Pawn 변경 감지를 위한 타이머
+	FTimerHandle DelegateCheckTimerHandle;
+
+	// ✅ Pawn 변경을 감지하고 델리게이트를 재설정하는 함수
+	void CheckPawnAndUpdateDelegate();
 };

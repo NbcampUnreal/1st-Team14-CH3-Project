@@ -72,7 +72,8 @@ void ACPlayerController::BeginPlay()
 			{
 				CurrentWidget->AddToViewport(100);
 				CurrentWidget->SetIsFocusable(true);
-				FInputModeUIOnly InputMode;
+				
+				FInputModeGameAndUI InputMode;
 				InputMode.SetWidgetToFocus(CurrentWidget->TakeWidget());
 				InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 				SetInputMode(InputMode);
