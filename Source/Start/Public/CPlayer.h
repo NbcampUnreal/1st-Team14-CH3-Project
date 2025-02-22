@@ -18,7 +18,8 @@ UCLASS()
 class START_API ACPlayer : public ACCharacter
 {
 	GENERATED_BODY()
-
+public:
+	FORCEINLINE USpringArmComponent* GetSpringArm() const {return SpringArm;}
 public:
 	ACPlayer();
 
@@ -27,9 +28,10 @@ protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
-	UPROPERTY(VisibleAnywhere, Category = "Camera")
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category = "Camera")
 	UCameraComponent* Camera;
-	UPROPERTY(EditAnywhere, Category = "Camera")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly,Category = "Camera")
 	USpringArmComponent* SpringArm;
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 	UCCameraComponent* CameraComponent;

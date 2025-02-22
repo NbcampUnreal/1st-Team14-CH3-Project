@@ -15,7 +15,7 @@ ACPlayer::ACPlayer()
 	//  스프링암 설정 (1인칭이므로 길이는 0)
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(RootComponent);
-	SpringArm->TargetArmLength = 100.0f; // 1인칭이므로 0
+	SpringArm->TargetArmLength = 300.0f;
 	SpringArm->bUsePawnControlRotation = true;
 
 	//  FPS 카메라 설정
@@ -87,7 +87,6 @@ void ACPlayer::ToggleView()
 	{
 		// 🔹 3인칭(TPS) 설정
 		Camera->AttachToComponent(SpringArm, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-		SpringArm->TargetArmLength = 300.0f;
 		Camera->bUsePawnControlRotation = false;
 	}
 }

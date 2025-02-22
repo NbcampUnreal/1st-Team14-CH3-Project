@@ -1,8 +1,10 @@
-#include "Weapon/CWeapon_AK47.h"
+#include "CWeapon_AK47.h"
+
+#include "CPlayer.h"
+#include "Components/CCameraComponent.h"
 
 ACWeapon_AK47::ACWeapon_AK47()
 {
-	/*m = CreateDefaultSubobject<UStaticMeshComponent>(L"s");*/
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> asset(TEXT("/Script/Engine.SkeletalMesh'/Game/Assets/Mesh/Weapons/Meshes/Ka47/SK_KA47.SK_KA47'"));
 	if (asset.Succeeded() == true)
 		Mesh->SetSkeletalMesh(asset.Object);
@@ -16,9 +18,22 @@ ACWeapon_AK47::ACWeapon_AK47()
 		Equip_PlayRate = 1.0f;
 		RightHandSokcetName = "Rifle_Hand";
 	}
+
+	//Aim
+	/*{
+		BaseData.TargetArmLength = 300;
+		BaseData.SocketOffset = FVector(0, 50, 15);
+		BaseData.FieldOfView = 90;
+
+
+		AimData.TargetArmLength = 30;
+		AimData.SocketOffset = FVector(-55, 0, 10);
+		AimData.FieldOfView = 55;
+	}*/
 }
 
 void ACWeapon_AK47::BeginPlay()
 {
 	Super::BeginPlay();
+
 }

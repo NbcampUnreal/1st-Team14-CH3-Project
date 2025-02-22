@@ -3,9 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Weapon/CWeapon.h"
+#include "CWeapon.h"
+#include "CWeapon.h"
 #include "CWeapon_AK47.generated.h"
 
+class UStaticMeshComponent;
 /**
  * 
  */
@@ -14,8 +16,6 @@ class START_API ACWeapon_AK47 : public ACWeapon
 {
 	GENERATED_BODY()
 public:
-	/*UPROPERTY(VisibleAnywhere)
-	UStaticMeshComponent* m;*/
 	ACWeapon_AK47();
 protected:
 	virtual void BeginPlay() override;

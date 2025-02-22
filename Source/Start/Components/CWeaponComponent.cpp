@@ -128,3 +128,19 @@ void UCWeaponComponent::End_Fire()
 	GetCurrentWeapon()->EndFire();
 }
 
+void UCWeaponComponent::BeginAim()
+{
+	if (GetCurrentWeapon() == nullptr)
+		return;
+
+	//GetCurrentWeapon()->BeginAim();
+}
+
+void UCWeaponComponent::EndAim()
+{
+	if (GetCurrentWeapon() == nullptr)
+		return;
+
+	//GetCurrentWeapon()->EndAim();
+}
+

@@ -4,8 +4,30 @@
 #include "Weapon/CWeapon.h"
 #include "CCharacter.h"
 #include "Camera/CameraComponent.h"
+#include "Components/CCameraComponent.h"
+#include "Components/CStateComponent.h"
+#include "Components/CWeaponComponent.h"
+#include "Components/TimelineComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 
-// Sets default values
+void FWeaponAimData::SetData(class ACCharacter* InOwner)
+{
+	USpringArmComponent* springArm = Cast<USpringArmComponent>(InOwner->GetComponentByClass(USpringArmComponent::StaticClass()));
+	springArm->TargetArmLength = TargetArmLength;
+	springArm->SocketOffset = SocketOffset;
+}
+
+void FWeaponAimData::SetDataByNoneCurve(class ACCharacter* InOwner)
+{
+	USpringArmComponent* springArm = Cast<USpringArmComponent>(InOwner->GetComponentByClass(USpringArmComponent::StaticClass()));
+	springArm->TargetArmLength = TargetArmLength;
+	springArm->SocketOffset = SocketOffset;
+
+	UCameraComponent* camera = Cast<UCameraComponent>(InOwner->GetComponentByClass(UCameraComponent::StaticClass()));
+	camera->FieldOfView = FieldOfView;
+}
+
+/////////////////////////
 ACWeapon::ACWeapon()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -13,6 +35,12 @@ ACWeapon::ACWeapon()
 	SetRootComponent(Root);
 	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>("Mesh");
 	Mesh->SetupAttachment(Root);
+	
+	
+	/*Timeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("Time Line"));
+	static ConstructorHelpers::FObjectFinder<UCurveFloat> curve(TEXT("/Script/Engine.CurveFloat'/Game/Blueprints/Weapon/Curve_Aim.Curve_Aim'"));
+	if (curve.Object != nullptr)
+		AimCurve = curve.Object;*/
 }
 
 // Called when the game starts or when spawned
@@ -26,6 +54,19 @@ void ACWeapon::BeginPlay()
 	
 	if (HolsterSocketName.IsValid() == true)
 		AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative,true), HolsterSocketName);
+
+	BaseData.SetDataByNoneCurve(OwnerCharacter);
+
+	State = Cast<UCStateComponent>(OwnerCharacter->GetComponentByClass(UCStateComponent::StaticClass()));
+	Camera = Cast<UCCameraComponent>(OwnerCharacter->GetComponentByClass(UCCameraComponent::StaticClass()));
+	/*if (AimCurve != nullptr)
+	{
+		FOnTimelineFloat timeline;
+		timeline.BindUFunction(this,"OnAiming");
+		Timeline->AddInterpFloat(AimCurve,timeline);
+		Timeline->SetLooping(false);
+		Timeline->SetPlayRate(AimSpeed);
+	}*/
 }
 
 // Called every frame
@@ -48,8 +89,20 @@ bool ACWeapon::CanEquip()
 void ACWeapon::Equip()
 {
 	bEquipping = true;
-	if (EquipMontage == nullptr)
+	if(State == nullptr)
 		return;
+	if(Camera == nullptr)
+		return;
+
+	State->SetEquipMode();
+	Camera->EnableControlRotation();
+
+	if (EquipMontage == nullptr)
+	{
+		BeginEquip();
+		EndEquip();
+		return;
+	}
 	
 	OwnerCharacter->PlayAnimMontage(EquipMontage,Equip_PlayRate);
 }
@@ -63,6 +116,8 @@ void ACWeapon::BeginEquip()
 void ACWeapon::EndEquip()
 {
 	bEquipping =false;
+
+	State->SetIdleMode();
 }
 
 bool ACWeapon::CanUnequip()
@@ -79,6 +134,7 @@ void ACWeapon::Unequip()
 {
 	if (HolsterSocketName.IsValid() == true)
 		AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative,true), HolsterSocketName);
+	Camera->DisableControlRoation();
 }
 
 bool ACWeapon::CanFire()
@@ -118,3 +174,46 @@ void ACWeapon::OnFireing()
 		DrawDebugLine(GetWorld(),start,end,DebugColor,true,LifeTime);
 }
 
+//bool ACWeapon::CanAim()
+//{
+//	bool b = false;
+//	b |= bEquipping;
+//	b |= bReload;
+//	b |= bFiring;
+//
+//	return !b;
+//}
+
+//void ACWeapon::BeginAim()
+//{
+//	bInAim = true;
+//	if (AimCurve != nullptr)
+//	{
+//		Timeline->PlayFromStart();
+//		AimData.SetData(OwnerCharacter);
+//		return;
+//	}
+//	AimData.SetDataByNoneCurve(OwnerCharacter);
+//}
+
+//void ACWeapon::EndAim()
+//{
+//	if  (bInAim == false)
+//		return;
+//	bInAim = false;
+//
+//	if (AimCurve != nullptr)
+//	{
+//		Timeline->PlayFromStart();
+//		BaseData.SetData(OwnerCharacter);
+//		return;
+//	}
+//	BaseData.SetDataByNoneCurve(OwnerCharacter);
+//}
+
+//void ACWeapon::OnAiming(float Output)
+//{
+//	UCameraComponent* camera = Cast<UCameraComponent>(OwnerCharacter->GetComponentByClass(UCameraComponent::StaticClass()));
+//	UE_LOG(LogTemp, Error, TEXT("Test"));
+//	camera->FieldOfView = FMath::Lerp(AimData.FieldOfView,BaseData.FieldOfView,Output);
+//}

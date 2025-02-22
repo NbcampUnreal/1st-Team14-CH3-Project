@@ -6,7 +6,27 @@
 #include "GameFramework/Actor.h"
 #include "CWeapon.generated.h"
 
+class UCCameraComponent;
+class UCStateComponent;
 class ACCharacter;
+class UTimelineComponent;
+
+USTRUCT()
+struct FWeaponAimData
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere)
+	float TargetArmLength;
+	UPROPERTY(EditAnywhere)
+	FVector SocketOffset;
+	UPROPERTY(EditAnywhere)
+	float FieldOfView;
+
+public:
+	void SetData(class ACCharacter*  InOwner);
+	void SetDataByNoneCurve(class ACCharacter*  InOwner);
+};
 
 UCLASS(Abstract)
 class START_API ACWeapon : public AActor
@@ -21,11 +41,20 @@ protected:
 	UAnimMontage* EquipMontage;
 	UPROPERTY(EditDefaultsOnly, Category = "Equip")
 	float Equip_PlayRate;
+
+	UPROPERTY(EditDefaultsOnly, category = "Aim")
+	FWeaponAimData BaseData;
+	UPROPERTY(EditDefaultsOnly, category = "Aim")
+	FWeaponAimData AimData;
+	UPROPERTY(EditDefaultsOnly, category = "Aim")
+	UCurveFloat* AimCurve;
+	UPROPERTY(EditDefaultsOnly, category = "Aim")
+	float AimSpeed = 200.0f;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Hit")
 	float HitDistance = 3000;
 
-public:
+private:
 	UPROPERTY(EditDefaultsOnly, Category = "Debug")
 	bool Debug = false;
 	UPROPERTY(EditDefaultsOnly, Category = "Debug")
@@ -34,10 +63,17 @@ public:
 	float LifeTime = 5.0f;
 	UPROPERTY(EditDefaultsOnly, Category = "Debug")
 	bool bPersistentLine = true;
-	
+
+private:
+	UPROPERTY(VisibleAnywhere)
+	UTimelineComponent* Timeline;
 private:
 	UPROPERTY(VisibleAnywhere)
 	USceneComponent* Root;
+	UPROPERTY(VisibleAnywhere)
+	UCStateComponent* State;
+	UPROPERTY(VisibleAnywhere)
+	UCCameraComponent* Camera;
 
 protected:
 	UPROPERTY(VisibleAnywhere)
@@ -64,12 +100,22 @@ public:
 	bool CanFire();
 	void BeginFire();
 	void EndFire();
+
 private:
 	UFUNCTION()
 	void OnFireing();
+public:
+/*	bool CanAim();
+	void BeginAim();
+	void EndAim();*/
 
 private:
+	/*UFUNCTION()
+	void OnAiming(float Output);*/
+
+protected:
 	ACCharacter* OwnerCharacter;
+private:
 
 	bool bEquipping;
 	bool bInAim;
