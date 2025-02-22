@@ -53,7 +53,7 @@ protected:
     UCStateComponent* StateComponent;
     UPROPERTY(VisibleAnywhere, Category = "Component")
     UCMovementComponent* MovementComponent;
-    UPROPERTY(VisibleAnywhere, Category = "Component")
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category = "Component")
 	UCWeaponComponent* WeaponComponent;
     UPROPERTY(VisibleAnywhere, Category = "Component")
     UCMontagesComponent* MontagesComponent;

@@ -7,21 +7,13 @@
 		{
 			"Name": "Start",
 			"Type": "Runtime",
-			"LoadingPhase": "Default",
-			"AdditionalDependencies": [
-				"Engine",
-				"UMG",
-				"AIModule"
-			]
+			"LoadingPhase": "Default"
 		}
 	],
 	"Plugins": [
 		{
 			"Name": "ModelingToolsEditorMode",
-			"Enabled": true,
-			"TargetAllowList": [
-				"Editor"
-			]
+			"Enabled": true
 		}
 	]
 }

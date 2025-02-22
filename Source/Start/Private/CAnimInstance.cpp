@@ -40,7 +40,8 @@ void UCAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	FRotator delta = UKismetMathLibrary::NormalizedDeltaRotator(rotation, controlRotation);
 	PrevRotation = UKismetMathLibrary::RInterpTo(PrevRotation, delta, DeltaSeconds, 25);
 	Direction = PrevRotation.Yaw;
-
+	Pitch = UKismetMathLibrary::FInterpTo(Pitch, OwnerCharacter->GetBaseAimRotation().Pitch, DeltaSeconds,25);
+	Yaw = UKismetMathLibrary::FInterpTo(Yaw, OwnerCharacter->GetBaseAimRotation().Yaw, DeltaSeconds,25);
 	bCanMove = Speed > 3.0f && Movement->GetCurrentAcceleration() != FVector::ZeroVector;
 	bIsFalling = Movement->IsFalling();
 }

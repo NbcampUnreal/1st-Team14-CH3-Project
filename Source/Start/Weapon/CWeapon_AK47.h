@@ -3,9 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Weapon/CWeapon.h"
+#include "CWeapon.h"
+#include "CWeapon.h"
 #include "CWeapon_AK47.generated.h"
 
+class UStaticMeshComponent;
 /**
  * 
  */

@@ -17,7 +17,7 @@ public class Start : ModuleRules
 			"Engine",  // 게임 엔진의 주요 기능
 			"InputCore", // 입력 시스템
 			"EnhancedInput", // EnhancedInputSystem 관련
-			"UMG", // *UI 위젯*
+			"UMG", "AIModule", // *UI 위젯*
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

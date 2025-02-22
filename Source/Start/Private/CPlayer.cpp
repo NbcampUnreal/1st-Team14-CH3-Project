@@ -15,7 +15,7 @@ ACPlayer::ACPlayer()
 	//  스프링암 설정 (1인칭이므로 길이는 0)
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(RootComponent);
-	SpringArm->TargetArmLength = 100.0f; // 1인칭이므로 0
+	SpringArm->TargetArmLength = 300.0f;
 	SpringArm->bUsePawnControlRotation = true;
 
 	//  FPS 카메라 설정
@@ -62,6 +62,10 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 			EnhancedInput->BindAction(PC->EquipRifleAction, ETriggerEvent::Triggered, WeaponComponent, &UCWeaponComponent::SetRifleMode);
 			EnhancedInput->BindAction(PC->EquipPistolAction, ETriggerEvent::Triggered, WeaponComponent, &UCWeaponComponent::SetPistolMode);
 			EnhancedInput->BindAction(PC->EquipKnifeAction, ETriggerEvent::Triggered, WeaponComponent, &UCWeaponComponent::SetKnifeMode);
+
+			EnhancedInput->BindAction(PC->FireAction, ETriggerEvent::Started, WeaponComponent, &UCWeaponComponent::Begin_Fire);
+			EnhancedInput->BindAction(PC->FireAction, ETriggerEvent::Completed, WeaponComponent, &UCWeaponComponent::End_Fire);
+			
 			// 🔹 시점 전환 액션 바인딩
 			EnhancedInput->BindAction(PC->SwitchViewAction, ETriggerEvent::Started, this, &ACPlayer::ToggleView);
 		}
@@ -83,7 +87,6 @@ void ACPlayer::ToggleView()
 	{
 		// 🔹 3인칭(TPS) 설정
 		Camera->AttachToComponent(SpringArm, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-		SpringArm->TargetArmLength = 300.0f;
 		Camera->bUsePawnControlRotation = false;
 	}
 }

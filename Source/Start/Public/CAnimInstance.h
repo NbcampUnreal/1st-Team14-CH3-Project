@@ -19,16 +19,20 @@ class UCAnimInstance : public UAnimInstance
 protected:
 	UPROPERTY(BlueprintReadOnly,EditAnywhere, Category = "EWeaponType")
 	EWeaponType WeaponType = EWeaponType::Max;
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Animation")
 	FVector Velocity;
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Animation")
 	float Direction;
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Animation")
 	float Speed;
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Animation")
 	bool bCanMove;
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Animation")
 	bool bIsFalling;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Animation")
+	float Pitch;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Animation")
+	float Yaw;
 public:
 	virtual void NativeBeginPlay() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
