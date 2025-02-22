@@ -41,10 +41,9 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Character Stats")
     void ModifyHealth(float Amount);
 
+
     UFUNCTION(BlueprintCallable, Category = "Character Stats")
     virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser) override;
-
-
     UFUNCTION(BlueprintCallable, Category = "Character Stats")
     void Heal(float HealAmount);
 
@@ -58,9 +57,11 @@ protected:
     UPROPERTY(VisibleAnywhere, Category = "Component")
     UCMontagesComponent* MontagesComponent;
     UPROPERTY(VisibleAnywhere, Category = "Component")
+
     UCStatusComponent* StatusComponent;
-private:
     void Die();  // 🔹 사망 처리 함수
+
+private:
     void SaveHealthToGameInstance();
     void LoadHealthFromGameInstance();
 };
