@@ -60,8 +60,8 @@ void ACEnemy::SetWalk()
 
 void ACEnemy::Tick(float DeltaTime)
 {
+	Super::Tick(DeltaTime);
 	bCanAttack = StateComponent->IsActionMode();
-	GEngine->AddOnScreenDebugMessage(1, 2.0f, FColor::Green, FString::Printf(TEXT("%d"), bCanAttack));
 }
 
 float ACEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
