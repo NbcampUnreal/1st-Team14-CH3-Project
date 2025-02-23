@@ -57,6 +57,9 @@ protected:
     /*🔹 아이템 드랍 쿨다운 */
     FTimerHandle DropCooldownTimerHandle;
 
+    virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+
+
     /*🔹 드랍 플래그 초기화 */
     UFUNCTION()
     void ResetDropFlag();
