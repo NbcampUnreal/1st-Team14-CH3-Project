@@ -18,6 +18,7 @@ ACWeapon_AK47::ACWeapon_AK47()
 		Equip_PlayRate = 1.0f;
 		RightHandSokcetName = "Rifle_Hand";
 	}
+	
 
 	//Aim
 	/*{
