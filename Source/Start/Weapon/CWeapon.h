@@ -42,14 +42,14 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Equip")
 	float Equip_PlayRate;
 
-	//UPROPERTY(EditDefaultsOnly, category = "Aim")
-	//FWeaponAimData BaseData;
-	//UPROPERTY(EditDefaultsOnly, category = "Aim")
-	//FWeaponAimData AimData;
-	//UPROPERTY(EditDefaultsOnly, category = "Aim")
-	//UCurveFloat* AimCurve;
-	//UPROPERTY(EditDefaultsOnly, category = "Aim")
-	//float AimSpeed = 200.0f;
+	UPROPERTY(EditDefaultsOnly, category = "Aim")
+	FWeaponAimData BaseData;
+	UPROPERTY(EditDefaultsOnly, category = "Aim")
+	FWeaponAimData AimData;
+	UPROPERTY(EditDefaultsOnly, category = "Aim")
+	UCurveFloat* AimCurve;
+	UPROPERTY(EditDefaultsOnly, category = "Aim")
+	float AimSpeed = 200.0f;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Hit")
 	float HitDistance = 3000;
