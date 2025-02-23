@@ -58,6 +58,10 @@ void ACEnemy::SetWalk()
 }
 
 
+void ACEnemy::BeginPlay()
+{
+}
+
 void ACEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
