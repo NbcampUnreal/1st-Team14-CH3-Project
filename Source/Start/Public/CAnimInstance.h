@@ -41,7 +41,6 @@ private:
 	UFUNCTION()
 	void OnWeaponTypeChanged(EWeaponType InPrevType, EWeaponType InNewType);
 
-
 private:
 	ACharacter* OwnerCharacter;
 	UCharacterMovementComponent* Movement;
