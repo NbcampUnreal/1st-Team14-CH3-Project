@@ -55,7 +55,7 @@ void ACWeapon::BeginPlay()
 	if (HolsterSocketName.IsValid() == true)
 		AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative,true), HolsterSocketName);
 
-	BaseData.SetDataByNoneCurve(OwnerCharacter);
+	//BaseData.SetDataByNoneCurve(OwnerCharacter);
 
 	State = Cast<UCStateComponent>(OwnerCharacter->GetComponentByClass(UCStateComponent::StaticClass()));
 	Camera = Cast<UCCameraComponent>(OwnerCharacter->GetComponentByClass(UCCameraComponent::StaticClass()));
