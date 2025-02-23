@@ -39,6 +39,8 @@ void ACPlayer::BeginPlay()
 	{
 		WeaponComponent = FindComponentByClass<UCWeaponComponent>();
 	}
+	GetController<APlayerController>()->PlayerCameraManager->ViewPitchMin = PitchRange.X;
+	GetController<APlayerController>()->PlayerCameraManager->ViewPitchMax = PitchRange.Y;
 }
 
 void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
