@@ -1,4 +1,5 @@
 ﻿#include "CInventoryComponent.h"
+#include "CPlayer.h"
 #include "CBaseItem.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
@@ -9,6 +10,22 @@
 UCInventoryComponent::UCInventoryComponent()
 {
     MaxSlots = 10;
+}
+
+ACBaseItem* UCInventoryComponent::GetItemInstance(EItemType ItemType)
+{
+    if (!DropItemClasses.Contains(ItemType))
+    {
+        UE_LOG(LogTemp, Warning, TEXT("❌ 해당 아이템 타입에 대한 블루프린트 클래스가 없습니다!"));
+        return nullptr;
+    }
+
+    // 🔹 아이템의 기본 오브젝트 가져오기
+    TSubclassOf<ACBaseItem> ItemClass = DropItemClasses[ItemType];
+    if (!ItemClass) return nullptr;
+
+    ACBaseItem* DefaultItem = ItemClass->GetDefaultObject<ACBaseItem>();
+    return DefaultItem;
 }
 
 // 아이템을 인벤토리에 추가
@@ -119,4 +136,45 @@ void UCInventoryComponent::PrintInventory()
 
     GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, InventoryText);
     UE_LOG(LogTemp, Warning, TEXT("%s"), *InventoryText);
+}
+
+bool UCInventoryComponent::UseItem(EItemType ItemType, ACPlayer* Player)
+{
+    if (!Player) return false;
+
+    // 인벤토리에 해당 아이템이 있는지 확인
+    if (!InventoryItems.Contains(ItemType) || InventoryItems[ItemType] <= 0)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("❌ 사용하려는 아이템이 없습니다!"));
+        return false;
+    }
+
+    // 아이템 인스턴스를 가져와 사용
+    ACBaseItem* ItemInstance = GetItemInstance(ItemType);
+    if (ItemInstance)
+    {
+        // 🔹 Player가 AActor에서 상속되었는지 확인 후 캐스팅
+        if (AActor* ActorPlayer = Cast<AActor>(Player))
+        {
+            ItemInstance->Use(ActorPlayer);
+        }
+        else
+        {
+            UE_LOG(LogTemp, Warning, TEXT("❌ ACPlayer를 AActor로 캐스팅할 수 없습니다."));
+            return false;
+        }
+
+        // 사용 후 수량 감소
+        InventoryItems[ItemType]--;
+        if (InventoryItems[ItemType] <= 0)
+        {
+            InventoryItems.Remove(ItemType);
+        }
+
+        // UI 업데이트
+        OnInventoryUpdated.Broadcast();
+        return true;
+    }
+
+    return false;
 }

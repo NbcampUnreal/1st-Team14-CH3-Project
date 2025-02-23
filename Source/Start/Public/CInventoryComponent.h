@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
@@ -9,6 +9,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInventoryUpdated);
 
 class ACBaseItem;
+class ACPlayer;
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class START_API UCInventoryComponent : public UActorComponent
@@ -18,40 +19,48 @@ class START_API UCInventoryComponent : public UActorComponent
 public:
     UCInventoryComponent();
 
-    // ¾ÆÀÌÅÛ Ãß°¡
+    // ì•„ì´í…œ ì¶”ê°€
     UFUNCTION(BlueprintCallable, Category = "Inventory")
     bool AddToInventory(EItemType ItemType);
 
-    // ¾ÆÀÌÅÛ Á¦°Å
+    // ì•„ì´í…œ ì œê±°
     UFUNCTION(BlueprintCallable, Category = "Inventory")
     bool RemoveItem(EItemType ItemType);
 
-    // ¾ÆÀÌÅÛ µå·Ó (¹Ù´Ú¿¡ ¾ÆÀÌÅÛ »ı¼º)
+    // ì•„ì´í…œ ë“œë¡­ (ë°”ë‹¥ì— ì•„ì´í…œ ìƒì„±)
     UFUNCTION(BlueprintCallable, Category = "Inventory")
     bool DropItem(EItemType ItemType);
 
     UFUNCTION(BlueprintCallable, Category = "Inventory")
     bool RemoveItemAndUpdateUI(EItemType ItemType);
+    
+    // âœ… ì•„ì´í…œ ì‚¬ìš© ì¶”ê°€
+    UFUNCTION(BlueprintCallable, Category = "Inventory")
+    bool UseItem(EItemType ItemType, ACPlayer* Player);
 
-    // ÇöÀç ÀÎº¥Åä¸® »óÅÂ Ãâ·Â
+    // í˜„ì¬ ì¸ë²¤í† ë¦¬ ìƒíƒœ ì¶œë ¥
     UFUNCTION(BlueprintCallable)
     void PrintInventory();
 
-    // ÀÎº¥Åä¸® º¯°æ ÀÌº¥Æ® (UI¿¡¼­ ¹ÙÀÎµùÇÏ¿© »ç¿ë)
+    // ì¸ë²¤í† ë¦¬ ë³€ê²½ ì´ë²¤íŠ¸ (UIì—ì„œ ë°”ì¸ë”©í•˜ì—¬ ì‚¬ìš©)
     UPROPERTY(BlueprintAssignable, Category = "Inventory")
     FOnInventoryUpdated OnInventoryUpdated;
 
     UFUNCTION(BlueprintCallable)
     const TMap<EItemType, int32>& GetInventoryItems() const { return InventoryItems; }
 protected:
-    // ÀÎº¥Åä¸® ½½·Ô °³¼ö Á¦ÇÑ
+    // ì¸ë²¤í† ë¦¬ ìŠ¬ë¡¯ ê°œìˆ˜ ì œí•œ
     UPROPERTY(EditDefaultsOnly, Category = "Inventory")
     int MaxSlots;
 
-    // ÇöÀç ÀÎº¥Åä¸®¿¡ ÀÖ´Â ¾ÆÀÌÅÛ (Á¾·ùº° °³¼ö ÀúÀå)
+    // í˜„ì¬ ì¸ë²¤í† ë¦¬ì— ìˆëŠ” ì•„ì´í…œ (ì¢…ë¥˜ë³„ ê°œìˆ˜ ì €ì¥)
     UPROPERTY(VisibleAnywhere, Category = "Inventory")
     TMap<EItemType, int32> InventoryItems;
 
     UPROPERTY(EditDefaultsOnly, Category = "Inventory")
     TMap<EItemType, TSubclassOf<ACBaseItem>> DropItemClasses;
+
+private:
+    // âœ… ì•„ì´í…œ ì¸ìŠ¤í„´ìŠ¤ë¥¼ ê°€ì ¸ì˜¤ëŠ” í•¨ìˆ˜ ì¶”ê°€
+    ACBaseItem* GetItemInstance(EItemType ItemType);
 };
