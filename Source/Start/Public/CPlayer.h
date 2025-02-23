@@ -28,6 +28,9 @@ protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
+	UPROPERTY(EditDefaultsOnly, Category = "Camera")
+	FVector2D PitchRange = FVector2D(-40, 40);;
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category = "Camera")
 	UCameraComponent* Camera;

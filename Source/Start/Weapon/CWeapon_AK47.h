@@ -15,6 +15,7 @@ UCLASS()
 class START_API ACWeapon_AK47 : public ACWeapon
 {
 	GENERATED_BODY()
+
 public:
 	ACWeapon_AK47();
 protected:
