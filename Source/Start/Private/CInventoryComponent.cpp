@@ -221,3 +221,24 @@ bool UCInventoryComponent::UseItem(EItemType ItemType, ACPlayer* Player)
 
     return true;
 }
+
+void UCInventoryComponent::AddBulletsToInventory(int32 BulletCount)
+{
+    if (BulletCount <= 0) return;
+
+    // 🔹 인벤토리에 총알 개수 추가
+    if (InventoryItems.Contains(EItemType::EIT_Bullet))
+    {
+        InventoryItems[EItemType::EIT_Bullet] += BulletCount;
+    }
+    else
+    {
+        InventoryItems.Add(EItemType::EIT_Bullet, BulletCount);
+    }
+
+    UE_LOG(LogTemp, Warning, TEXT("📦 %d개의 총알이 인벤토리에 추가되었습니다! (현재 총알: %d)"),
+        BulletCount, InventoryItems[EItemType::EIT_Bullet]);
+
+    // 🔹 UI 업데이트
+    OnInventoryUpdated.Broadcast();
+}

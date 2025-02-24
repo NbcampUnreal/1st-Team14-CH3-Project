@@ -48,6 +48,8 @@ public:
 
     UFUNCTION(BlueprintCallable)
     const TMap<EItemType, int32>& GetInventoryItems() const { return InventoryItems; }
+
+    void AddBulletsToInventory(int32 BulletCount);
 protected:
     // 인벤토리 슬롯 개수 제한
     UPROPERTY(EditDefaultsOnly, Category = "Inventory")
