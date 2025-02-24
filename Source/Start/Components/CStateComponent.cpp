@@ -35,6 +35,11 @@ void UCStateComponent::SetDeadMode()
 	ChangeType(EStateType::Dead);
 }
 
+void UCStateComponent::SetInventoryMode()
+{
+	ChangeType(EStateType::Inventory);
+}
+
 void UCStateComponent::ChangeType(EStateType NewType)
 {
 	PreveType = Type;
