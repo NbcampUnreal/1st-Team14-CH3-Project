@@ -144,3 +144,18 @@ void UCWeaponComponent::EndAim()
 	//GetCurrentWeapon()->EndAim();
 }
 
+FVector UCWeaponComponent::GetLefttHandLocation()
+{
+	if (GetCurrentWeapon() == nullptr)
+		return FVector::Zero();
+
+	return GetCurrentWeapon()->GetLeftHandLocation();
+}
+
+void UCWeaponComponent::ToggleAutoFire()
+{
+	if(GetCurrentWeapon() == nullptr)
+		return;
+	GetCurrentWeapon()->ToggleAutoFire();
+}
+

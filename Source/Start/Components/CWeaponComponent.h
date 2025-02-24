@@ -58,6 +58,9 @@ UFUNCTION(BlueprintCallable)
 	void BeginAim();
 UFUNCTION(BlueprintCallable)
 	void EndAim();
+	FVector GetLefttHandLocation();
+UFUNCTION(BlueprintCallable)
+	void ToggleAutoFire();
 
 public:
 	FWeaponTypeChanged OnWeaponTypeChanged;
