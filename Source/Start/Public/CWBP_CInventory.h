@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/WrapBox.h"
+#include "IItemInterface.h"
 #include "CWBP_CInventory.generated.h"
 
 class UCInventoryComponent;
@@ -24,7 +25,7 @@ public:
     UFUNCTION()
     void UpdateInventory();
 
-    void UpdateItemTooltip(FString ItemName, FString ItemDescription);
+    void UpdateItemTooltip(EItemType ItemType);
     void HideItemTooltip();
 
 protected:

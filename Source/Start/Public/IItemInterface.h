@@ -37,4 +37,22 @@ public:
 
     // 🔹 아이템 타입 반환
     virtual EItemType GetItemType() const = 0;
+
+    // ✅ `EItemType`을 문자열로 변환하는 정적 함수 추가
+    static FString GetItemName(EItemType ItemType)
+    {
+        switch (ItemType)
+        {
+        case EItemType::EIT_HealthPotion:
+            return TEXT("Health Potion");
+        case EItemType::EIT_StaminaPotion:
+            return TEXT("Stamina Potion");
+        case EItemType::EIT_Bullet:
+            return TEXT("Bullet");
+        case EItemType::EIT_Grenades:
+            return TEXT("Grenades");
+        default:
+            return TEXT("Unknown Item");
+        }
+    }
 };

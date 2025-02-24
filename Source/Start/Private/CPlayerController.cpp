@@ -26,6 +26,7 @@ ACPlayerController::ACPlayerController()
 	CachedPawn = nullptr;
 	InventoryComponent = nullptr;
 	FireAction = nullptr;
+	ToggleAutoFireAction = nullptr;
 
 	HUDWidgetClass = nullptr;
 	MainMenuWidgetClass = nullptr;

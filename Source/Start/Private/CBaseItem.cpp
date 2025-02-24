@@ -21,6 +21,7 @@ ACBaseItem::ACBaseItem() :
 
     KeyPressedSound = nullptr;
     UseSound = nullptr;
+    ItemIcon = nullptr;
 }
 
 // 🔹 인벤토리에 아이템 추가
