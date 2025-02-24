@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/CWeaponComponent.h" // EWeaponType 사용을 위해 포함
 #include "CHUDWidget.generated.h"
 
 /**
@@ -43,6 +44,18 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "HUD")
 	void ShowItemPickupNotification(const FText& ItemName);
 
+	// 무기 종류 변경에 따른 탄약 표시 여부 업데이트 함수
+	UFUNCTION(BlueprintCallable, Category = "HUD")
+	void UpdateWeaponType(EWeaponType PrevType, EWeaponType NewType); // 델리게이트용
+
+	// 탄약 표시 여부를 제어하는 함수
+	UFUNCTION(BlueprintCallable, Category = "HUD")
+	void SetAmmoVisibility(bool bVisible);
+
+	// 줌인 상태에 따른 크로스헤어 Visibility 제어 함수
+	UFUNCTION(BlueprintCallable, Category = "HUD")
+	void SetCrosshairVisibility(bool bVisible);
+
 protected:
 	virtual void NativeConstruct() override;
 
@@ -57,6 +70,14 @@ protected:
 	// 탄약 정보를 표시할 TextBlock (예: "10 / 30")
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* AmmoText;
+
+	// AmmoIcon을 위한 UImage 바인딩
+	UPROPERTY(meta = (BindWidget))
+	class UImage* AmmoIcon;
+
+	//CrosshairIcon(조준점)을 위한 UImage 바인딩
+	UPROPERTY(meta = (BindWidget))
+	class UImage* CrosshairIcon;
 
 	// 현재 무기 이름을 표시할 TextBlock
 	UPROPERTY(meta = (BindWidget))

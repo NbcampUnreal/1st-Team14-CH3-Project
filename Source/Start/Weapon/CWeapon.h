@@ -121,8 +121,14 @@ protected:
 public:
 	FORCEINLINE bool IsAutoFire() { return bAutoFire; }
 	FORCEINLINE FVector GetLeftHandLocation() { return LeftHandLocation; }
-	FORCEINLINE uint8 GetMaxMagazineCount() { return MaxMagazineCount; }
-	FORCEINLINE uint8 GetCurrentMagazineCount() { return CurrentMagazineCount; }
+
+	// 탄약 정보를 HUD에 제공하기 위한 getter 함수들
+	FORCEINLINE uint8 GetCurrentMagazineCount() const { return CurrentMagazineCount; }
+	FORCEINLINE uint8 GetMaxMagazineCount() const { return MaxMagazineCount; }
+	// 편의상 HUD 연동용 별칭 함수 추가
+	FORCEINLINE uint8 GetMaxAmmo() const { return GetMaxMagazineCount(); }
+	FORCEINLINE uint8 GetCurrentAmmo() const { return GetCurrentMagazineCount(); }
+
 public:	
 	ACWeapon();
 
