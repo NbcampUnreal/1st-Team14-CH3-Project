@@ -154,14 +154,19 @@ public:
 
 	bool CanReload();
 	void Reload();
+
+	void Eject_Magazine();
+	void Spawn_Magazine();
+	void Load_Magazine();
+	void End_Magazine();
 public:
-/*	bool CanAim();
+	bool CanAim();
 	void BeginAim();
-	void EndAim();*/
+	void EndAim();
 
 private:
-	/*UFUNCTION()
-	void OnAiming(float Output);*/
+	UFUNCTION()
+	void OnAiming(float Output);
 
 protected:
 	ACCharacter* OwnerCharacter;
