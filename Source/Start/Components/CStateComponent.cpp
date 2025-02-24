@@ -2,6 +2,7 @@
 
 UCStateComponent::UCStateComponent()
 {
+	Type = EStateType::Idle;  // 초기 상태를 Idle로 설정
 }
 
 

@@ -32,9 +32,26 @@ ACPlayer::ACPlayer()
 void ACPlayer::BeginPlay()
 {
 	Super::BeginPlay();
+
 	CameraComponent->DisableControlRoation();
 	ToggleView(); // 초기 시점 설정
-	//  `ACPlayerController`가 입력 매핑을 관리하므로 별도 설정 불필요
+
+	// ✅ StateComponent 가져오기 (null 체크)
+	if (!StateComponent)
+	{
+		StateComponent = FindComponentByClass<UCStateComponent>();
+	}
+
+	if (StateComponent)
+	{
+		StateComponent->SetIdleMode();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("❌ StateComponent를 찾을 수 없습니다!"));
+	}
+
+	// ✅ MovementComponent 가져오기 (null 체크)
 	if (!MovementComponent)
 	{
 		MovementComponent = FindComponentByClass<UCMovementComponent>();
@@ -42,15 +59,32 @@ void ACPlayer::BeginPlay()
 
 	if (MovementComponent)
 	{
-		MovementComponent->OnWark(); // ✅ 게임 시작 시 기본 이동 모드를 '걷기'로 강제 설정
-		UE_LOG(LogTemp, Warning, TEXT("🏃‍♂️ 게임 시작 시 기본 이동 모드: 걷기(Walk)"));
+		MovementComponent->OnWark(); // ✅ 기본 이동 모드를 '걷기'로 설정
+		UE_LOG(LogTemp, Warning, TEXT("🏃‍♂️ 기본 이동 모드: 걷기(Walk)"));
 	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("❌ MovementComponent를 찾을 수 없습니다!"));
+	}
+
+	// ✅ WeaponComponent 가져오기 (null 체크)
 	if (!WeaponComponent)
 	{
 		WeaponComponent = FindComponentByClass<UCWeaponComponent>();
 	}
-	GetController<APlayerController>()->PlayerCameraManager->ViewPitchMin = PitchRange.X;
-	GetController<APlayerController>()->PlayerCameraManager->ViewPitchMax = PitchRange.Y;
+
+	if (!WeaponComponent)
+	{
+		UE_LOG(LogTemp, Error, TEXT("❌ WeaponComponent를 찾을 수 없습니다!"));
+	}
+
+	// ✅ 카메라 설정
+	APlayerController* PC = GetController<APlayerController>();
+	if (PC)
+	{
+		PC->PlayerCameraManager->ViewPitchMin = PitchRange.X;
+		PC->PlayerCameraManager->ViewPitchMax = PitchRange.Y;
+	}
 }
 
 void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -77,11 +111,57 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 			EnhancedInput->BindAction(PC->FireAction, ETriggerEvent::Started, WeaponComponent, &UCWeaponComponent::Begin_Fire);
 			EnhancedInput->BindAction(PC->FireAction, ETriggerEvent::Completed, WeaponComponent, &UCWeaponComponent::End_Fire);
-			
+			EnhancedInput->BindAction(PC->MoveAction, ETriggerEvent::Triggered, this, &ACPlayer::MoveIfNotInInventory);
+			EnhancedInput->BindAction(PC->JumpAction, ETriggerEvent::Started, this, &ACPlayer::JumpIfNotInInventory);
 			// 🔹 시점 전환 액션 바인딩
 			EnhancedInput->BindAction(PC->SwitchViewAction, ETriggerEvent::Started, this, &ACPlayer::ToggleView);
 		}
 	}
+}
+
+// ✅ 인벤토리 상태일 때 움직임 방지
+void ACPlayer::MoveIfNotInInventory(const FInputActionValue& Value)
+{
+	if (!StateComponent)
+	{
+		StateComponent = FindComponentByClass<UCStateComponent>();
+	}
+
+	if (StateComponent && StateComponent->GetStateType() == EStateType::Inventory)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("❌ 인벤토리 상태에서는 움직일 수 없음!"));
+		return;
+	}
+
+	if (!MovementComponent)
+	{
+		UE_LOG(LogTemp, Error, TEXT("❌ MovementComponent가 없습니다! 이동할 수 없음."));
+		return;
+	}
+
+	MovementComponent->OnMove(Value);
+}
+
+void ACPlayer::JumpIfNotInInventory(const FInputActionValue& Value)
+{
+	if (!StateComponent)
+	{
+		StateComponent = FindComponentByClass<UCStateComponent>();
+	}
+
+	if (StateComponent && StateComponent->GetStateType() == EStateType::Inventory)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("❌ 인벤토리 상태에서는 점프할 수 없음!"));
+		return;
+	}
+
+	if (!MovementComponent)
+	{
+		UE_LOG(LogTemp, Error, TEXT("❌ MovementComponent가 없습니다! 점프할 수 없음."));
+		return;
+	}
+
+	MovementComponent->OnJump(Value);
 }
 
 void ACPlayer::ToggleView()

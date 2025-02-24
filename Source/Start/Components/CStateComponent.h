@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -36,6 +36,7 @@ public:
 public:	
 	UCStateComponent();
 
+	EStateType GetStateType() const { return Type; }  // 🔹 StateType을 반환하는 함수 추가
 protected:
 	virtual void BeginPlay() override;
 
