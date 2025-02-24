@@ -22,6 +22,7 @@ public:
     // 인벤토리 컴포넌트 포인터를 슬롯에 설정하는 함수
     UFUNCTION(BlueprintCallable, Category = "Inventory")
     void SetInventoryComponent(UCInventoryComponent* InInventoryComponent);
+
 protected:
     UPROPERTY(meta = (BindWidget))
     UButton* SlotButton;
@@ -58,7 +59,8 @@ protected:
     FTimerHandle DropCooldownTimerHandle;
 
     virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
-
+    virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+    virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
 
     /*🔹 드랍 플래그 초기화 */
     UFUNCTION()

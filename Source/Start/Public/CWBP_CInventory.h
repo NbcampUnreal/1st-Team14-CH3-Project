@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/WrapBox.h"
 #include "CWBP_CInventory.generated.h"
 
 class UCInventoryComponent;
-class UUniformGridPanel;
 class UCWBP_CInventorySlot;
 
 UCLASS()
@@ -24,6 +24,9 @@ public:
     UFUNCTION()
     void UpdateInventory();
 
+    void UpdateItemTooltip(FString ItemName, FString ItemDescription);
+    void HideItemTooltip();
+
 protected:
     // 인벤토리 컴포넌트 참조
     UPROPERTY()
@@ -33,9 +36,14 @@ protected:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
     TSubclassOf<class UCWBP_CInventorySlot> SlotWidgetClass;
 
-    // 인벤토리 항목들을 배치할 그리드 패널
     UPROPERTY(meta = (BindWidget))
-    UUniformGridPanel* InventoryGrid;
+    UWrapBox* InventoryWrapBox;
+
+    UPROPERTY(meta = (BindWidget))
+    class UTextBlock* T_ItemName;
+
+    UPROPERTY(meta = (BindWidget))
+    class UTextBlock* T_ItemDescription;
 
     // Delegate가 바인딩되어 있는지 여부를 추적하는 플래그
     bool bDelegateBound = false;

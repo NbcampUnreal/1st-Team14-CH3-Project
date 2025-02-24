@@ -1,6 +1,7 @@
 ﻿#include "CWBP_CInventory.h"
 #include "CInventoryComponent.h"
 #include "CWBP_CInventorySlot.h"
+#include "Components/TextBlock.h"
 #include "Components/UniformGridPanel.h"
 
 void UCWBP_CInventory::InitializeInventory(UCInventoryComponent* InInventoryComponent)
@@ -26,12 +27,11 @@ void UCWBP_CInventory::InitializeInventory(UCInventoryComponent* InInventoryComp
 
 void UCWBP_CInventory::UpdateInventory()
 {
-
     UE_LOG(LogTemp, Warning, TEXT(">>> UpdateInventory 함수 호출됨."));
 
-    if (!InventoryComponent || !InventoryGrid)
+    if (!InventoryComponent || !InventoryWrapBox)
     {
-        UE_LOG(LogTemp, Error, TEXT("❌ InventoryComponent 또는 InventoryGrid가 NULL입니다!"));
+        UE_LOG(LogTemp, Error, TEXT("❌ InventoryComponent 또는 InventoryWrapBox가 NULL입니다!"));
         return;
     }
 
@@ -42,24 +42,33 @@ void UCWBP_CInventory::UpdateInventory()
     }
 
     // 기존 슬롯 삭제
-    InventoryGrid->ClearChildren();
+    InventoryWrapBox->ClearChildren();
 
+    // ✅ 정렬 순서를 보장하기 위해 TArray로 변환
+    TArray<EItemType> SortedItems;
+    InventoryComponent->GetInventoryItems().GenerateKeyArray(SortedItems);
+
+    // ✅ 아이템을 저장된 순서대로 정렬 (필요시 사용자 지정 순서 적용 가능)
+    SortedItems.Sort([](const EItemType& A, const EItemType& B)
+        {
+            return static_cast<int32>(A) < static_cast<int32>(B);
+        });
+
+    // ✅ 정렬된 순서대로 슬롯 추가
     int32 SlotIndex = 0;
-    TMap<EItemType, int32> Items = InventoryComponent->GetInventoryItems();
-    UE_LOG(LogTemp, Warning, TEXT("Inventory에 등록된 아이템 수: %d"), Items.Num());
-
-    // 인벤토리 컴포넌트에 등록된 모든 아이템에 대해 슬롯 생성
-    for (const auto& Item : InventoryComponent->GetInventoryItems())
+    for (const EItemType& ItemType : SortedItems)
     {
+        int32 ItemCount = InventoryComponent->GetInventoryItems()[ItemType];
+
         UCWBP_CInventorySlot* SlotWidget = CreateWidget<UCWBP_CInventorySlot>(this, SlotWidgetClass);
         if (SlotWidget)
         {
-            SlotWidget->SetItem(Item.Key, Item.Value);
-            // 여기서 InventoryComponent 전달
+            SlotWidget->SetItem(ItemType, ItemCount);
             SlotWidget->SetInventoryComponent(InventoryComponent);
 
-            // 한 행에 5개씩 배치 (행: SlotIndex / 5, 열: SlotIndex % 5)
-            InventoryGrid->AddChildToUniformGrid(SlotWidget, SlotIndex / 5, SlotIndex % 5);
+            // 🔹 WrapBox에 추가하여 자동 정렬 유지
+            InventoryWrapBox->AddChild(SlotWidget);
+
             SlotIndex++;
         }
         else
@@ -68,6 +77,37 @@ void UCWBP_CInventory::UpdateInventory()
         }
     }
 }
+
+void UCWBP_CInventory::UpdateItemTooltip(FString ItemName, FString ItemDescription)
+{
+    if (T_ItemName)
+    {
+        T_ItemName->SetText(FText::FromString(ItemName));
+        T_ItemName->SetVisibility(ESlateVisibility::Visible);
+    }
+
+    if (T_ItemDescription)
+    {
+        T_ItemDescription->SetText(FText::FromString(ItemDescription));
+        T_ItemDescription->SetVisibility(ESlateVisibility::Visible);
+    }
+}
+
+void UCWBP_CInventory::HideItemTooltip()
+{
+    if (T_ItemName)
+    {
+        T_ItemName->SetText(FText::GetEmpty());
+        T_ItemName->SetVisibility(ESlateVisibility::Hidden);
+    }
+
+    if (T_ItemDescription)
+    {
+        T_ItemDescription->SetText(FText::GetEmpty());
+        T_ItemDescription->SetVisibility(ESlateVisibility::Hidden);
+    }
+}
+
 
 void UCWBP_CInventory::NativeDestruct()
 {

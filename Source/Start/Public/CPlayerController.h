@@ -64,6 +64,9 @@ public:
 	UFUNCTION()
 	void UpdateInventoryUI();  // 🔹 UI 업데이트 함수 추가
 
+	UFUNCTION()
+	void HandleLeftClick();
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<UCWBP_CInventory> InventoryWidgetClass;
 
@@ -71,6 +74,8 @@ public:
 	UCWBP_CInventory* InventoryWidget;
 
 	bool bIsInventoryOpen;
+
+	UCWBP_CInventory* GetInventoryWidget() const { return InventoryWidget; }
 protected:
 
 	virtual void BeginPlay() override;
