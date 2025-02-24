@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -14,6 +14,7 @@ enum class EStateType : uint8
 	Action,
 	Hitted,
 	Dead,
+	Inventory,
 	Max
 };
 
@@ -30,10 +31,12 @@ public:
 	FORCEINLINE bool IsActionMode() { return Type == EStateType::Action; }
 	FORCEINLINE bool IsHittedMode() { return Type == EStateType::Hitted; }
 	FORCEINLINE bool IsDeadMode() { return Type == EStateType::Dead; }
+	FORCEINLINE bool IsInventoryMode() { return Type == EStateType::Inventory; }
 
 public:	
 	UCStateComponent();
 
+	EStateType GetStateType() const { return Type; }  // 🔹 StateType을 반환하는 함수 추가
 protected:
 	virtual void BeginPlay() override;
 
@@ -43,6 +46,7 @@ public:
 	void SetActionMode();
 	void SetHittedMode();
 	void SetDeadMode();
+	void SetInventoryMode();
 
 private:
 	void ChangeType(EStateType NewType);

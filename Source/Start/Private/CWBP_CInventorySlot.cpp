@@ -63,13 +63,12 @@ void UCWBP_CInventorySlot::NativeOnMouseEnter(const FGeometry& InGeometry, const
     UCWBP_CInventory* InventoryWidget = CustomPC->GetInventoryWidget();
     if (!InventoryWidget) return;
 
-    // 🔹 아이템 이름 및 설명 설정
-    FString ItemName = UEnum::GetValueAsString(StoredItemType);
-    FString ItemDescription = TEXT("이 아이템은 특정 효과가 있습니다.");
-
     // ✅ 툴팁 업데이트 함수 호출
-    InventoryWidget->UpdateItemTooltip(ItemName, ItemDescription);
+    InventoryWidget->UpdateItemTooltip(StoredItemType);
+
+    UE_LOG(LogTemp, Warning, TEXT("✅ 아이템 툴팁 표시 - 타입: %d"), static_cast<int32>(StoredItemType));
 }
+
 
 void UCWBP_CInventorySlot::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
 {

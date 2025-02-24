@@ -5,6 +5,7 @@
 
 #include "CBullet.h"
 #include "CCharacter.h"
+#include "CPlayer.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CCameraComponent.h"
 #include "Components/CStateComponent.h"
@@ -84,7 +85,21 @@ void ACWeapon::BeginPlay()
 		AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative,true), HolsterSocketName);
 
 	
-
+	ACPlayer* player = Cast<ACPlayer>(OwnerCharacter);
+	if (player != NULL)
+	{
+		//Aim BaseData Setting
+		USpringArmComponent* SpringArm = Cast<USpringArmComponent>(player->GetComponentByClass(USpringArmComponent::StaticClass()));
+		UCameraComponent* camera = Cast<UCameraComponent>(player->GetComponentByClass(UCameraComponent::StaticClass()));
+		if (SpringArm != nullptr && camera != nullptr)
+		{
+			BaseData.TargetArmLength = SpringArm->TargetArmLength;
+			BaseData.SocketOffset = SpringArm->SocketOffset;
+			BaseData.bEnableCameraLag = SpringArm->bEnableCameraLag;
+			BaseData.FieldOfView = camera->FieldOfView;
+		}
+	}
+	BaseData.SetDataByNoneCurve(OwnerCharacter);
 	State = Cast<UCStateComponent>(OwnerCharacter->GetComponentByClass(UCStateComponent::StaticClass()));
 	Camera = Cast<UCCameraComponent>(OwnerCharacter->GetComponentByClass(UCCameraComponent::StaticClass()));
 	if (AimCurve != nullptr)
@@ -111,6 +126,7 @@ bool ACWeapon::CanEquip()
 	b |= bEquipping;
 	b |= bReload;
 	b |= bFiring;
+	b |= State->IsInventoryMode() == true;
 	
 	return !b;
 }
@@ -156,6 +172,7 @@ bool ACWeapon::CanUnequip()
 	b |= bEquipping;
 	b |= bReload;
 	b |= bFiring;
+	b |= State->IsInventoryMode() == true;
 	
 	return !b;
 }
@@ -173,7 +190,7 @@ bool ACWeapon::CanFire()
 	b |= bEquipping;
 	b |= bReload;
 	b |= bFiring;
-
+	b |= State->IsInventoryMode() == true;
 	return !b;
 }
 
@@ -280,7 +297,7 @@ bool ACWeapon::CanReload()
 	bool b = false;
 	b |= bEquipping;
 	b |= bReload;
-
+	b |= State->IsInventoryMode() == true;
 	return !b;
 }
 
@@ -316,7 +333,7 @@ bool ACWeapon::CanAim()
 	b |= bEquipping;
 	b |= bReload;
 	b |= bFiring;
-
+	b |= State->IsInventoryMode() == true;
 	return !b;
 }
 

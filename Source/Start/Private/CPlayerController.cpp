@@ -5,6 +5,8 @@
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/Pawn.h"
+#include "CPlayer.h"
+
 
 ACPlayerController::ACPlayerController()
 {
@@ -26,6 +28,7 @@ ACPlayerController::ACPlayerController()
 	CachedPawn = nullptr;
 	InventoryComponent = nullptr;
 	FireAction = nullptr;
+	ToggleAutoFireAction = nullptr;
 
 	HUDWidgetClass = nullptr;
 	MainMenuWidgetClass = nullptr;
@@ -187,13 +190,19 @@ void ACPlayerController::ToggleInventory()
 		PawnInventoryComponent = MyPawn->FindComponentByClass<UCInventoryComponent>();
 	}
 
-	if (bIsInventoryOpen)
+	ACPlayer* PlayerCharacter = Cast<ACPlayer>(GetPawn());  // ✅ 지역 변수명 변경
+	if (!PlayerCharacter) return;
+
+	UCStateComponent* StateComponent = PlayerCharacter->FindComponentByClass<UCStateComponent>(); // 🔹 상태 컴포넌트 가져오기
+
+	if (bIsInventoryOpen)  // ✅ 인벤토리를 닫을 때
 	{
 		if (InventoryWidget && InventoryWidget->IsInViewport())
 		{
 			InventoryWidget->RemoveFromParent();
 			bShowMouseCursor = false;
-			SetInputMode(FInputModeGameOnly()); // UI 닫을 때 입력 모드 변경
+			SetInputMode(FInputModeGameOnly());
+
 			UE_LOG(LogTemp, Warning, TEXT("🔹 인벤토리 닫기"));
 		}
 
@@ -202,8 +211,14 @@ void ACPlayerController::ToggleInventory()
 			PawnInventoryComponent->OnInventoryUpdated.RemoveDynamic(this, &ACPlayerController::UpdateInventoryUI);
 			UE_LOG(LogTemp, Warning, TEXT("🛑 InventoryComponent 델리게이트 해제됨."));
 		}
+
+		if (StateComponent)
+		{
+			StateComponent->SetIdleMode();  // 🔹 인벤토리를 닫으면 다시 Idle 상태로 전환
+			UE_LOG(LogTemp, Warning, TEXT("🔄 캐릭터 상태: Idle로 변경됨"));
+		}
 	}
-	else
+	else  // ✅ 인벤토리를 열 때
 	{
 		if (!InventoryWidget)
 		{
@@ -232,7 +247,6 @@ void ACPlayerController::ToggleInventory()
 			InventoryWidget->SetVisibility(ESlateVisibility::Visible);
 			bShowMouseCursor = true;
 
-			// ✅ UI 입력 모드로 변경하여 클릭 이벤트가 정상 작동하도록 설정
 			FInputModeGameAndUI InputMode;
 			InputMode.SetWidgetToFocus(InventoryWidget->TakeWidget());
 			InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
@@ -240,12 +254,17 @@ void ACPlayerController::ToggleInventory()
 
 			UE_LOG(LogTemp, Warning, TEXT("✅ InventoryWidget 화면에 추가됨"));
 		}
+
+		if (StateComponent)
+		{
+			StateComponent->SetInventoryMode();  // 🔹 인벤토리 상태 적용
+			UE_LOG(LogTemp, Warning, TEXT("🔄 캐릭터 상태: Inventory로 변경됨"));
+		}
 	}
 
 	bIsInventoryOpen = !bIsInventoryOpen;
 	UE_LOG(LogTemp, Warning, TEXT("현재 인벤토리 상태: %s"), bIsInventoryOpen ? TEXT("열림") : TEXT("닫힘"));
 }
-
 
 
 void ACPlayerController::PickupItem()

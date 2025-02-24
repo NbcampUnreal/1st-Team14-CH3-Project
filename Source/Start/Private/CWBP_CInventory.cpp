@@ -78,34 +78,34 @@ void UCWBP_CInventory::UpdateInventory()
     }
 }
 
-void UCWBP_CInventory::UpdateItemTooltip(FString ItemName, FString ItemDescription)
+void UCWBP_CInventory::UpdateItemTooltip(EItemType ItemType)
 {
-    if (T_ItemName)
-    {
-        T_ItemName->SetText(FText::FromString(ItemName));
-        T_ItemName->SetVisibility(ESlateVisibility::Visible);
-    }
+    if (!T_ItemName || !T_ItemDescription) return;
 
-    if (T_ItemDescription)
-    {
-        T_ItemDescription->SetText(FText::FromString(ItemDescription));
-        T_ItemDescription->SetVisibility(ESlateVisibility::Visible);
-    }
+    // ✅ `EItemType`을 문자열로 변환 후, UI에 표시할 이름 설정
+    FString ItemName = UEnum::GetDisplayValueAsText(ItemType).ToString();
+    FString ItemDescription = TEXT("이 아이템은 특정 효과가 있습니다."); // 설명 추가 가능
+
+    // ✅ UI 업데이트
+    T_ItemName->SetText(FText::FromString(ItemName));
+    T_ItemDescription->SetText(FText::FromString(ItemDescription));
+
+    // ✅ 툴팁이 보이도록 강제 활성화
+    T_ItemName->SetVisibility(ESlateVisibility::Visible);
+    T_ItemDescription->SetVisibility(ESlateVisibility::Visible);
+
+    UE_LOG(LogTemp, Warning, TEXT("📌 아이템 툴팁 업데이트 - 이름: %s"), *ItemName);
 }
 
 void UCWBP_CInventory::HideItemTooltip()
 {
-    if (T_ItemName)
-    {
-        T_ItemName->SetText(FText::GetEmpty());
-        T_ItemName->SetVisibility(ESlateVisibility::Hidden);
-    }
+    if (!T_ItemName || !T_ItemDescription) return;
 
-    if (T_ItemDescription)
-    {
-        T_ItemDescription->SetText(FText::GetEmpty());
-        T_ItemDescription->SetVisibility(ESlateVisibility::Hidden);
-    }
+    // ✅ UI 숨기기
+    T_ItemName->SetVisibility(ESlateVisibility::Hidden);
+    T_ItemDescription->SetVisibility(ESlateVisibility::Hidden);
+
+    UE_LOG(LogTemp, Warning, TEXT("📌 아이템 툴팁 숨김"));
 }
 
 

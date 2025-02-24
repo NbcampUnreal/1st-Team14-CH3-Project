@@ -26,6 +26,7 @@ public:
 	float FieldOfView;
 	UPROPERTY(VisibleAnywhere)
 	bool bEnableCameraLag;
+
 public:
 	void SetData(class ACCharacter*  InOwner);
 	void SetDataByNoneCurve(class ACCharacter*  InOwner);
@@ -177,7 +178,6 @@ private:
 	bool bFiring;
 	bool bReload;
 	bool bAutoFire = true;
-
 protected:
 	uint8 CurrentMagazineCount;
 };

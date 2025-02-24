@@ -2,6 +2,7 @@
 
 UCStateComponent::UCStateComponent()
 {
+	Type = EStateType::Idle;  // 초기 상태를 Idle로 설정
 }
 
 
@@ -33,6 +34,11 @@ void UCStateComponent::SetHittedMode()
 void UCStateComponent::SetDeadMode()
 {
 	ChangeType(EStateType::Dead);
+}
+
+void UCStateComponent::SetInventoryMode()
+{
+	ChangeType(EStateType::Inventory);
 }
 
 void UCStateComponent::ChangeType(EStateType NewType)
