@@ -48,6 +48,8 @@ public:
 	UInputAction* FireAction;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	UInputAction* PickupItemAction;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UInputAction* ToggleAutoFireAction;
 
 	// HUD 위젯 블루프린트 클래스 (게임 플레이 시)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
