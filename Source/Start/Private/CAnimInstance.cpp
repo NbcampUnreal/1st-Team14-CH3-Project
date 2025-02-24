@@ -23,6 +23,7 @@ void UCAnimInstance::NativeBeginPlay()
 		return;
 
 	Weapon->OnWeaponTypeChanged.AddDynamic(this, &UCAnimInstance::OnWeaponTypeChanged);
+	bUseHandIk = true;
 }
 
 void UCAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
@@ -44,6 +45,9 @@ void UCAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	Yaw = UKismetMathLibrary::FInterpTo(Yaw, UKismetMathLibrary::Clamp(OwnerCharacter->GetBaseAimRotation().Yaw, -90,90), DeltaSeconds,25);
 	bCanMove = Speed > 3.0f && Movement->GetCurrentAcceleration() != FVector::ZeroVector;
 	bIsFalling = Movement->IsFalling();
+
+	bUseHandIk = Weapon->IsUnarmedModeMode() == false;
+	LeftHandLocation = Weapon->GetLefttHandLocation();
 }
 
 void UCAnimInstance::OnWeaponTypeChanged(EWeaponType InPrevType, EWeaponType InNewType)
