@@ -1,6 +1,4 @@
 #include "CWeapon_AK47.h"
-#include "CPlayer.h"
-#include "Components/CCameraComponent.h"
 #include "Camera/CameraShakeBase.h"
 
 ACWeapon_AK47::ACWeapon_AK47()
@@ -57,14 +55,5 @@ ACWeapon_AK47::ACWeapon_AK47()
 void ACWeapon_AK47::BeginPlay()
 {
 	Super::BeginPlay();
-	ACPlayer* player = Cast<ACPlayer>(OwnerCharacter);
-	if (player != NULL)
-	{
-		//Aim BaseData Setting
-		BaseData.TargetArmLength = player->GetSpringArm()->TargetArmLength;
-		BaseData.SocketOffset = player->GetSpringArm()->SocketOffset;
-		BaseData.bEnableCameraLag = player->GetSpringArm()->bEnableCameraLag;
-		BaseData.FieldOfView = 90;
-	}
-	BaseData.SetDataByNoneCurve(OwnerCharacter);
+
 }
