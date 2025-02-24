@@ -43,7 +43,7 @@ void ACBullet::BeginPlay()
 
 void ACBullet::Shoot(const FVector& InDirection)
 {
-	SetLifeSpan(3);
+	SetLifeSpan(LifeTime);
 	Projectile->Velocity = InDirection*Projectile->InitialSpeed;
 	Projectile->SetActive(true);
 }
