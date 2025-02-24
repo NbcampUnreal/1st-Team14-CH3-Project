@@ -46,10 +46,10 @@ ACWeapon::ACWeapon()
 	SetRootComponent(Root);
 	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>("Mesh");
 	Mesh->SetupAttachment(Root);
-	/*Timeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("Time Line"));
+	Timeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("Time Line"));
 	static ConstructorHelpers::FObjectFinder<UCurveFloat> curve(TEXT("/Script/Engine.CurveFloat'/Game/Blueprints/Weapon/Curve_Aim.Curve_Aim'"));
 	if (curve.Object != nullptr)
-		AimCurve = curve.Object;*/
+		AimCurve = curve.Object;
 
 	static ConstructorHelpers::FObjectFinder<UMaterialInstanceConstant> decal(TEXT("/Script/Engine.MaterialInstanceConstant'/Game/Assets/Material/M_Decal_Inst.M_Decal_Inst'"));
 	if (decal.Succeeded() == true)
@@ -83,23 +83,22 @@ void ACWeapon::BeginPlay()
 	if (HolsterSocketName.IsValid() == true)
 		AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative,true), HolsterSocketName);
 
-	//BaseData.SetDataByNoneCurve(OwnerCharacter);
+	
 
 	State = Cast<UCStateComponent>(OwnerCharacter->GetComponentByClass(UCStateComponent::StaticClass()));
 	Camera = Cast<UCCameraComponent>(OwnerCharacter->GetComponentByClass(UCCameraComponent::StaticClass()));
-	/*if (AimCurve != nullptr)
+	if (AimCurve != nullptr)
 	{
 		FOnTimelineFloat timeline;
 		timeline.BindUFunction(this,"OnAiming");
 		Timeline->AddInterpFloat(AimCurve,timeline);
 		Timeline->SetLooping(false);
 		Timeline->SetPlayRate(AimSpeed);
-	}*/
+	}
 
 	CurrentMagazineCount = MaxMagazineCount;
 }
 
-// Called every frame
 void ACWeapon::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -264,7 +263,7 @@ void ACWeapon::OnFireing()
 			bullet->Shoot(direction);
 	}
 
-	if (CurrentMagazineCount >= 1)
+	if (CurrentMagazineCount > 1)
 		CurrentMagazineCount--;
 	else
 		if (CanReload() == true)
@@ -295,46 +294,62 @@ void ACWeapon::Reload()
 		OwnerCharacter->PlayAnimMontage(ReloadMontage,ReloadPlayRate);
 }
 
-//bool ACWeapon::CanAim()
-//{
-//	bool b = false;
-//	b |= bEquipping;
-//	b |= bReload;
-//	b |= bFiring;
-//
-//	return !b;
-//}
+void ACWeapon::Eject_Magazine()
+{
+}
 
-//void ACWeapon::BeginAim()
-//{
-//	bInAim = true;
-//	if (AimCurve != nullptr)
-//	{
-//		Timeline->PlayFromStart();
-//		AimData.SetData(OwnerCharacter);
-//		return;
-//	}
-//	AimData.SetDataByNoneCurve(OwnerCharacter);
-//}
+void ACWeapon::Spawn_Magazine()
+{
+}
 
-//void ACWeapon::EndAim()
-//{
-//	if  (bInAim == false)
-//		return;
-//	bInAim = false;
-//
-//	if (AimCurve != nullptr)
-//	{
-//		Timeline->PlayFromStart();
-//		BaseData.SetData(OwnerCharacter);
-//		return;
-//	}
-//	BaseData.SetDataByNoneCurve(OwnerCharacter);
-//}
+void ACWeapon::Load_Magazine()
+{
+}
 
-//void ACWeapon::OnAiming(float Output)
-//{
-//	UCameraComponent* camera = Cast<UCameraComponent>(OwnerCharacter->GetComponentByClass(UCameraComponent::StaticClass()));
-//	UE_LOG(LogTemp, Error, TEXT("Test"));
-//	camera->FieldOfView = FMath::Lerp(AimData.FieldOfView,BaseData.FieldOfView,Output);
-//}
+void ACWeapon::End_Magazine()
+{
+}
+
+bool ACWeapon::CanAim()
+{
+	bool b = false;
+	b |= bEquipping;
+	b |= bReload;
+	b |= bFiring;
+
+	return !b;
+}
+
+void ACWeapon::BeginAim()
+{
+	bInAim = true;
+	if (AimCurve != nullptr)
+	{
+		Timeline->PlayFromStart();
+		AimData.SetData(OwnerCharacter);
+		return;
+	}
+	AimData.SetDataByNoneCurve(OwnerCharacter);
+}
+
+void ACWeapon::EndAim()
+{
+	if  (bInAim == false)
+		return;
+	bInAim = false;
+
+	if (AimCurve != nullptr)
+	{
+		Timeline->PlayFromStart();
+		BaseData.SetData(OwnerCharacter);
+		return;
+	}
+	BaseData.SetDataByNoneCurve(OwnerCharacter);
+}
+
+void ACWeapon::OnAiming(float Output)
+{
+	UCameraComponent* camera = Cast<UCameraComponent>(OwnerCharacter->GetComponentByClass(UCameraComponent::StaticClass()));
+	UE_LOG(LogTemp, Error, TEXT("Test"));
+	camera->FieldOfView = FMath::Lerp(AimData.FieldOfView,BaseData.FieldOfView,Output);
+}

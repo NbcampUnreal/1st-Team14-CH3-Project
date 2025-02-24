@@ -22,18 +22,12 @@ ACWeapon_AK47::ACWeapon_AK47()
 	
 
 	//Aim
-	/*{
-		BaseData.bEnableCameraLag = true;
-		BaseData.TargetArmLength = 300;
-		BaseData.SocketOffset = FVector(0, 50, 15);
-		BaseData.FieldOfView = 90;
-
-
+	{
 		AimData.bEnableCameraLag = true;
 		AimData.TargetArmLength = 30;
 		AimData.SocketOffset = FVector(-55, 0, 10);
 		AimData.FieldOfView = 55;
-	}*/
+	}
 
 	//Fire
 	{
@@ -63,4 +57,14 @@ ACWeapon_AK47::ACWeapon_AK47()
 void ACWeapon_AK47::BeginPlay()
 {
 	Super::BeginPlay();
+	ACPlayer* player = Cast<ACPlayer>(OwnerCharacter);
+	if (player != NULL)
+	{
+		//Aim BaseData Setting
+		BaseData.TargetArmLength = player->GetSpringArm()->TargetArmLength;
+		BaseData.SocketOffset = player->GetSpringArm()->SocketOffset;
+		BaseData.bEnableCameraLag = player->GetSpringArm()->bEnableCameraLag;
+		BaseData.FieldOfView = 90;
+	}
+	BaseData.SetDataByNoneCurve(OwnerCharacter);
 }

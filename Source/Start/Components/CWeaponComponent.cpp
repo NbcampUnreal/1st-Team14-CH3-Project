@@ -133,7 +133,7 @@ void UCWeaponComponent::BeginAim()
 	if (GetCurrentWeapon() == nullptr)
 		return;
 
-	//GetCurrentWeapon()->BeginAim();
+	GetCurrentWeapon()->BeginAim();
 }
 
 void UCWeaponComponent::EndAim()
@@ -141,7 +141,7 @@ void UCWeaponComponent::EndAim()
 	if (GetCurrentWeapon() == nullptr)
 		return;
 
-	//GetCurrentWeapon()->EndAim();
+	GetCurrentWeapon()->EndAim();
 }
 
 FVector UCWeaponComponent::GetLefttHandLocation()
