@@ -4,12 +4,29 @@
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
 #include "CPlayerController.h"
+#include "CBulletBoxItem.h"
 #include "GameFramework/Actor.h"
 
 // 생성자: 최대 슬롯 수 초기화
 UCInventoryComponent::UCInventoryComponent()
 {
     MaxSlots = 12;
+}
+
+void UCInventoryComponent::BeginPlay()
+{
+    Super::BeginPlay();  // 🔹 부모 클래스의 BeginPlay 호출 (중요)
+
+    // ✅ DropItemClasses에 BulletBoxItem 추가
+    if (ACBulletBoxItem::StaticClass())
+    {
+        DropItemClasses.Add(EItemType::EIT_BulletBox, ACBulletBoxItem::StaticClass());
+        UE_LOG(LogTemp, Warning, TEXT("✅ BulletBox 아이템이 DropItemClasses에 정상 등록됨."));
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("❌ ACBulletBoxItem::StaticClass()가 NULL임. DropItemClasses에 추가 실패!"));
+    }
 }
 
 ACBaseItem* UCInventoryComponent::GetItemInstance(EItemType ItemType)
@@ -224,21 +241,21 @@ bool UCInventoryComponent::UseItem(EItemType ItemType, ACPlayer* Player)
 
 void UCInventoryComponent::AddBulletsToInventory(int32 BulletCount)
 {
-    if (BulletCount <= 0) return;
+	if (BulletCount <= 0) return;
 
-    // 🔹 인벤토리에 총알 개수 추가
-    if (InventoryItems.Contains(EItemType::EIT_Bullet))
-    {
-        InventoryItems[EItemType::EIT_Bullet] += BulletCount;
-    }
-    else
-    {
-        InventoryItems.Add(EItemType::EIT_Bullet, BulletCount);
-    }
+	// 🔹 인벤토리에 총알 개수 추가
+	if (InventoryItems.Contains(EItemType::EIT_Bullet))
+	{
+		InventoryItems[EItemType::EIT_Bullet] += BulletCount;
+	}
+	else
+	{
+		InventoryItems.Add(EItemType::EIT_Bullet, BulletCount);
+	}
 
-    UE_LOG(LogTemp, Warning, TEXT("📦 %d개의 총알이 인벤토리에 추가되었습니다! (현재 총알: %d)"),
+	UE_LOG(LogTemp, Warning, TEXT("📦 %d개의 총알이 인벤토리에 추가되었습니다! (현재 총알: %d)"), 
         BulletCount, InventoryItems[EItemType::EIT_Bullet]);
 
-    // 🔹 UI 업데이트
-    OnInventoryUpdated.Broadcast();
+	// 🔹 UI 업데이트
+	OnInventoryUpdated.Broadcast();
 }

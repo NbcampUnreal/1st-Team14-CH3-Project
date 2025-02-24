@@ -18,6 +18,7 @@ class START_API UCInventoryComponent : public UActorComponent
 
 public:
     UCInventoryComponent();
+    void BeginPlay();
 
     // 아이템 추가
     UFUNCTION(BlueprintCallable, Category = "Inventory")

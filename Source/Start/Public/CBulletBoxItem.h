@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "CBaseItem.h"
+#include "CPlayer.h"
 #include "CBulletBoxItem.generated.h"
 
 
@@ -12,6 +13,8 @@ class START_API ACBulletBoxItem : public ACBaseItem
 	
 public:
 	ACBulletBoxItem();
+	virtual void Use(AActor* Target) override;
+	void GiveBulletsToPlayer(ACCharacter* PlayerCharacter);
 
 protected:
 	virtual void KeyPressedActivate(AActor* Activator) override;
