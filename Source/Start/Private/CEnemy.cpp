@@ -59,12 +59,6 @@ void ACEnemy::SetWalk()
 	MovementComponent->OnWark();
 }
 
-void ACEnemy::SetPlayerStun(AActor* Player)
-{
-	ACCharacter* Charactor = Cast<ACCharacter>(Player);
-	//Charactor->FindComponentByClass<CMovementComponent>();
-}
-
 
 void ACEnemy::BeginPlay()
 {
