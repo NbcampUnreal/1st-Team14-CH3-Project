@@ -22,7 +22,7 @@ public:
 	FORCEINLINE USpringArmComponent* GetSpringArm() const {return SpringArm;}
 public:
 	ACPlayer();
-
+	FORCEINLINE UCameraComponent* GetCamera() const { return Camera; }
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;

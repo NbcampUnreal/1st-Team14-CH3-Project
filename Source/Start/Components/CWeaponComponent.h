@@ -6,7 +6,7 @@
 
 class ACCharacter;
 
-UENUM(BlueprintType)
+UENUM(meta = (BlueprintSpawnableComponent))
 enum class EWeaponType : uint8
 {
 	Rifle, Pistol, Knife, Max	
@@ -14,7 +14,7 @@ enum class EWeaponType : uint8
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FWeaponTypeChanged, EWeaponType, InPrevType, EWeaponType, InNewType);
 
-UCLASS ()
+UCLASS (ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class START_API UCWeaponComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -58,6 +58,11 @@ UFUNCTION(BlueprintCallable)
 	void BeginAim();
 UFUNCTION(BlueprintCallable)
 	void EndAim();
+	FVector GetLefttHandLocation();
+UFUNCTION(BlueprintCallable)
+	void ToggleAutoFire();
+UFUNCTION(BlueprintCallable)
+	void Reload();
 
 public:
 	FWeaponTypeChanged OnWeaponTypeChanged;

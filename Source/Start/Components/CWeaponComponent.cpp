@@ -133,7 +133,7 @@ void UCWeaponComponent::BeginAim()
 	if (GetCurrentWeapon() == nullptr)
 		return;
 
-	//GetCurrentWeapon()->BeginAim();
+	GetCurrentWeapon()->BeginAim();
 }
 
 void UCWeaponComponent::EndAim()
@@ -141,6 +141,28 @@ void UCWeaponComponent::EndAim()
 	if (GetCurrentWeapon() == nullptr)
 		return;
 
-	//GetCurrentWeapon()->EndAim();
+	GetCurrentWeapon()->EndAim();
+}
+
+FVector UCWeaponComponent::GetLefttHandLocation()
+{
+	if (GetCurrentWeapon() == nullptr)
+		return FVector::Zero();
+
+	return GetCurrentWeapon()->GetLeftHandLocation();
+}
+
+void UCWeaponComponent::ToggleAutoFire()
+{
+	if(GetCurrentWeapon() == nullptr)
+		return;
+	GetCurrentWeapon()->ToggleAutoFire();
+}
+
+void UCWeaponComponent::Reload()
+{
+	if(GetCurrentWeapon() == nullptr)
+		return;
+	GetCurrentWeapon()->Reload();
 }
 

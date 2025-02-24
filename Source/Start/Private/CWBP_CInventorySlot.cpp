@@ -1,10 +1,13 @@
 ﻿#include "CWBP_CInventorySlot.h"
 #include "CPlayer.h"
+#include "CWBP_CInventory.h"
 #include "Components/Button.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "CInventoryComponent.h"
-
+#include "GameFramework/HUD.h"
+#include "CPlayerController.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
 
 void UCWBP_CInventorySlot::NativeConstruct()
 {
@@ -12,6 +15,7 @@ void UCWBP_CInventorySlot::NativeConstruct()
 
     if (SlotButton)
     {
+        SlotButton->OnClicked.AddDynamic(this, &UCWBP_CInventorySlot::OnSlotClicked);
     }
 }
 
@@ -26,7 +30,7 @@ FReply UCWBP_CInventorySlot::NativeOnMouseButtonDown(const FGeometry& InGeometry
     // 🔹 왼쪽 클릭 감지
     if (InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
     {
-        UE_LOG(LogTemp, Warning, TEXT("✅ 왼쪽 클릭 감지됨 - 아이템 사용"));
+        UE_LOG(LogTemp, Warning, TEXT("✅ 왼쪽 클릭 감지됨 - 아이템 사용 시도"));
         OnSlotClicked();
         return FReply::Handled();
     }
@@ -42,38 +46,88 @@ FReply UCWBP_CInventorySlot::NativeOnMouseButtonDown(const FGeometry& InGeometry
     return Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
 }
 
+void UCWBP_CInventorySlot::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+    Super::NativeOnMouseEnter(InGeometry, InMouseEvent);
+
+    if (!InventoryComponent || !InventoryComponent->GetOwner()) return;
+
+    // 🔹 플레이어 컨트롤러 가져오기
+    APlayerController* PC = Cast<APlayerController>(InventoryComponent->GetOwner()->GetInstigatorController());
+    if (!PC) return;
+
+    ACPlayerController* CustomPC = Cast<ACPlayerController>(PC);
+    if (!CustomPC) return;
+
+    // 🔹 인벤토리 위젯 가져오기
+    UCWBP_CInventory* InventoryWidget = CustomPC->GetInventoryWidget();
+    if (!InventoryWidget) return;
+
+    // 🔹 아이템 이름 및 설명 설정
+    FString ItemName = UEnum::GetValueAsString(StoredItemType);
+    FString ItemDescription = TEXT("이 아이템은 특정 효과가 있습니다.");
+
+    // ✅ 툴팁 업데이트 함수 호출
+    InventoryWidget->UpdateItemTooltip(ItemName, ItemDescription);
+}
+
+void UCWBP_CInventorySlot::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
+{
+    Super::NativeOnMouseLeave(InMouseEvent);
+
+    if (!InventoryComponent || !InventoryComponent->GetOwner()) return;
+
+    // 🔹 플레이어 컨트롤러 가져오기
+    APlayerController* PC = Cast<APlayerController>(InventoryComponent->GetOwner()->GetInstigatorController());
+    if (!PC) return;
+
+    ACPlayerController* CustomPC = Cast<ACPlayerController>(PC);
+    if (!CustomPC) return;
+
+    // 🔹 인벤토리 위젯 가져오기
+    UCWBP_CInventory* InventoryWidget = CustomPC->GetInventoryWidget();
+    if (!InventoryWidget) return;
+
+    // ✅ 툴팁 숨기기 함수 호출
+    InventoryWidget->HideItemTooltip();
+}
+
 void UCWBP_CInventorySlot::SetItem(EItemType ItemType, int32 ItemCount)
 {
     StoredItemType = ItemType;
     StoredItemCount = ItemCount;
 
-    UE_LOG(LogTemp, Warning, TEXT("✅ 슬롯에 아이템 추가: %d (수량: %d)"), (int32)ItemType, ItemCount);
-
     if (ItemCountText)
     {
-        ItemCountText->SetText(FText::AsNumber(StoredItemCount));
+        ItemCountText->SetText(ItemCount > 0 ? FText::AsNumber(StoredItemCount) : FText::GetEmpty());
     }
 
-    // 블루프린트에서 아이콘 가져오기 (디버그 로그 추가)
     if (ItemImage)
     {
-        if (ItemBlueprintMap.Contains(ItemType))
+        if (ItemType == EItemType::EIT_None)
         {
-            TSubclassOf<ACBaseItem> BPClass = ItemBlueprintMap[ItemType];
-            if (BPClass)
+            ItemImage->SetVisibility(ESlateVisibility::Hidden);  // ✅ 빈 슬롯이면 숨김
+        }
+        else
+        {
+            ItemImage->SetVisibility(ESlateVisibility::Visible);
+
+            if (ItemBlueprintMap.Contains(ItemType))
             {
-                ACBaseItem* DefaultObj = BPClass.GetDefaultObject();
-                if (DefaultObj && DefaultObj->ItemIcon)
+                TSubclassOf<ACBaseItem> BPClass = ItemBlueprintMap[ItemType];
+                if (BPClass)
                 {
-                    UE_LOG(LogTemp, Warning, TEXT("▶ 아이콘 텍스처: %s"), *DefaultObj->ItemIcon->GetName());
-                    ItemImage->SetBrushFromTexture(DefaultObj->ItemIcon);
-                    return;
+                    ACBaseItem* DefaultObj = BPClass.GetDefaultObject();
+                    if (DefaultObj && DefaultObj->ItemIcon)
+                    {
+                        ItemImage->SetBrushFromTexture(DefaultObj->ItemIcon);
+                    }
                 }
             }
         }
-        UE_LOG(LogTemp, Error, TEXT("❌ 블루프린트에서 아이콘을 가져올 수 없음!"));
     }
 }
+
 
 void UCWBP_CInventorySlot::SetInventoryComponent(UCInventoryComponent* InInventoryComponent)
 {
@@ -82,7 +136,12 @@ void UCWBP_CInventorySlot::SetInventoryComponent(UCInventoryComponent* InInvento
 
 void UCWBP_CInventorySlot::OnSlotClicked()
 {
-    if (!InventoryComponent) return;
+    if (!InventoryComponent)
+    {
+        UE_LOG(LogTemp, Error, TEXT("❌ InventoryComponent가 NULL이므로 아이템을 사용할 수 없습니다!"));
+        return;
+    }
+
 
     // 인벤토리에서 해당 아이템이 있는지 확인
     ACPlayer* Player = Cast<ACPlayer>(GetOwningPlayerPawn());
@@ -92,6 +151,7 @@ void UCWBP_CInventorySlot::OnSlotClicked()
         return;
     }
 
+    UE_LOG(LogTemp, Warning, TEXT("✅ OnSlotClicked 호출됨 - 아이템 사용 요청: %d"), static_cast<int32>(StoredItemType));
     // 아이템 사용
     bool bUsed = InventoryComponent->UseItem(StoredItemType, Player);
     if (bUsed)

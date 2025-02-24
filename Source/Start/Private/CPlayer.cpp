@@ -35,6 +35,16 @@ void ACPlayer::BeginPlay()
 	CameraComponent->DisableControlRoation();
 	ToggleView(); // 초기 시점 설정
 	//  `ACPlayerController`가 입력 매핑을 관리하므로 별도 설정 불필요
+	if (!MovementComponent)
+	{
+		MovementComponent = FindComponentByClass<UCMovementComponent>();
+	}
+
+	if (MovementComponent)
+	{
+		MovementComponent->OnWark(); // ✅ 게임 시작 시 기본 이동 모드를 '걷기'로 강제 설정
+		UE_LOG(LogTemp, Warning, TEXT("🏃‍♂️ 게임 시작 시 기본 이동 모드: 걷기(Walk)"));
+	}
 	if (!WeaponComponent)
 	{
 		WeaponComponent = FindComponentByClass<UCWeaponComponent>();

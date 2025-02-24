@@ -4,8 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "CWeapon.generated.h"
 
+class ACBullet;
 class UCCameraComponent;
 class UCStateComponent;
 class ACCharacter;
@@ -22,7 +24,8 @@ public:
 	FVector SocketOffset;
 	UPROPERTY(EditAnywhere)
 	float FieldOfView;
-
+	UPROPERTY(VisibleAnywhere)
+	bool bEnableCameraLag;
 public:
 	void SetData(class ACCharacter*  InOwner);
 	void SetDataByNoneCurve(class ACCharacter*  InOwner);
@@ -37,6 +40,8 @@ protected:
 	FName HolsterSocketName;
 	UPROPERTY(EditDefaultsOnly, Category = "Equip")
 	FName RightHandSokcetName;
+	UPROPERTY(EditDefaultsOnly, Category = "Equip")
+	FVector LeftHandLocation;
 	UPROPERTY(EditDefaultsOnly, Category = "Equip")
 	UAnimMontage* EquipMontage;
 	UPROPERTY(EditDefaultsOnly, Category = "Equip")
@@ -53,20 +58,53 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Hit")
 	float HitDistance = 3000;
+	UPROPERTY(EditDefaultsOnly, Category = "Hit")
+	UMaterialInstanceConstant* HitDecal;
+	UPROPERTY(EditDefaultsOnly, Category = "Hit")
+	FVector HitDecalSize = FVector(5);
+	UPROPERTY(EditDefaultsOnly, Category = "Hit")
+	float HitDecalLifeTime = 10.0f;
+	UPROPERTY(EditDefaultsOnly, Category = "Hit")
+	UParticleSystem* HitParticle;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Fire")
+	UAnimMontage* FireMontage;
+	UPROPERTY(EditDefaultsOnly, Category = "Fire")
+	float FireRate;
+	UPROPERTY(EditDefaultsOnly, Category = "Fire")
+	UParticleSystem* FlashParticle;
+	UPROPERTY(EditDefaultsOnly, Category = "Fire")
+	UParticleSystem* EjectParticle;
+	UPROPERTY(EditDefaultsOnly, Category = "Fire")
+	USoundWave* FireSound;
+	UPROPERTY(EditDefaultsOnly, Category = "Fire")
+	float RecoilAngle;
+	UPROPERTY(EditDefaultsOnly, Category = "Fire")
+	TSubclassOf<UCameraShakeBase> CameraShak;
+	UPROPERTY(EditDefaultsOnly, Category = "Fire")
+	float AutoFireInterval;
+	UPROPERTY(EditDefaultsOnly, Category = "Fire")
+	float RecoilRate;
+	UPROPERTY(EditDefaultsOnly, Category = "Fire")
+	TSubclassOf<ACBullet> BulletClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Magazine;")
+	uint8 MaxMagazineCount;
+	UPROPERTY(EditDefaultsOnly, Category = "Magazine")
+	UAnimMontage* ReloadMontage;
+	UPROPERTY(EditDefaultsOnly, Category = "Magazine")
+	float ReloadPlayRate;
 private:
+	UPROPERTY(EditAnywhere, Category = "Debug")
+	TEnumAsByte<EDrawDebugTrace::Type> Debug;
 	UPROPERTY(EditDefaultsOnly, Category = "Debug")
-	bool Debug = false;
-	UPROPERTY(EditDefaultsOnly, Category = "Debug")
-	FColor DebugColor = FColor::Red;
-	UPROPERTY(EditDefaultsOnly, Category = "Debug")
-	float LifeTime = 5.0f;
-	UPROPERTY(EditDefaultsOnly, Category = "Debug")
-	bool bPersistentLine = true;
-
+	FLinearColor DebugColor = FColor::Red;
+	
 private:
 	UPROPERTY(VisibleAnywhere)
 	UTimelineComponent* Timeline;
+
+	
 private:
 	UPROPERTY(VisibleAnywhere)
 	USceneComponent* Root;
@@ -78,6 +116,12 @@ private:
 protected:
 	UPROPERTY(VisibleAnywhere)
 	USkeletalMeshComponent* Mesh;
+
+public:
+	FORCEINLINE bool IsAutoFire() { return bAutoFire; }
+	FORCEINLINE FVector GetLeftHandLocation() { return LeftHandLocation; }
+	FORCEINLINE uint8 GetMaxMagazineCount() { return MaxMagazineCount; }
+	FORCEINLINE uint8 GetCurrentMagazineCount() { return CurrentMagazineCount; }
 public:	
 	ACWeapon();
 
@@ -104,22 +148,36 @@ public:
 private:
 	UFUNCTION()
 	void OnFireing();
+
 public:
-/*	bool CanAim();
+	void ToggleAutoFire();
+
+	bool CanReload();
+	void Reload();
+
+	void Eject_Magazine();
+	void Spawn_Magazine();
+	void Load_Magazine();
+	void End_Magazine();
+public:
+	bool CanAim();
 	void BeginAim();
-	void EndAim();*/
+	void EndAim();
 
 private:
-	/*UFUNCTION()
-	void OnAiming(float Output);*/
+	UFUNCTION()
+	void OnAiming(float Output);
 
 protected:
 	ACCharacter* OwnerCharacter;
 private:
-
+	FTimerHandle AutoFireHandle;
 	bool bEquipping;
 	bool bInAim;
 	bool bFiring;
 	bool bReload;
 	bool bAutoFire = true;
+
+protected:
+	uint8 CurrentMagazineCount;
 };

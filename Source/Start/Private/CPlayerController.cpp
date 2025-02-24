@@ -25,6 +25,7 @@ ACPlayerController::ACPlayerController()
 	bIsInventoryOpen = false;
 	CachedPawn = nullptr;
 	InventoryComponent = nullptr;
+	FireAction = nullptr;
 
 	HUDWidgetClass = nullptr;
 	MainMenuWidgetClass = nullptr;
@@ -143,8 +144,34 @@ void ACPlayerController::SetupInputComponent()
 	{
 		EnhancedInputComponent->BindAction(ToggleInventoryAction, ETriggerEvent::Triggered, this, &ACPlayerController::ToggleInventory);
 		EnhancedInputComponent->BindAction(PickupItemAction, ETriggerEvent::Triggered, this, &ACPlayerController::PickupItem);
+
+		// ✅ 왼쪽 클릭 입력을 받을 때 UI가 열려있으면 동작하지 않도록 예외 처리
+		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Triggered, this, &ACPlayerController::HandleLeftClick);
 	}
 }
+
+void ACPlayerController::HandleLeftClick()
+{
+	if (bIsInventoryOpen)
+	{
+		// ✅ UI에 클릭할 수 있는 버튼이 있는지 체크
+		FHitResult HitResult;
+		GetHitResultUnderCursor(ECC_Visibility, false, HitResult);
+
+		if (HitResult.bBlockingHit)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("🔹 UI 클릭 감지됨 - 입력 허용"));
+			return; // 🚨 UI 위에서 클릭한 경우 입력을 허용함
+		}
+
+		UE_LOG(LogTemp, Warning, TEXT("❌ 인벤토리가 열려 있어서 왼쪽 클릭 입력을 무시함!"));
+		return;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("🔫 총 발사 실행"));
+	// 원래의 총 발사 기능 실행 코드...
+}
+
 
 void ACPlayerController::ToggleInventory()
 {
@@ -154,34 +181,32 @@ void ACPlayerController::ToggleInventory()
 		return;
 	}
 
-	// ✅ 현재 Pawn에서 InventoryComponent 가져오기
 	UCInventoryComponent* PawnInventoryComponent = nullptr;
 	if (APawn* MyPawn = GetPawn())
 	{
 		PawnInventoryComponent = MyPawn->FindComponentByClass<UCInventoryComponent>();
 	}
 
-	if (bIsInventoryOpen) // ✅ 인벤토리를 닫을 때
+	if (bIsInventoryOpen)
 	{
 		if (InventoryWidget && InventoryWidget->IsInViewport())
 		{
 			InventoryWidget->RemoveFromParent();
 			bShowMouseCursor = false;
+			SetInputMode(FInputModeGameOnly()); // UI 닫을 때 입력 모드 변경
 			UE_LOG(LogTemp, Warning, TEXT("🔹 인벤토리 닫기"));
 		}
 
 		if (PawnInventoryComponent)
 		{
-			// ✅ 델리게이트 해제 (중복 호출 방지)
 			PawnInventoryComponent->OnInventoryUpdated.RemoveDynamic(this, &ACPlayerController::UpdateInventoryUI);
 			UE_LOG(LogTemp, Warning, TEXT("🛑 InventoryComponent 델리게이트 해제됨."));
 		}
 	}
-	else // ✅ 인벤토리를 열 때
+	else
 	{
 		if (!InventoryWidget)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("🔹 InventoryWidget 새로 생성 중..."));
 			InventoryWidget = CreateWidget<UCWBP_CInventory>(this, InventoryWidgetClass);
 
 			if (!InventoryWidget)
@@ -194,17 +219,11 @@ void ACPlayerController::ToggleInventory()
 		if (PawnInventoryComponent)
 		{
 			InventoryWidget->InitializeInventory(PawnInventoryComponent);
-
-			// ✅ 델리게이트 추가 (UI 자동 갱신)
 			if (!InventoryComponent->OnInventoryUpdated.IsBound())
 			{
 				PawnInventoryComponent->OnInventoryUpdated.AddDynamic(this, &ACPlayerController::UpdateInventoryUI);
 				UE_LOG(LogTemp, Warning, TEXT("✅ InventoryComponent 델리게이트 추가됨."));
 			}
-		}
-		else
-		{
-			UE_LOG(LogTemp, Error, TEXT("❌ Pawn의 InventoryComponent를 찾지 못함!"));
 		}
 
 		if (!InventoryWidget->IsInViewport())
@@ -212,6 +231,13 @@ void ACPlayerController::ToggleInventory()
 			InventoryWidget->AddToViewport();
 			InventoryWidget->SetVisibility(ESlateVisibility::Visible);
 			bShowMouseCursor = true;
+
+			// ✅ UI 입력 모드로 변경하여 클릭 이벤트가 정상 작동하도록 설정
+			FInputModeGameAndUI InputMode;
+			InputMode.SetWidgetToFocus(InventoryWidget->TakeWidget());
+			InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+			SetInputMode(InputMode);
+
 			UE_LOG(LogTemp, Warning, TEXT("✅ InventoryWidget 화면에 추가됨"));
 		}
 	}
@@ -219,6 +245,7 @@ void ACPlayerController::ToggleInventory()
 	bIsInventoryOpen = !bIsInventoryOpen;
 	UE_LOG(LogTemp, Warning, TEXT("현재 인벤토리 상태: %s"), bIsInventoryOpen ? TEXT("열림") : TEXT("닫힘"));
 }
+
 
 
 void ACPlayerController::PickupItem()
@@ -301,3 +328,4 @@ void ACPlayerController::PickupItem()
 		UE_LOG(LogTemp, Warning, TEXT("주변에 줍을 아이템이 없습니다."));
 	}
 }
+

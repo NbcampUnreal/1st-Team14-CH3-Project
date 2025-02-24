@@ -48,6 +48,8 @@ public:
 	UInputAction* FireAction;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	UInputAction* PickupItemAction;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UInputAction* ToggleAutoFireAction;
 
 	// HUD 위젯 블루프린트 클래스 (게임 플레이 시)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
@@ -64,6 +66,9 @@ public:
 	UFUNCTION()
 	void UpdateInventoryUI();  // 🔹 UI 업데이트 함수 추가
 
+	UFUNCTION()
+	void HandleLeftClick();
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<UCWBP_CInventory> InventoryWidgetClass;
 
@@ -71,6 +76,8 @@ public:
 	UCWBP_CInventory* InventoryWidget;
 
 	bool bIsInventoryOpen;
+
+	UCWBP_CInventory* GetInventoryWidget() const { return InventoryWidget; }
 protected:
 
 	virtual void BeginPlay() override;
