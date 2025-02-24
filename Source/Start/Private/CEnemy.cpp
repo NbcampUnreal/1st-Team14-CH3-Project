@@ -3,6 +3,7 @@
 
 #include "CEnemy.h"
 #include "CEnemyAIController.h"
+#include "CCharacter.h"
 #include "Components/CStateComponent.h"
 #include "Components/CMovementComponent.h"
 #include "Components/WidgetComponent.h"
@@ -56,6 +57,12 @@ void ACEnemy::SetRun()
 void ACEnemy::SetWalk()
 {
 	MovementComponent->OnWark();
+}
+
+void ACEnemy::SetPlayerStun(AActor* Player)
+{
+	ACCharacter* Charactor = Cast<ACCharacter>(Player);
+	//Charactor->FindComponentByClass<CMovementComponent>();
 }
 
 
