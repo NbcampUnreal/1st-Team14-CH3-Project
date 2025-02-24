@@ -159,3 +159,10 @@ void UCWeaponComponent::ToggleAutoFire()
 	GetCurrentWeapon()->ToggleAutoFire();
 }
 
+void UCWeaponComponent::Reload()
+{
+	if(GetCurrentWeapon() == nullptr)
+		return;
+	GetCurrentWeapon()->Reload();
+}
+

@@ -87,6 +87,13 @@ protected:
 	float RecoilRate;
 	UPROPERTY(EditDefaultsOnly, Category = "Fire")
 	TSubclassOf<ACBullet> BulletClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Magazine;")
+	uint8 MaxMagazineCount;
+	UPROPERTY(EditDefaultsOnly, Category = "Magazine")
+	UAnimMontage* ReloadMontage;
+	UPROPERTY(EditDefaultsOnly, Category = "Magazine")
+	float ReloadPlayRate;
 private:
 	UPROPERTY(EditAnywhere, Category = "Debug")
 	TEnumAsByte<EDrawDebugTrace::Type> Debug;
@@ -96,6 +103,8 @@ private:
 private:
 	UPROPERTY(VisibleAnywhere)
 	UTimelineComponent* Timeline;
+
+	
 private:
 	UPROPERTY(VisibleAnywhere)
 	USceneComponent* Root;
@@ -111,7 +120,8 @@ protected:
 public:
 	FORCEINLINE bool IsAutoFire() { return bAutoFire; }
 	FORCEINLINE FVector GetLeftHandLocation() { return LeftHandLocation; }
-
+	FORCEINLINE uint8 GetMaxMagazineCount() { return MaxMagazineCount; }
+	FORCEINLINE uint8 GetCurrentMagazineCount() { return CurrentMagazineCount; }
 public:	
 	ACWeapon();
 
@@ -141,6 +151,9 @@ private:
 
 public:
 	void ToggleAutoFire();
+
+	bool CanReload();
+	void Reload();
 public:
 /*	bool CanAim();
 	void BeginAim();
@@ -160,4 +173,6 @@ private:
 	bool bReload;
 	bool bAutoFire = true;
 
+protected:
+	uint8 CurrentMagazineCount;
 };

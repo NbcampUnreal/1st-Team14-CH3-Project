@@ -95,6 +95,8 @@ void ACWeapon::BeginPlay()
 		Timeline->SetLooping(false);
 		Timeline->SetPlayRate(AimSpeed);
 	}*/
+
+	CurrentMagazineCount = MaxMagazineCount;
 }
 
 // Called every frame
@@ -261,11 +263,36 @@ void ACWeapon::OnFireing()
 		if (bullet != nullptr)
 			bullet->Shoot(direction);
 	}
+
+	if (CurrentMagazineCount >= 1)
+		CurrentMagazineCount--;
+	else
+		if (CanReload() == true)
+			Reload();
 }
 
 void ACWeapon::ToggleAutoFire()
 {
 	bAutoFire = !bAutoFire;
+}
+
+bool ACWeapon::CanReload()
+{
+	bool b = false;
+	b |= bEquipping;
+	b |= bReload;
+
+	return !b;
+}
+
+void ACWeapon::Reload()
+{
+	bReload = true;
+	//End_Aim();
+	EndFire();
+
+	if (ReloadMontage != nullptr)
+		OwnerCharacter->PlayAnimMontage(ReloadMontage,ReloadPlayRate);
 }
 
 //bool ACWeapon::CanAim()

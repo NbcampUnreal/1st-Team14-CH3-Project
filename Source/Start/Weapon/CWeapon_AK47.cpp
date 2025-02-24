@@ -48,6 +48,16 @@ ACWeapon_AK47::ACWeapon_AK47()
 		AutoFireInterval = 0.15f;
 		RecoilRate = 0.05f;
 	}
+
+	//Magazine
+	{
+		CurrentMagazineCount = 30;
+		static ConstructorHelpers::FObjectFinder<UAnimMontage> montage(TEXT("/Script/Engine.AnimMontage'/Game/Assets/Montages/Rifle/Reload/Reload_Rifle_Hip_Montage.Reload_Rifle_Hip_Montage'"));
+		if (montage.Succeeded() == true)
+			ReloadMontage = montage.Object;
+		ReloadPlayRate = 1.0f;
+		
+	}
 }
 
 void ACWeapon_AK47::BeginPlay()
