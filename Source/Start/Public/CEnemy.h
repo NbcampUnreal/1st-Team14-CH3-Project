@@ -8,6 +8,8 @@
 
 class UWidgetComponent;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyAttack);
+
 UCLASS()
 class START_API ACEnemy : public ACCharacter
 {
@@ -18,9 +20,29 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
 	UWidgetComponent* OverheadHPWidget;
+
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnEnemyAttack OnEnemyAttack;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bCanAttack;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsGunUsed;
 	
 	void UpdateOverheadHP();
 
+	UFUNCTION(BlueprintCallable)
+	void EnemyAttack();
+	UFUNCTION(BlueprintCallable)
+	void SetIdleMode();
+
+	UFUNCTION(BlueprintCallable)
+	void SetRun();
+	UFUNCTION(BlueprintCallable)
+	void SetWalk();
+
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser) override;
 
 };
