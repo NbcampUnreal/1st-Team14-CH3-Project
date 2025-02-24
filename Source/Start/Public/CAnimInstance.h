@@ -33,6 +33,10 @@ protected:
 	float Pitch;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Animation")
 	float Yaw;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Weapon")
+	bool bUseHandIk;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Weapon")
+	FVector LeftHandLocation;
 public:
 	virtual void NativeBeginPlay() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
