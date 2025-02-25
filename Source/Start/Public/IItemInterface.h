@@ -3,6 +3,8 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
+#include "Engine/DataTable.h"
+#include "FItemData.h"
 #include "IItemInterface.generated.h"
 
 // 🔹 아이템 타입 열거형
@@ -57,5 +59,25 @@ public:
         default:
             return TEXT("Unknown Item");
         }
+    }
+
+    // 🔹 올바르게 변환하는 정적 함수 추가
+    static FName GetRowNameFromItemType(EItemType ItemType)
+    {
+        FString EnumString = UEnum::GetValueAsString(ItemType);
+        EnumString.RemoveFromStart("EItemType::"); // ✅ "EItemType::" 제거하여 순수 값 반환
+        return FName(*EnumString);
+    }
+
+    // ✅ 툴팁 정보를 데이터 테이블에서 가져오는 함수
+    virtual FString GetItemTooltip(UDataTable* ItemDataTable) const
+    {
+        if (!ItemDataTable) return TEXT("아이템 데이터 없음");
+
+        FString ContextString;
+        FName RowName = *UEnum::GetValueAsString(GetItemType()); // EItemType을 FName으로 변환
+        FItemData* ItemData = ItemDataTable->FindRow<FItemData>(RowName, ContextString);
+
+        return ItemData ? ItemData->Description.ToString() : TEXT("툴팁 정보 없음");
     }
 };

@@ -18,7 +18,9 @@ class START_API UCInventoryComponent : public UActorComponent
 
 public:
     UCInventoryComponent();
+    void BeginPlay();
 
+    IIItemInterface* FindItemByType(EItemType ItemType);
     // 아이템 추가
     UFUNCTION(BlueprintCallable, Category = "Inventory")
     bool AddToInventory(EItemType ItemType);

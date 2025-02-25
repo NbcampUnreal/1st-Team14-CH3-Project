@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/WrapBox.h"
 #include "IItemInterface.h"
+#include "FItemData.h"
 #include "Components/CStateComponent.h"
 #include "CWBP_CInventory.generated.h"
 
@@ -18,38 +19,43 @@ class START_API UCWBP_CInventory : public UUserWidget
 	GENERATED_BODY()
 
 public:
-    // ÀÎº¥Åä¸® ÄÄÆ÷³ÍÆ®¸¦ ÃÊ±âÈ­ÇÏ°í ÀÌº¥Æ®¿¡ ¹ÙÀÎµùÇÏ´Â ÇÔ¼ö
+    // ì¸ë²¤í† ë¦¬ ì»´í¬ë„ŒíŠ¸ë¥¼ ì´ˆê¸°í™”í•˜ê³  ì´ë²¤íŠ¸ì— ë°”ì¸ë”©í•˜ëŠ” í•¨ìˆ˜
     UFUNCTION(BlueprintCallable, Category = "Inventory")
     void InitializeInventory(UCInventoryComponent* InInventoryComponent);
 
-    // ÀÎº¥Åä¸® °»½Å ÇÔ¼ö (µ¨¸®°ÔÀÌÆ®¿Í ¹ÙÀÎµù)
+    // ì¸ë²¤í† ë¦¬ ê°±ì‹  í•¨ìˆ˜ (ë¸ë¦¬ê²Œì´íŠ¸ì™€ ë°”ì¸ë”©)
     UFUNCTION()
     void UpdateInventory();
 
-    void UpdateItemTooltip(EItemType ItemType);
+    void UpdateItemTooltip(IIItemInterface* Item);
     void HideItemTooltip();
+
+    // âœ… ë°ì´í„° í…Œì´ë¸” ì°¸ì¡° (ë¸”ë£¨í”„ë¦°íŠ¸ì—ì„œ ì„¤ì • ê°€ëŠ¥)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Info")
+    UDataTable* ItemDataTable;
+
+    // âœ… UI ìš”ì†Œë“¤
+    UPROPERTY(meta = (BindWidget))
+    class UTextBlock* T_ItemName;
+
+    UPROPERTY(meta = (BindWidget))
+    class UTextBlock* T_ItemDescription;
   
 protected:
-    // ÀÎº¥Åä¸® ÄÄÆ÷³ÍÆ® ÂüÁ¶
+    // ì¸ë²¤í† ë¦¬ ì»´í¬ë„ŒíŠ¸ ì°¸ì¡°
     UPROPERTY()
     UCInventoryComponent* InventoryComponent;
 
-    // ½½·Ô À§Á¬ Å¬·¡½º (ºí·çÇÁ¸°Æ®¿¡¼­ ÇÒ´ç)
+    // ìŠ¬ë¡¯ ìœ„ì ¯ í´ë˜ìŠ¤ (ë¸”ë£¨í”„ë¦°íŠ¸ì—ì„œ í• ë‹¹)
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
     TSubclassOf<class UCWBP_CInventorySlot> SlotWidgetClass;
 
     UPROPERTY(meta = (BindWidget))
     UWrapBox* InventoryWrapBox;
 
-    UPROPERTY(meta = (BindWidget))
-    class UTextBlock* T_ItemName;
-
-    UPROPERTY(meta = (BindWidget))
-    class UTextBlock* T_ItemDescription;
-
-    // Delegate°¡ ¹ÙÀÎµùµÇ¾î ÀÖ´ÂÁö ¿©ºÎ¸¦ ÃßÀûÇÏ´Â ÇÃ·¡±×
+    // Delegateê°€ ë°”ì¸ë”©ë˜ì–´ ìˆëŠ”ì§€ ì—¬ë¶€ë¥¼ ì¶”ì í•˜ëŠ” í”Œë˜ê·¸
     bool bDelegateBound = false;
 
-    // À§Á¬ ÆÄ±« ½Ã µ¨¸®°ÔÀÌÆ® ÇØÁ¦¸¦ À§ÇÑ ¿À¹ö¶óÀÌµå ÇÔ¼ö
+    // ìœ„ì ¯ íŒŒê´´ ì‹œ ë¸ë¦¬ê²Œì´íŠ¸ í•´ì œë¥¼ ìœ„í•œ ì˜¤ë²„ë¼ì´ë“œ í•¨ìˆ˜
     virtual void NativeDestruct() override;
 };
