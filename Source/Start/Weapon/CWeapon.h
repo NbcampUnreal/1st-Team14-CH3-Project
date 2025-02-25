@@ -124,6 +124,8 @@ public:
 	FORCEINLINE bool IsAutoFire() { return bAutoFire; }
 	FORCEINLINE FVector GetLeftHandLocation() { return LeftHandLocation; }
 
+	FORCEINLINE bool GetInAim() const { return bInAim; }
+	
 	// ź�� ������ HUD�� �����ϱ� ���� getter �Լ���
 	FORCEINLINE uint8 GetCurrentMagazineCount() const { return CurrentMagazineCount; }
 	FORCEINLINE uint8 GetMaxMagazineCount() const { return MaxMagazineCount; }

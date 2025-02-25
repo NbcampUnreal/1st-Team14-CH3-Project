@@ -21,9 +21,9 @@ ACWeapon_AK47::ACWeapon_AK47()
 
 	//Aim
 	{
-		AimData.bEnableCameraLag = true;
+		AimData.bEnableCameraLag = false;
 		AimData.TargetArmLength = 30;
-		AimData.SocketOffset = FVector(-55, 0, 10);
+		AimData.SocketOffset = FVector(-55, 50, 10);
 		AimData.FieldOfView = 55;
 	}
 

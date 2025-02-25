@@ -159,6 +159,14 @@ void UCWeaponComponent::EndAim()
 	OnAimChanged.Broadcast(false); // Aim 상태 변경(줌아웃) 델리게이트 호출
 }
 
+bool UCWeaponComponent::GetInAim()
+{
+	if (GetCurrentWeapon() == nullptr)
+		return false;
+
+	return GetCurrentWeapon()->GetInAim();
+}
+
 FVector UCWeaponComponent::GetLefttHandLocation()
 {
 	if (GetCurrentWeapon() == nullptr)
