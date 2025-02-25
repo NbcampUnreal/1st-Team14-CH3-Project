@@ -20,6 +20,8 @@ private:
 	UProjectileMovementComponent* Projectile;
 	UPROPERTY(EditDefaultsOnly)
 	UMaterialInstanceConstant* Material;
+	UPROPERTY(EditDefaultsOnly)
+	float LifeTime;
 public:
 	ACBullet();
 

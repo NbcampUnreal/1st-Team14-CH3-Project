@@ -1,4 +1,6 @@
 ﻿#include "CPlayerController.h"
+#include "CHUDWidget.h"
+#include "Components/CWeaponComponent.h"
 #include "CBaseItem.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
@@ -60,7 +62,9 @@ void ACPlayerController::BeginPlay()
 		true
 	);
 
+	// =======
 	// UI 설정
+	// =======
 	UWorld* World = GetWorld();
 	if (!World) return;
 
@@ -96,6 +100,20 @@ void ACPlayerController::BeginPlay()
 				FInputModeGameOnly InputMode;
 				SetInputMode(InputMode);
 				bShowMouseCursor = false;
+			}
+		}
+		// HUD 생성 후, 무기 컴포넌트의 델리게이트 바인딩 (Ammo, WeaponType, Aim)
+		if (APawn* MyPawn = GetPawn())
+		{
+			// 캐스팅하여 UCHUDWidget로 사용
+			if (UCHUDWidget* HUD = Cast<UCHUDWidget>(CurrentWidget))
+			{
+				if (UCWeaponComponent* WeaponComp = MyPawn->FindComponentByClass<UCWeaponComponent>())
+				{
+					WeaponComp->OnAmmoChanged.AddDynamic(HUD, &UCHUDWidget::UpdateAmmo);
+					WeaponComp->OnWeaponTypeChanged.AddDynamic(HUD, &UCHUDWidget::UpdateWeaponType);
+					WeaponComp->OnAimChanged.AddDynamic(HUD, &UCHUDWidget::SetCrosshairVisibility);
+				}
 			}
 		}
 	}

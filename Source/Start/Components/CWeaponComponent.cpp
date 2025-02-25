@@ -62,6 +62,9 @@ void UCWeaponComponent::SetPistolMode()
 	SetMode(EWeaponType::Pistol);
 }
 
+// ================
+// 무기 타입 변경 함수
+// ================
 void UCWeaponComponent::SetMode(EWeaponType InType)
 {
 	if (Type == InType)
@@ -85,6 +88,11 @@ void UCWeaponComponent::SetMode(EWeaponType InType)
 		return;
 	Weapons[(int32)InType]->Equip();
 	ChangeType(InType);
+
+	// 무기 장착 시 바로 탄약 정보를 HUD에 전달
+	int32 CurrentAmmo = Weapons[(int32)InType]->GetCurrentAmmo();
+	int32 MaxAmmo = Weapons[(int32)InType]->GetMaxAmmo();
+	OnAmmoChanged.Broadcast(CurrentAmmo, MaxAmmo); // 즉시 업데이트
 }
 
 void UCWeaponComponent::ChangeType(EWeaponType InType)
@@ -110,7 +118,7 @@ void UCWeaponComponent::End_Equip()
 	GetCurrentWeapon()->EndEquip();
 }
 
-void UCWeaponComponent::Begin_Fire()
+void UCWeaponComponent::Begin_Fire() // 무기 발사 시작
 {
 	if (GetCurrentWeapon() == nullptr)
 		return;
@@ -118,12 +126,17 @@ void UCWeaponComponent::Begin_Fire()
 		return;
 
 	GetCurrentWeapon()->BeginFire();
+
+	// 발사 후 최신 탄약 정보 전달 (HUD 업데이트용)
+	int32 CurrentAmmo = GetCurrentWeapon()->GetCurrentAmmo();
+	int32 MaxAmmo = GetCurrentWeapon()->GetMaxAmmo(); 
+	OnAmmoChanged.Broadcast(CurrentAmmo, MaxAmmo);
 }
 
-void UCWeaponComponent::End_Fire()
+void UCWeaponComponent::End_Fire() // 무기 발사 종료
 {
 	if (GetCurrentWeapon() == nullptr)
-		return;;
+		return;
 
 	GetCurrentWeapon()->EndFire();
 }
@@ -134,6 +147,7 @@ void UCWeaponComponent::BeginAim()
 		return;
 
 	GetCurrentWeapon()->BeginAim();
+	OnAimChanged.Broadcast(true); // Aim 상태 변경(줌인) 델리게이트 호출
 }
 
 void UCWeaponComponent::EndAim()
@@ -142,6 +156,7 @@ void UCWeaponComponent::EndAim()
 		return;
 
 	GetCurrentWeapon()->EndAim();
+	OnAimChanged.Broadcast(false); // Aim 상태 변경(줌아웃) 델리게이트 호출
 }
 
 FVector UCWeaponComponent::GetLefttHandLocation()
@@ -164,5 +179,10 @@ void UCWeaponComponent::Reload()
 	if(GetCurrentWeapon() == nullptr)
 		return;
 	GetCurrentWeapon()->Reload();
+
+	// 재장전 후 최신 탄약 정보 전달 (HUD 업데이트용)
+	int32 CurrentAmmo = GetCurrentWeapon()->GetCurrentAmmo();
+	int32 MaxAmmo = GetCurrentWeapon()->GetMaxAmmo();
+	OnAmmoChanged.Broadcast(CurrentAmmo, MaxAmmo);
 }
 

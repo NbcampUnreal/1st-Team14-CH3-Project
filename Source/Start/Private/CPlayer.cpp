@@ -7,6 +7,7 @@
 #include "Components/CMovementComponent.h"
 #include "Components/CWeaponComponent.h"
 #include "InputActionValue.h"
+#include "Weapon/CWeapon.h"
 #include "Components/CCameraComponent.h"
 
 ACPlayer::ACPlayer()
