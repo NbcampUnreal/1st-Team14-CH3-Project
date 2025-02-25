@@ -90,8 +90,8 @@ void UCWeaponComponent::SetMode(EWeaponType InType)
 	ChangeType(InType);
 
 	// 무기 장착 시 바로 탄약 정보를 HUD에 전달
-	int32 CurrentAmmo = Weapons[(int32)InType]->GetCurrentAmmo();
-	int32 MaxAmmo = Weapons[(int32)InType]->GetMaxAmmo();
+	int32 CurrentAmmo = Weapons[(int32)InType]->GetCurrentMagazineCount();
+	int32 MaxAmmo = Weapons[(int32)InType]->GetMaxMagazineCount();
 	OnAmmoChanged.Broadcast(CurrentAmmo, MaxAmmo); // 즉시 업데이트
 }
 
@@ -128,8 +128,8 @@ void UCWeaponComponent::Begin_Fire() // 무기 발사 시작
 	GetCurrentWeapon()->BeginFire();
 
 	// 발사 후 최신 탄약 정보 전달 (HUD 업데이트용)
-	int32 CurrentAmmo = GetCurrentWeapon()->GetCurrentAmmo();
-	int32 MaxAmmo = GetCurrentWeapon()->GetMaxAmmo(); 
+	int32 CurrentAmmo = GetCurrentWeapon()->GetCurrentMagazineCount();
+	int32 MaxAmmo = GetCurrentWeapon()->GetMaxMagazineCount(); 
 	OnAmmoChanged.Broadcast(CurrentAmmo, MaxAmmo);
 }
 
@@ -197,8 +197,8 @@ void UCWeaponComponent::Reload()
 	GetCurrentWeapon()->Reload();
 
 	// 재장전 후 최신 탄약 정보 전달 (HUD 업데이트용)
-	int32 CurrentAmmo = GetCurrentWeapon()->GetCurrentAmmo();
-	int32 MaxAmmo = GetCurrentWeapon()->GetMaxAmmo();
+	int32 CurrentAmmo = GetCurrentWeapon()->GetCurrentMagazineCount();
+	int32 MaxAmmo = GetCurrentWeapon()->GetMaxMagazineCount();
 	OnAmmoChanged.Broadcast(CurrentAmmo, MaxAmmo);
 }
 

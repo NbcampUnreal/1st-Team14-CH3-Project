@@ -34,7 +34,7 @@ ACWeapon_AK47::ACWeapon_AK47()
 			FireMontage = montage.Object;
 		FireRate = 1.0f;
 		RecoilAngle = 0.75f;
-		static ConstructorHelpers::FClassFinder<UCameraShakeBase> cameraShake(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/Weapon/AK/BP_AK47_CameraShake.BP_AK47_CameraShake'"));
+		static ConstructorHelpers::FClassFinder<UCameraShakeBase> cameraShake(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/Weapon/AK/BP_AK47_CameraShake.BP_AK47_CameraShake_C'"));
 		if (cameraShake.Succeeded() == true)
 			CameraShak = cameraShake.Class;
 		AutoFireInterval = 0.15f;
@@ -52,6 +52,7 @@ ACWeapon_AK47::ACWeapon_AK47()
 		static ConstructorHelpers::FClassFinder<ACMagazine> magazine(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/Weapon/AK/BP_CMagazine.BP_CMagazine_C'"));
 		if (magazine.Succeeded() == true)
 			MagazineClass = magazine.Class;
+		MagazinSocketName = "Rifle_Magazine";
 	}
 }
 

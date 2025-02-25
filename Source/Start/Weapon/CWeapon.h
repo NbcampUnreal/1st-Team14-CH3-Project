@@ -104,7 +104,8 @@ protected:
 	FName MagazineBoneName;
 	UPROPERTY(EditDefaultsOnly, Category = "Magazine")
 	TSubclassOf<ACMagazine> MagazineClass;
-	
+	UPROPERTY(EditDefaultsOnly, Category = "Magazine")
+	FName MagazinSocketName;
 private:
 	UPROPERTY(EditAnywhere, Category = "Debug")
 	TEnumAsByte<EDrawDebugTrace::Type> Debug;
@@ -139,8 +140,8 @@ public:
 	FORCEINLINE uint8 GetCurrentMagazineCount() const { return CurrentMagazineCount; }
 	FORCEINLINE uint8 GetMaxMagazineCount() const { return MaxMagazineCount; }
 	// ���ǻ� HUD ������ ��Ī �Լ� �߰�
-	FORCEINLINE uint8 GetMaxAmmo() const { return GetMaxMagazineCount(); }
-	FORCEINLINE uint8 GetCurrentAmmo() const { return GetCurrentMagazineCount(); }
+	//FORCEINLINE uint8 GetMaxAmmo() const { return GetMaxMagazineCount(); }
+	//FORCEINLINE uint8 GetCurrentAmmo() const { return GetCurrentMagazineCount(); }
 
 public:	
 	ACWeapon();
@@ -197,6 +198,9 @@ private:
 	bool bFiring;
 	bool bReload;
 	bool bAutoFire = true;
+
+	ACMagazine* Magazine;
+	
 protected:
 	uint8 CurrentMagazineCount;
 };

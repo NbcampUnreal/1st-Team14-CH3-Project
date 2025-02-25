@@ -49,7 +49,7 @@ ACWeapon::ACWeapon()
 	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>("Mesh");
 	Mesh->SetupAttachment(Root);
 	Timeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("Time Line"));
-	static ConstructorHelpers::FObjectFinder<UCurveFloat> curve(TEXT("/Script/Engine.CurveFloat'/Game/Blueprints/Weapon/Curve_Aim.Curve_Aim'"));
+	static ConstructorHelpers::FObjectFinder<UCurveFloat> curve(TEXT("/Script/Engine.CurveFloat'/Game/Blueprints/Weapon/AK/Curve_Aim.Curve_Aim'"));
 	if (curve.Object != nullptr)
 		AimCurve = curve.Object;
 
@@ -328,6 +328,12 @@ void ACWeapon::Eject_Magazine()
 
 void ACWeapon::Spawn_Magazine()
 {
+	if (MagazineClass == nullptr)
+		return;
+	FActorSpawnParameters param;
+	param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	Magazine = GetWorld()->SpawnActor<ACMagazine>(MagazineClass,param);
+	Magazine->AttachToComponent(OwnerCharacter->GetMesh(),FAttachmentTransformRules(EAttachmentRule::KeepRelative,true), MagazinSocketName);
 }
 
 void ACWeapon::Load_Magazine()
@@ -335,6 +341,9 @@ void ACWeapon::Load_Magazine()
 	CurrentMagazineCount = MaxMagazineCount;
 	if (MagazineBoneName.IsValid() == true)
 		Mesh->UnHideBoneByName(MagazineBoneName);
+
+	if (Magazine != nullptr)
+		Magazine->Destroy();
 }
 
 void ACWeapon::End_Magazine()

@@ -13,10 +13,12 @@ ACMagazine::ACMagazine()
 		Mesh_Full->SetStaticMesh(meshFull.Object);
 	Mesh_Empaty = CreateDefaultSubobject<UStaticMeshComponent>("Mesh_Empaty");
 	Mesh_Empaty->SetupAttachment(Root);
-
+	Mesh_Full->SetCollisionProfileName("Magazine");
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> meshEmpaty(L"/Script/Engine.StaticMesh'/Game/Assets/Mesh/Weapons/Meshes/Ka47/SM_KA47_Mag_Empty.SM_KA47_Mag_Empty'");
 	if (meshEmpaty.Succeeded() == true)
 		Mesh_Empaty->SetStaticMesh(meshEmpaty.Object);
+	Mesh_Empaty->SetupAttachment(Root);
+	Mesh_Empaty->SetCollisionProfileName("Magazine");
 	
 	
 }
