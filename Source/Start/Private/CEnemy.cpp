@@ -7,6 +7,7 @@
 #include "CPlayer.h"
 #include "Components/CStateComponent.h"
 #include "Components/CMovementComponent.h"
+#include "Components/CWeaponComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Components/ProgressBar.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -82,7 +83,19 @@ void ACEnemy::SetStun(ACPlayer* Player)
 
 }
 
+void ACEnemy::GunAttackStart()
+{
+	WeaponComponent->SetRifleMode();
+	WeaponComponent->Begin_Fire();
+}
 
+
+
+void ACEnemy::GunAttackEnd()
+{
+	WeaponComponent->End_Fire();
+	WeaponComponent->SetUnarmedMode();
+}
 
 void ACEnemy::BeginPlay()
 {
