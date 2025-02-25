@@ -97,6 +97,8 @@ protected:
 	UAnimMontage* ReloadMontage;
 	UPROPERTY(EditDefaultsOnly, Category = "Magazine")
 	float ReloadPlayRate;
+
+
 private:
 	UPROPERTY(EditAnywhere, Category = "Debug")
 	TEnumAsByte<EDrawDebugTrace::Type> Debug;
@@ -126,12 +128,18 @@ public:
 
 	FORCEINLINE bool GetInAim() const { return bInAim; }
 	
-	// ź�� ������ HUD�� �����ϱ� ���� getter �Լ���
 	FORCEINLINE uint8 GetCurrentMagazineCount() const { return CurrentMagazineCount; }
 	FORCEINLINE uint8 GetMaxMagazineCount() const { return MaxMagazineCount; }
-	// ���ǻ� HUD ������ ��Ī �Լ� �߰�
-	FORCEINLINE uint8 GetMaxAmmo() const { return GetMaxMagazineCount(); }
+
+	// 편의를 위한 별칭 지정
 	FORCEINLINE uint8 GetCurrentAmmo() const { return GetCurrentMagazineCount(); }
+	FORCEINLINE uint8 GetMaxAmmo() const { return GetMaxMagazineCount(); }
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	FText WeaponDisplayName;
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	FText GetWeaponDisplayName() const { return WeaponDisplayName; }
 
 public:	
 	ACWeapon();
