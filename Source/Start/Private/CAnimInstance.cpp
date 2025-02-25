@@ -49,6 +49,7 @@ void UCAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	bInAim = Weapon->GetInAim();
 	bUseHandIk = Weapon->IsUnarmedModeMode() == false;
 	LeftHandLocation = Weapon->GetLefttHandLocation();
+	LeftHandAimLocation = Weapon->GetLefttHandAimLocation();
 }
 
 void UCAnimInstance::OnWeaponTypeChanged(EWeaponType InPrevType, EWeaponType InNewType)

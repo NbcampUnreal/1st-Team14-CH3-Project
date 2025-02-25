@@ -39,6 +39,8 @@ protected:
 	bool bUseHandIk;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Weapon")
 	FVector LeftHandLocation;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Weapon")
+	FVector LeftHandAimLocation;
 public:
 	virtual void NativeBeginPlay() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;

@@ -1,6 +1,6 @@
 #include "CWeapon_AK47.h"
 #include "Camera/CameraShakeBase.h"
-
+#include "CMagazine.h"
 ACWeapon_AK47::ACWeapon_AK47()
 {
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> asset(TEXT("/Script/Engine.SkeletalMesh'/Game/Assets/Mesh/Weapons/Meshes/Ka47/SK_KA47.SK_KA47'"));
@@ -15,9 +15,9 @@ ACWeapon_AK47::ACWeapon_AK47()
 			EquipMontage = montage.Object;
 		Equip_PlayRate = 1.0f;
 		RightHandSokcetName = "Rifle_Hand";
-		LeftHandLocation = FVector(-37.119789,14.315624,3.738997);//Mesh->GetSocketLocation("LeftHand");
+		LeftHandLocation = FVector(-34.197836,12.642071,8.645998);
+		LeftHandAimLocation = FVector(-32.453343,-1.028387,14.791615);
 	}
-	
 
 	//Aim
 	{
@@ -34,7 +34,7 @@ ACWeapon_AK47::ACWeapon_AK47()
 			FireMontage = montage.Object;
 		FireRate = 1.0f;
 		RecoilAngle = 0.75f;
-		static ConstructorHelpers::FClassFinder<UCameraShakeBase> cameraShake(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/Weapon/BP_AK47_CameraShake.BP_AK47_CameraShake_C'"));
+		static ConstructorHelpers::FClassFinder<UCameraShakeBase> cameraShake(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/Weapon/AK/BP_AK47_CameraShake.BP_AK47_CameraShake'"));
 		if (cameraShake.Succeeded() == true)
 			CameraShak = cameraShake.Class;
 		AutoFireInterval = 0.15f;
@@ -48,12 +48,16 @@ ACWeapon_AK47::ACWeapon_AK47()
 		if (montage.Succeeded() == true)
 			ReloadMontage = montage.Object;
 		ReloadPlayRate = 1.0f;
-		
+		MagazineBoneName = "b_gun_mag";
+		static ConstructorHelpers::FClassFinder<ACMagazine> magazine(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/Weapon/AK/BP_CMagazine.BP_CMagazine_C'"));
+		if (magazine.Succeeded() == true)
+			MagazineClass = magazine.Class;
 	}
 }
 
 void ACWeapon_AK47::BeginPlay()
 {
 	Super::BeginPlay();
-
+	
+	
 }

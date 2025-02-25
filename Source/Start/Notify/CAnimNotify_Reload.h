@@ -21,7 +21,7 @@ class START_API UCAnimNotify_Reload : public UAnimNotify
 	GENERATED_BODY()
 private:
 	UPROPERTY(EditAnywhere, Category = "Action")
-	EReloadActionType Actionntype;
+	EReloadActionType ActionType;
 	
 public:
 	virtual FString GetNotifyName_Implementation() const override;

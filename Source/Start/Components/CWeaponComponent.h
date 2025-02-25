@@ -64,10 +64,15 @@ public:
 	void BeginAim();
 	void EndAim();
 	bool GetInAim();
-
 	FVector GetLefttHandLocation();
+	FVector GetLefttHandAimLocation();
+
 	void ToggleAutoFire();
 	void Reload();
+	void Eject_Magazine();
+	void Spawn_Magazine();
+	void Load_Magazine();
+	void End_Magazine();
 
 public:
 	FWeaponTypeChanged OnWeaponTypeChanged; // ���� Ÿ�� ���� ��������Ʈ

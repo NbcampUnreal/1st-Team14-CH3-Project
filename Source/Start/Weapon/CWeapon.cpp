@@ -5,6 +5,7 @@
 
 #include "CBullet.h"
 #include "CCharacter.h"
+#include "CMagazine.h"
 #include "CPlayer.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CCameraComponent.h"
@@ -156,7 +157,7 @@ void ACWeapon::BeginEquip()
 {
 	if (RightHandSokcetName.IsValid())
 		AttachToComponent(OwnerCharacter->GetMesh(),FAttachmentTransformRules(EAttachmentRule::KeepRelative,true), RightHandSokcetName);
-}
+}	
 
 void ACWeapon::EndEquip()
 {
@@ -304,7 +305,7 @@ bool ACWeapon::CanReload()
 void ACWeapon::Reload()
 {
 	bReload = true;
-	//End_Aim();
+	EndAim();
 	EndFire();
 
 	if (ReloadMontage != nullptr)
@@ -313,6 +314,16 @@ void ACWeapon::Reload()
 
 void ACWeapon::Eject_Magazine()
 {
+	if (MagazineBoneName.IsValid() == true)
+		Mesh->HideBoneByName(MagazineBoneName,PBO_None);
+	if (MagazineClass == nullptr)
+		return;
+
+	FTransform transform=Mesh->GetSocketTransform(MagazineBoneName);
+	ACMagazine* magazie =  GetWorld()->SpawnActorDeferred<ACMagazine>(MagazineClass,transform,nullptr,nullptr,ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+	magazie->SetEject();
+	magazie->SetLifeSpan(5.0f);
+	magazie->FinishSpawning(transform);
 }
 
 void ACWeapon::Spawn_Magazine()
@@ -321,10 +332,14 @@ void ACWeapon::Spawn_Magazine()
 
 void ACWeapon::Load_Magazine()
 {
+	CurrentMagazineCount = MaxMagazineCount;
+	if (MagazineBoneName.IsValid() == true)
+		Mesh->UnHideBoneByName(MagazineBoneName);
 }
 
 void ACWeapon::End_Magazine()
 {
+	bReload = false;
 }
 
 bool ACWeapon::CanAim()

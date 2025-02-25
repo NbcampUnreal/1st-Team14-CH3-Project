@@ -7,6 +7,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "CWeapon.generated.h"
 
+class ACMagazine;
 class ACBullet;
 class UCCameraComponent;
 class UCStateComponent;
@@ -43,6 +44,8 @@ protected:
 	FName RightHandSokcetName;
 	UPROPERTY(EditDefaultsOnly, Category = "Equip")
 	FVector LeftHandLocation;
+	UPROPERTY(EditDefaultsOnly, Category = "Equip")
+	FVector LeftHandAimLocation;
 	UPROPERTY(EditDefaultsOnly, Category = "Equip")
 	UAnimMontage* EquipMontage;
 	UPROPERTY(EditDefaultsOnly, Category = "Equip")
@@ -97,6 +100,11 @@ protected:
 	UAnimMontage* ReloadMontage;
 	UPROPERTY(EditDefaultsOnly, Category = "Magazine")
 	float ReloadPlayRate;
+	UPROPERTY(EditDefaultsOnly, Category = "Magazine")
+	FName MagazineBoneName;
+	UPROPERTY(EditDefaultsOnly, Category = "Magazine")
+	TSubclassOf<ACMagazine> MagazineClass;
+	
 private:
 	UPROPERTY(EditAnywhere, Category = "Debug")
 	TEnumAsByte<EDrawDebugTrace::Type> Debug;
@@ -123,6 +131,7 @@ protected:
 public:
 	FORCEINLINE bool IsAutoFire() { return bAutoFire; }
 	FORCEINLINE FVector GetLeftHandLocation() { return LeftHandLocation; }
+	FORCEINLINE FVector GetLeftHandAimLocation() { return LeftHandAimLocation; }
 
 	FORCEINLINE bool GetInAim() const { return bInAim; }
 	
@@ -145,7 +154,7 @@ public:
 public:
 	bool CanEquip();
 	void Equip();
-	void BeginEquip();
+	virtual void BeginEquip();
 	void EndEquip();
 
 	bool CanUnequip();

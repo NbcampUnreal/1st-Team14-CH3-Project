@@ -22,5 +22,19 @@ void UCAnimNotify_Reload::Notify(USkeletalMeshComponent* MeshComp, UAnimSequence
 	if (weapon == nullptr)
 		return;
 
-	
+	switch (ActionType)
+	{
+	case EReloadActionType::Eject:
+		weapon->Eject_Magazine();
+		break;
+	case EReloadActionType::Spawn:
+		weapon->Spawn_Magazine();
+		break;
+	case EReloadActionType::Load:
+		weapon->Load_Magazine();
+		break;
+	case EReloadActionType::End:
+		weapon->End_Magazine();
+		break;
+	}
 }

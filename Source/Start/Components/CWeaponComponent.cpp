@@ -175,6 +175,14 @@ FVector UCWeaponComponent::GetLefttHandLocation()
 	return GetCurrentWeapon()->GetLeftHandLocation();
 }
 
+FVector UCWeaponComponent::GetLefttHandAimLocation()
+{
+	if (GetCurrentWeapon() == nullptr)
+		return FVector::Zero();
+
+	return GetCurrentWeapon()->GetLeftHandAimLocation();
+}
+
 void UCWeaponComponent::ToggleAutoFire()
 {
 	if(GetCurrentWeapon() == nullptr)
@@ -192,5 +200,37 @@ void UCWeaponComponent::Reload()
 	int32 CurrentAmmo = GetCurrentWeapon()->GetCurrentAmmo();
 	int32 MaxAmmo = GetCurrentWeapon()->GetMaxAmmo();
 	OnAmmoChanged.Broadcast(CurrentAmmo, MaxAmmo);
+}
+
+void UCWeaponComponent::Eject_Magazine()
+{
+	if (GetCurrentWeapon() == nullptr)
+		return;
+
+	GetCurrentWeapon()->Eject_Magazine();
+}
+
+void UCWeaponComponent::Spawn_Magazine()
+{
+	if (GetCurrentWeapon() == nullptr)
+		return;
+
+	GetCurrentWeapon()->Spawn_Magazine();
+}
+
+void UCWeaponComponent::Load_Magazine()
+{
+	if (GetCurrentWeapon() == nullptr)
+		return;
+
+	GetCurrentWeapon()->Load_Magazine();
+}
+
+void UCWeaponComponent::End_Magazine()
+{
+	if (GetCurrentWeapon() == nullptr)
+		return;
+
+	GetCurrentWeapon()->End_Magazine();
 }
 
