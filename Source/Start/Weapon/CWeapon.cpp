@@ -86,7 +86,7 @@ void ACWeapon::BeginPlay()
 
 	
 	ACPlayer* player = Cast<ACPlayer>(OwnerCharacter);
-	if (player != NULL)
+	if (player != NULL && bIsCustom == false)
 	{
 		//Aim BaseData Setting
 		USpringArmComponent* SpringArm = Cast<USpringArmComponent>(player->GetComponentByClass(USpringArmComponent::StaticClass()));
@@ -342,7 +342,6 @@ void ACWeapon::BeginAim()
 	ACPlayer* Player = Cast<ACPlayer>(OwnerCharacter);
 	if (!Player)
 		return;
-
 	bInAim = true;
 	if (AimCurve != nullptr)
 	{

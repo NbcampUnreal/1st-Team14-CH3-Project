@@ -15,10 +15,10 @@ enum class EWeaponType : uint8
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FWeaponTypeChanged, EWeaponType, InPrevType, EWeaponType, InNewType);
 
-// Åº¾à Á¤º¸ º¯°æ µ¨¸®°ÔÀÌÆ® ¼±¾ð (ÇöÀç Åº¾à, ÃÖ´ë Åº¾à)
+// Åºï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ Åºï¿½ï¿½, ï¿½Ö´ï¿½ Åºï¿½ï¿½)
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAmmoChanged, int32, CurrentAmmo, int32, MaxAmmo);
 
-// Aim »óÅÂ º¯°æ µ¨¸®°ÔÀÌÆ®: true¸é aim Áß, false¸é ÇØÁ¦
+// Aim ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®: trueï¿½ï¿½ aim ï¿½ï¿½, falseï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAimChanged, bool, bIsAiming);
 
 UCLASS (ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
@@ -61,21 +61,18 @@ public:
 	void Begin_Fire();
 	void End_Fire();
 
-UFUNCTION(BlueprintCallable)
 	void BeginAim();
-UFUNCTION(BlueprintCallable)
 	void EndAim();
+	bool GetInAim();
 
 	FVector GetLefttHandLocation();
-UFUNCTION(BlueprintCallable)
 	void ToggleAutoFire();
-UFUNCTION(BlueprintCallable)
 	void Reload();
 
 public:
-	FWeaponTypeChanged OnWeaponTypeChanged; // ¹«±â Å¸ÀÔ º¯°æ µ¨¸®°ÔÀÌÆ®
-	FAmmoChanged OnAmmoChanged; // Åº¾à Á¤º¸ º¯°æ µ¨¸®°ÔÀÌÆ®
-	FAimChanged OnAimChanged; // Aim »óÅÂ º¯°æ µ¨¸®°ÔÀÌÆ®
+	FWeaponTypeChanged OnWeaponTypeChanged; // ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
+	FAmmoChanged OnAmmoChanged; // Åºï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
+	FAimChanged OnAimChanged; // Aim ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
 	
 private:
 	EWeaponType Type = EWeaponType::Max;

@@ -34,6 +34,8 @@ protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Animation")
 	float Yaw;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Weapon")
+	bool bInAim;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Weapon")
 	bool bUseHandIk;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Weapon")
 	FVector LeftHandLocation;

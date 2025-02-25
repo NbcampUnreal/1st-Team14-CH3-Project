@@ -46,6 +46,7 @@ void UCAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	bCanMove = Speed > 3.0f && Movement->GetCurrentAcceleration() != FVector::ZeroVector;
 	bIsFalling = Movement->IsFalling();
 
+	bInAim = Weapon->GetInAim();
 	bUseHandIk = Weapon->IsUnarmedModeMode() == false;
 	LeftHandLocation = Weapon->GetLefttHandLocation();
 }
