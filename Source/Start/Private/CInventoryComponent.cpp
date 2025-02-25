@@ -58,24 +58,33 @@ ACBaseItem* UCInventoryComponent::GetItemInstance(EItemType ItemType)
 
 bool UCInventoryComponent::AddToInventory(EItemType ItemType)
 {
-    // 🔹 최대 아이템 스택 제한 설정 (예: 99개)
-    const int32 MaxStackSize = 99;
+    // 🔹 아이템별 최대 스택 제한 설정 (기본값 99)
+    static TMap<EItemType, int32> MaxStackLimits = {
+        {EItemType::EIT_Bullet, 300},  // 🔹 총알은 최대 300개까지 저장 가능
+        {EItemType::EIT_HealthPotion, 10},  // 🔹 체력 포션은 최대 10개까지
+        {EItemType::EIT_StaminaPotion, 10},
+        {EItemType::EIT_Grenades, 5},  // 🔹 수류탄은 최대 5개까지
+        {EItemType::EIT_BulletBox, 5}  // 🔹 총알 박스는 최대 5개까지
+    };
 
-    // 🔹 기존 아이템이 존재하면 개수만 증가
+    const int32 MaxStackSize = MaxStackLimits.Contains(ItemType) ? MaxStackLimits[ItemType] : 999;  // 기본값 99
+
+    // 🔹 기존 아이템이 있는 경우 개수 증가
     if (InventoryItems.Contains(ItemType))
     {
         if (InventoryItems[ItemType] < MaxStackSize)
         {
             InventoryItems[ItemType]++;
-            UE_LOG(LogTemp, Warning, TEXT("✅ 아이템 추가됨: %d (현재 개수: %d)"), static_cast<int32>(ItemType), InventoryItems[ItemType]);
+            UE_LOG(LogTemp, Warning, TEXT("✅ 아이템 추가됨: %d (현재 개수: %d / 최대: %d)"),
+                static_cast<int32>(ItemType), InventoryItems[ItemType], MaxStackSize);
 
             // ✅ UI 업데이트
             OnInventoryUpdated.Broadcast();
-
             return true;
         }
         else
         {
+            UE_LOG(LogTemp, Warning, TEXT("⚠️ 최대 개수를 초과할 수 없습니다! (아이템 타입: %d)"), static_cast<int32>(ItemType));
             GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT("⚠️ 최대 개수를 초과할 수 없습니다!"));
             return false;
         }
@@ -84,13 +93,15 @@ bool UCInventoryComponent::AddToInventory(EItemType ItemType)
     // 🔹 새로운 아이템을 추가하는 경우, 인벤토리 슬롯 제한 체크
     if (InventoryItems.Num() >= MaxSlots)
     {
+        UE_LOG(LogTemp, Warning, TEXT("❌ 인벤토리가 가득 찼습니다! (현재 슬롯: %d / 최대 슬롯: %d)"), InventoryItems.Num(), MaxSlots);
         GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT("❌ 인벤토리가 가득 찼습니다!"));
         return false;
     }
 
     // 🔹 새로운 아이템 추가
     InventoryItems.Add(ItemType, 1);
-    UE_LOG(LogTemp, Warning, TEXT("✅ 새로운 아이템 추가됨: %d (현재 개수: %d)"), static_cast<int32>(ItemType), InventoryItems[ItemType]);
+    UE_LOG(LogTemp, Warning, TEXT("✅ 새로운 아이템 추가됨: %d (현재 개수: %d / 최대: %d)"),
+        static_cast<int32>(ItemType), InventoryItems[ItemType], MaxStackSize);
 
     // ✅ UI 업데이트
     OnInventoryUpdated.Broadcast();
