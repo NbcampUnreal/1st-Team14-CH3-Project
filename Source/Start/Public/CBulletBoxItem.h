@@ -14,11 +14,14 @@ class START_API ACBulletBoxItem : public ACBaseItem
 public:
 	ACBulletBoxItem();
 	virtual void Use(AActor* Target) override;
-	void GiveBulletsToPlayer(ACCharacter* PlayerCharacter);
 
 protected:
 	virtual void KeyPressedActivate(AActor* Activator) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Item)
 	int BulletNum;
+
+	bool bIsActivated = false;
+
+
 };
