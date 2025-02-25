@@ -22,6 +22,13 @@ void UCWBP_CInventory::InitializeInventory(UCInventoryComponent* InInventoryComp
         bDelegateBound = true;
     }
 
+    // ✅ ItemDataTable이 블루프린트에서 설정되었는지 확인
+    if (!ItemDataTable)
+    {
+        UE_LOG(LogTemp, Error, TEXT("❌ InitializeInventory 실패 - ItemDataTable이 NULL! 블루프린트에서 설정해야 합니다."));
+        return;
+    }
+
     UpdateInventory();
 }
 
@@ -78,23 +85,45 @@ void UCWBP_CInventory::UpdateInventory()
     }
 }
 
-void UCWBP_CInventory::UpdateItemTooltip(EItemType ItemType)
+void UCWBP_CInventory::UpdateItemTooltip(IIItemInterface* Item)
 {
-    if (!T_ItemName || !T_ItemDescription) return;
+    if (!Item || !ItemDataTable)
+    {
+        UE_LOG(LogTemp, Error, TEXT("❌ UpdateItemTooltip 실패 - Item 또는 ItemDataTable이 NULL!"));
+        return;
+    }
 
-    // ✅ `EItemType`을 문자열로 변환 후, UI에 표시할 이름 설정
-    FString ItemName = UEnum::GetDisplayValueAsText(ItemType).ToString();
-    FString ItemDescription = TEXT("이 아이템은 특정 효과가 있습니다."); // 설명 추가 가능
+    FString ContextString;
 
-    // ✅ UI 업데이트
+    // 🔹 Enum 값을 FName으로 변환할 때 정확한 방식 사용
+    FName RowName = IIItemInterface::GetRowNameFromItemType(Item->GetItemType());
+
+    UE_LOG(LogTemp, Warning, TEXT("🔍 FindRow 요청 - Row Name: %s"), *RowName.ToString());
+
+    FItemData* ItemData = ItemDataTable->FindRow<FItemData>(RowName, ContextString);
+
+    if (!ItemData)
+    {
+        UE_LOG(LogTemp, Error, TEXT("❌ UpdateItemTooltip 실패 - 데이터 테이블에서 아이템(%s)을 찾을 수 없음!"), *RowName.ToString());
+        return;
+    }
+
+    FString ItemName = ItemData->Name.ToString();
+    FString ItemDescription = ItemData->Description.ToString();
+
+    if (ItemName.IsEmpty())
+    {
+        UE_LOG(LogTemp, Error, TEXT("❌ UpdateItemTooltip 실패 - ItemName이 비어 있음!"));
+        return;
+    }
+
     T_ItemName->SetText(FText::FromString(ItemName));
     T_ItemDescription->SetText(FText::FromString(ItemDescription));
 
-    // ✅ 툴팁이 보이도록 강제 활성화
     T_ItemName->SetVisibility(ESlateVisibility::Visible);
     T_ItemDescription->SetVisibility(ESlateVisibility::Visible);
 
-    UE_LOG(LogTemp, Warning, TEXT("📌 아이템 툴팁 업데이트 - 이름: %s"), *ItemName);
+    UE_LOG(LogTemp, Warning, TEXT("✅ 아이템 툴팁 업데이트 성공 - 이름: %s, 설명: %s"), *ItemName, *ItemDescription);
 }
 
 void UCWBP_CInventory::HideItemTooltip()
@@ -119,4 +148,9 @@ void UCWBP_CInventory::NativeDestruct()
         UE_LOG(LogTemp, Warning, TEXT("🛑 InventoryComponent와의 델리게이트 연결 해제됨."));
     }
     Super::NativeDestruct();
+
+    if (!T_ItemName || !T_ItemDescription)
+    {
+        UE_LOG(LogTemp, Error, TEXT("❌ UI 요소 초기화 실패 - T_ItemName 또는 T_ItemDescription이 NULL!"));
+    }
 }

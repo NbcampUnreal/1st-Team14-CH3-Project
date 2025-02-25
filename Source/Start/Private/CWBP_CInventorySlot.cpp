@@ -63,8 +63,12 @@ void UCWBP_CInventorySlot::NativeOnMouseEnter(const FGeometry& InGeometry, const
     UCWBP_CInventory* InventoryWidget = CustomPC->GetInventoryWidget();
     if (!InventoryWidget) return;
 
-    // ✅ 툴팁 업데이트 함수 호출
-    InventoryWidget->UpdateItemTooltip(StoredItemType);
+    // 🔹 StoredItemType을 기반으로 아이템 객체 찾기
+    IIItemInterface* FoundItem = InventoryComponent->FindItemByType(StoredItemType);
+    if (!FoundItem) return;
+
+    // ✅ 툴팁 업데이트 함수 호출 (IIItemInterface* 전달)
+    InventoryWidget->UpdateItemTooltip(FoundItem);
 
     UE_LOG(LogTemp, Warning, TEXT("✅ 아이템 툴팁 표시 - 타입: %d"), static_cast<int32>(StoredItemType));
 }

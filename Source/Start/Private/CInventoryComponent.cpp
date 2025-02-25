@@ -259,3 +259,16 @@ void UCInventoryComponent::AddBulletsToInventory(int32 BulletCount)
 	// 🔹 UI 업데이트
 	OnInventoryUpdated.Broadcast();
 }
+
+IIItemInterface* UCInventoryComponent::FindItemByType(EItemType ItemType)
+{
+    ACBaseItem* FoundItem = GetItemInstance(ItemType);
+    if (!FoundItem)
+    {
+        UE_LOG(LogTemp, Error, TEXT("❌ FindItemByType 실패 - GetItemInstance(%d) 가 NULL을 반환!"), static_cast<int32>(ItemType));
+        return nullptr;
+    }
+
+    UE_LOG(LogTemp, Warning, TEXT("✅ FindItemByType 성공 - 아이템(%d) 반환!"), static_cast<int32>(ItemType));
+    return Cast<IIItemInterface>(FoundItem);
+}
