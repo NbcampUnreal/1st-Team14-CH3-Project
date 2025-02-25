@@ -21,6 +21,9 @@ void UCHUDWidget::NativeConstruct()
 	// DamageOverlay와 ItemPickupText는 기본적으로 숨김 처리
 	if (DamageOverlay)	{DamageOverlay->SetVisibility(ESlateVisibility::Hidden);}
 	if (ItemPickupText){ItemPickupText->SetVisibility(ESlateVisibility::Hidden);}
+
+	// 초기 상태에서 AmmoIcon도 숨김 처리
+	if (AmmoIcon) { AmmoIcon->SetVisibility(ESlateVisibility::Hidden); }
 }
 
 // 체력 업데이트
@@ -49,6 +52,11 @@ void UCHUDWidget::UpdateAmmo(int32 iCurrentAmmo, int32 iMaxAmmo)
 		FString AmmoString = FString::Printf(TEXT("%d / %d"), iCurrentAmmo, iMaxAmmo);
 		AmmoText->SetText(FText::FromString(AmmoString));
 	}
+	// 만약 탄약이 0이면 AmmoIcon도 숨길 수 있도록
+	if (AmmoIcon)
+	{
+		AmmoIcon->SetVisibility(iCurrentAmmo > 0 ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+	}
 }
 
 // 현재 무기 이름 업데이트
@@ -57,6 +65,34 @@ void UCHUDWidget::UpdateWeapon(FText WeaponName)
 	if (WeaponNameText)
 	{
 		WeaponNameText->SetText(WeaponName);
+	}
+}
+
+// 무기 종류에 따른 탄약 표시 여부 업데이트 함수
+void UCHUDWidget::UpdateWeaponType(EWeaponType PrevType, EWeaponType NewType)
+{
+	// 라이플(Rifle)과 피스톨(Pistol)만 총알 정보를 보여줌.
+	bool bShowAmmo = (NewType == EWeaponType::Rifle || NewType == EWeaponType::Pistol);
+	SetAmmoVisibility(bShowAmmo);
+}
+
+void UCHUDWidget::SetAmmoVisibility(bool bVisible)
+{
+	if (AmmoText)
+	{
+		AmmoText->SetVisibility(bVisible ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+	}
+	if (AmmoIcon)
+	{
+		AmmoIcon->SetVisibility(bVisible ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+	}
+}
+
+void UCHUDWidget::SetCrosshairVisibility(bool bVisible)
+{
+	if (CrosshairIcon)
+	{
+		CrosshairIcon->SetVisibility(bVisible ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
 	}
 }
 
