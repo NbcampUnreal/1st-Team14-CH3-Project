@@ -10,7 +10,7 @@ ACWeapon_AK47::ACWeapon_AK47()
 	//Equip
 	{
 		HolsterSocketName = "Spine_Rifle";
-		static ConstructorHelpers::FObjectFinder<UAnimMontage> montage(TEXT("/Script/Engine.AnimMontage'/Game/Assets/Montages/Rifle/Equip/Equip_Rifle_Standing_Montage1.Equip_Rifle_Standing_Montage1'"));
+		static ConstructorHelpers::FObjectFinder<UAnimMontage> montage(TEXT("/Script/Engine.AnimMontage'/Game/Assets/Montages/Rifle/Equip/Equip_Rifle_Standing_Montage.Equip_Rifle_Standing_Montage'"));
 		if (montage.Succeeded() == true)
 			EquipMontage = montage.Object;
 		Equip_PlayRate = 1.0f;
@@ -40,7 +40,7 @@ ACWeapon_AK47::ACWeapon_AK47()
 		AutoFireInterval = 0.15f;
 		RecoilRate = 0.05f;
 	}
-
+	
 	//Magazine
 	{
 		CurrentMagazineCount = 30;
