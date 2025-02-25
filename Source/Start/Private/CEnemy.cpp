@@ -4,6 +4,7 @@
 #include "CEnemy.h"
 #include "CEnemyAIController.h"
 #include "CCharacter.h"
+#include "CPlayer.h"
 #include "Components/CStateComponent.h"
 #include "Components/CMovementComponent.h"
 #include "Components/WidgetComponent.h"
@@ -58,6 +59,29 @@ void ACEnemy::SetWalk()
 {
 	MovementComponent->OnWark();
 }
+
+void ACEnemy::SetStun(ACPlayer* Player)
+{
+	UCMovementComponent* PlayerMovementComponent = Player->FindComponentByClass<UCMovementComponent>();
+	if (PlayerMovementComponent->GetCanMove())
+	{
+		
+		if (PlayerMovementComponent)
+		{
+			PlayerMovementComponent->Stop();
+		}
+		FTimerHandle StunTimerHandle;
+		GetWorldTimerManager().SetTimer(StunTimerHandle, [PlayerMovementComponent]()
+			{
+				if (PlayerMovementComponent)
+				{
+					PlayerMovementComponent->Move();
+				}
+			}, 3.0f, false);
+	}
+
+}
+
 
 
 void ACEnemy::BeginPlay()
