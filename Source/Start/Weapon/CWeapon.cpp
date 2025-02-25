@@ -86,7 +86,7 @@ void ACWeapon::BeginPlay()
 
 	
 	ACPlayer* player = Cast<ACPlayer>(OwnerCharacter);
-	if (player != NULL)
+	if (player != NULL && bIsCustom == false)
 	{
 		//Aim BaseData Setting
 		USpringArmComponent* SpringArm = Cast<USpringArmComponent>(player->GetComponentByClass(USpringArmComponent::StaticClass()));
@@ -98,8 +98,8 @@ void ACWeapon::BeginPlay()
 			BaseData.bEnableCameraLag = SpringArm->bEnableCameraLag;
 			BaseData.FieldOfView = camera->FieldOfView;
 		}
+		BaseData.SetDataByNoneCurve(OwnerCharacter);
 	}
-	BaseData.SetDataByNoneCurve(OwnerCharacter);
 	State = Cast<UCStateComponent>(OwnerCharacter->GetComponentByClass(UCStateComponent::StaticClass()));
 	Camera = Cast<UCCameraComponent>(OwnerCharacter->GetComponentByClass(UCCameraComponent::StaticClass()));
 	if (AimCurve != nullptr)
@@ -339,6 +339,9 @@ bool ACWeapon::CanAim()
 
 void ACWeapon::BeginAim()
 {
+	ACPlayer* Player = Cast<ACPlayer>(OwnerCharacter);
+	if (!Player)
+		return;
 	bInAim = true;
 	if (AimCurve != nullptr)
 	{

@@ -49,6 +49,8 @@ protected:
 	float Equip_PlayRate;
 
 	UPROPERTY(EditDefaultsOnly, category = "Aim")
+	bool bIsCustom;
+	UPROPERTY(EditDefaultsOnly, category = "Aim")
 	FWeaponAimData BaseData;
 	UPROPERTY(EditDefaultsOnly, category = "Aim")
 	FWeaponAimData AimData;
@@ -122,10 +124,12 @@ public:
 	FORCEINLINE bool IsAutoFire() { return bAutoFire; }
 	FORCEINLINE FVector GetLeftHandLocation() { return LeftHandLocation; }
 
-	// Åº¾à Á¤º¸¸¦ HUD¿¡ Á¦°øÇÏ±â À§ÇÑ getter ÇÔ¼öµé
+	FORCEINLINE bool GetInAim() const { return bInAim; }
+	
+	// Åºï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ HUDï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½ getter ï¿½Ô¼ï¿½ï¿½ï¿½
 	FORCEINLINE uint8 GetCurrentMagazineCount() const { return CurrentMagazineCount; }
 	FORCEINLINE uint8 GetMaxMagazineCount() const { return MaxMagazineCount; }
-	// ÆíÀÇ»ó HUD ¿¬µ¿¿ë º°Äª ÇÔ¼ö Ãß°¡
+	// ï¿½ï¿½ï¿½Ç»ï¿½ HUD ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Äª ï¿½Ô¼ï¿½ ï¿½ß°ï¿½
 	FORCEINLINE uint8 GetMaxAmmo() const { return GetMaxMagazineCount(); }
 	FORCEINLINE uint8 GetCurrentAmmo() const { return GetCurrentMagazineCount(); }
 

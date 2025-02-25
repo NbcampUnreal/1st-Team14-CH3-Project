@@ -7,6 +7,7 @@
 #include "CEnemy.generated.h"
 
 class UWidgetComponent;
+class ACPlayer;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyAttack);
 
@@ -40,6 +41,15 @@ public:
 	void SetRun();
 	UFUNCTION(BlueprintCallable)
 	void SetWalk();
+
+	UFUNCTION(BlueprintCallable)
+	void SetStun(ACPlayer* Player);
+
+	UFUNCTION(BlueprintCallable)
+	void GunAttackStart();
+
+	UFUNCTION(BlueprintCallable)
+	void GunAttackEnd();
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
