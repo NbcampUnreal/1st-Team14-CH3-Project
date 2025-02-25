@@ -45,8 +45,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetStun(ACPlayer* Player);
 
+	UFUNCTION(BlueprintCallable)
+	void GunAttackStart();
 
-
+	UFUNCTION(BlueprintCallable)
+	void GunAttackEnd();
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
