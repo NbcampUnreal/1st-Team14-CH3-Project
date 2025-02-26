@@ -176,7 +176,7 @@ bool UCWeaponComponent::GetInAim()
 	return GetCurrentWeapon()->GetInAim();
 }
 
-FVector UCWeaponComponent::GetLefttHandLocation()
+FVector UCWeaponComponent::GetLeftHandLocation()
 {
 	if (GetCurrentWeapon() == nullptr)
 		return FVector::Zero();

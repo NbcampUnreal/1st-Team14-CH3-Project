@@ -2,9 +2,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "CGameState.h" // EGameState 헤더
 #include "AElevatorTrigger.generated.h"
 
 class UBoxComponent;
+class USoundBase;
 
 UCLASS()
 class START_API AAElevatorTrigger : public AActor
@@ -24,6 +26,11 @@ private:
 
     UPROPERTY(EditAnywhere, Category = "Elevator")
     bool bIsN_Elevator;  // 🔹 True면 연구소 미로, False면 보스 연구소
+
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	USoundBase* ElevatorSound;
+
+	void LoadNextLevel(EGameState NewState); // 🔹 다음 레벨 로드
 
     UFUNCTION()
     void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
