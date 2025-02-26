@@ -83,18 +83,33 @@ void ACEnemy::SetStun(ACPlayer* Player)
 
 }
 
-void ACEnemy::GunAttackStart()
+void ACEnemy::Equip()
 {
-	WeaponComponent->SetRifleMode();
-	WeaponComponent->Begin_Fire();
+	if (!bIsEqueped)
+	{
+		WeaponComponent->SetRifleMode();
+		bIsEqueped = true;
+	}
 }
 
+void ACEnemy::UnEquip()
+{
+	if(bIsEqueped)
+	{
+		WeaponComponent->SetUnarmedMode();
+	}
+}
 
+void ACEnemy::GunAttackStart()
+{
+	Equip();
+	WeaponComponent->Begin_Fire();
+}
 
 void ACEnemy::GunAttackEnd()
 {
 	WeaponComponent->End_Fire();
-	WeaponComponent->SetUnarmedMode();
+	UnEquip();
 }
 
 void ACEnemy::BeginPlay()

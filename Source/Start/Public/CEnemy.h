@@ -29,6 +29,8 @@ public:
 	bool bCanAttack;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsGunUsed;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsEqueped;
 	
 	void UpdateOverheadHP();
 
@@ -44,6 +46,12 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetStun(ACPlayer* Player);
+
+	UFUNCTION(BlueprintCallable)
+	void Equip();
+
+	UFUNCTION(BlueprintCallable)
+	void UnEquip();
 
 	UFUNCTION(BlueprintCallable)
 	void GunAttackStart();
