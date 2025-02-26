@@ -103,14 +103,12 @@ void ACEnemy::UnEquip()
 
 void ACEnemy::GunAttackStart()
 {
-	Equip();
 	WeaponComponent->Begin_Fire();
 }
 
 void ACEnemy::GunAttackEnd()
 {
 	WeaponComponent->End_Fire();
-	UnEquip();
 }
 
 void ACEnemy::BeginPlay()
