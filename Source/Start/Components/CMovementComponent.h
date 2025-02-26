@@ -48,6 +48,7 @@ public:
 	void OnJump(const FInputActionValue& Value);
 	void EndJump();
 
+	void OnAim();
 	void OnWark();
 	void OnRun();
 

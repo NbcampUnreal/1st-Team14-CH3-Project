@@ -33,6 +33,8 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Camera")
 	FVector2D PitchRange = FVector2D(-40, 40);;
 
+	void BeginAim();
+	void EndAim();
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category = "Camera")
 	UCameraComponent* Camera;

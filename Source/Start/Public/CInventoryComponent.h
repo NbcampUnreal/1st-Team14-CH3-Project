@@ -20,6 +20,8 @@ public:
     UCInventoryComponent();
     void BeginPlay();
 
+    FORCEINLINE int32 CurrentBulletCount() { return InventoryItems[EItemType::EIT_Bullet]; }
+
     IIItemInterface* FindItemByType(EItemType ItemType);
     // 아이템 추가
     UFUNCTION(BlueprintCallable, Category = "Inventory")

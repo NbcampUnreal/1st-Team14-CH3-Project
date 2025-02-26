@@ -107,8 +107,8 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 			EnhancedInput->BindAction(PC->RunAction, ETriggerEvent::Started, MovementComponent, &UCMovementComponent::OnRun);
 			EnhancedInput->BindAction(PC->RunAction, ETriggerEvent::Completed, MovementComponent, &UCMovementComponent::OnWark);
 			EnhancedInput->BindAction(PC->ReloadAction, ETriggerEvent::Triggered, WeaponComponent, &UCWeaponComponent::Reload);
-			EnhancedInput->BindAction(PC->ToggleZoomAction, ETriggerEvent::Started, WeaponComponent, &UCWeaponComponent::BeginAim);
-			EnhancedInput->BindAction(PC->ToggleZoomAction, ETriggerEvent::Completed, WeaponComponent, &UCWeaponComponent::EndAim);
+			EnhancedInput->BindAction(PC->ToggleZoomAction, ETriggerEvent::Started, this, &ACPlayer::BeginAim);
+			EnhancedInput->BindAction(PC->ToggleZoomAction, ETriggerEvent::Completed, this, &ACPlayer::EndAim);
 
 			EnhancedInput->BindAction(PC->EquipRifleAction, ETriggerEvent::Triggered, WeaponComponent, &UCWeaponComponent::SetRifleMode);
 			EnhancedInput->BindAction(PC->EquipPistolAction, ETriggerEvent::Triggered, WeaponComponent, &UCWeaponComponent::SetPistolMode);
@@ -186,4 +186,16 @@ void ACPlayer::ToggleView()
 		Camera->AttachToComponent(SpringArm, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 		Camera->bUsePawnControlRotation = false;
 	}
+}
+
+void ACPlayer::BeginAim()
+{
+	MovementComponent->OnAim();
+	WeaponComponent->BeginAim();
+}
+
+void ACPlayer::EndAim()
+{
+	MovementComponent->OnAim();
+	WeaponComponent->EndAim();
 }
