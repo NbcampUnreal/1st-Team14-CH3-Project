@@ -191,7 +191,7 @@ bool ACWeapon::CanFire()
 	b |= bEquipping;
 	b |= bReload;
 	b |= bFiring;
-	b |= State->IsInventoryMode() == true;
+	//b |= State->IsInventoryMode() == true;
 	return !b;
 }
 
@@ -306,7 +306,7 @@ bool ACWeapon::CanReload()
 	bool b = false;
 	b |= bEquipping;
 	b |= bReload;
-	b |= State->IsInventoryMode() == true;
+	//b |= State->IsInventoryMode() == true;
 	return !b;
 }
 
@@ -368,7 +368,7 @@ bool ACWeapon::CanAim()
 	b |= bEquipping;
 	b |= bReload;
 	b |= bFiring;
-	b |= State->IsInventoryMode() == true;
+	//b |= State->IsInventoryMode() == true;
 	return !b;
 }
 
