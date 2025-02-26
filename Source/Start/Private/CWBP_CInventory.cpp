@@ -51,9 +51,13 @@ void UCWBP_CInventory::UpdateInventory()
     // 기존 슬롯 삭제
     InventoryWrapBox->ClearChildren();
 
+    // 🔹 현재 아이템 개수 저장
+    int32 CurrentItemCount = InventoryComponent->GetInventoryItems().Num();
+
     // ✅ 정렬 순서를 보장하기 위해 TArray로 변환
     TArray<EItemType> SortedItems;
     InventoryComponent->GetInventoryItems().GenerateKeyArray(SortedItems);
+
 
     // ✅ 아이템을 저장된 순서대로 정렬 (필요시 사용자 지정 순서 적용 가능)
     SortedItems.Sort([](const EItemType& A, const EItemType& B)
@@ -82,6 +86,12 @@ void UCWBP_CInventory::UpdateInventory()
         {
             UE_LOG(LogTemp, Error, TEXT("❌ 슬롯 위젯 생성 실패!"));
         }
+    }
+    // ✅ 아이템이 하나도 없을 때만 툴팁 숨기기
+    if (CurrentItemCount == 0)
+    {
+        HideItemTooltip();
+        UE_LOG(LogTemp, Warning, TEXT("📌 모든 아이템이 사라짐 - 툴팁 숨김"));
     }
 }
 
