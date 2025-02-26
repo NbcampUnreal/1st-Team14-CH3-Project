@@ -33,6 +33,9 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Camera")
 	FVector2D PitchRange = FVector2D(-40, 40);;
 
+	UPROPERTY(VisibleAnywhere, Category = "Mesh")
+	USkeletalMeshComponent* FirstPersonMesh;
+
 	void BeginAim();
 	void EndAim();
 protected:

@@ -26,6 +26,11 @@ ACPlayer::ACPlayer()
 
 	CameraComponent = CreateDefaultSubobject<UCCameraComponent>(TEXT("CameraComponent"));
 
+	// 추가된 SkeletalMesh (Camera에 Attach)
+	FirstPersonMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("FirstPersonMesh"));
+	FirstPersonMesh->SetupAttachment(Camera);
+	FirstPersonMesh->SetVisibility(false);  // 비활성화
+
 	bIsFirstPerson = true;
 
 	InventoryComponent = CreateDefaultSubobject<UCInventoryComponent>(TEXT("InventoryComponent"));
