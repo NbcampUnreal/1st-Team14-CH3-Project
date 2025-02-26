@@ -174,6 +174,12 @@ void ACPlayer::JumpIfNotInInventory(const FInputActionValue& Value)
 	MovementComponent->OnJump(Value);
 }
 
+void ACPlayer::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	UE_LOG(LogTemp,Warning,TEXT("%f"),Camera->FieldOfView)
+}
+
 void ACPlayer::ToggleView()
 {
 	bIsFirstPerson = !bIsFirstPerson; // 시점 전환
@@ -195,12 +201,13 @@ void ACPlayer::ToggleView()
 
 void ACPlayer::BeginAim()
 {
+	if(WeaponComponent->BeginAim() == false)
+		return;
 	MovementComponent->OnAim();
-	WeaponComponent->BeginAim();
 }
 
 void ACPlayer::EndAim()
 {
-	MovementComponent->OnAim();
+	MovementComponent->OnWark();
 	WeaponComponent->EndAim();
 }

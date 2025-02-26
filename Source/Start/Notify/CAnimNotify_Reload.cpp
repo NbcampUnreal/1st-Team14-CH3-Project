@@ -24,6 +24,8 @@ void UCAnimNotify_Reload::Notify(USkeletalMeshComponent* MeshComp, UAnimSequence
 
 	switch (ActionType)
 	{
+	case EReloadActionType::Start:
+		break;
 	case EReloadActionType::Eject:
 		weapon->Eject_Magazine();
 		break;

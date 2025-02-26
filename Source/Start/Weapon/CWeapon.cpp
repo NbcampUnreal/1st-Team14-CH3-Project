@@ -27,6 +27,9 @@ void FWeaponAimData::SetData(class ACCharacter* InOwner)
 	springArm->TargetArmLength = TargetArmLength;
 	springArm->SocketOffset = SocketOffset;
 	springArm->bEnableCameraLag = bEnableCameraLag;
+	UCameraComponent* camera = Cast<UCameraComponent>(InOwner->GetComponentByClass(UCameraComponent::StaticClass()));
+	camera->FieldOfView = FieldOfView;
+	UE_LOG(LogTemp, Error, TEXT("%f"), camera->FieldOfView);
 }
 
 void FWeaponAimData::SetDataByNoneCurve(class ACCharacter* InOwner)
@@ -83,11 +86,11 @@ void ACWeapon::BeginPlay()
 	OwnerCharacter = Cast<ACCharacter>(GetOwner());
 	if (OwnerCharacter == nullptr)
 		return;
-	
-	if (HolsterSocketName.IsValid() == true)
-		AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative,true), HolsterSocketName);
 
-	
+	if (HolsterSocketName.IsValid() == true)
+		AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), HolsterSocketName);
+
+
 	ACPlayer* player = Cast<ACPlayer>(OwnerCharacter);
 	if (player != NULL && bIsCustom == false)
 	{
@@ -101,15 +104,16 @@ void ACWeapon::BeginPlay()
 			BaseData.bEnableCameraLag = SpringArm->bEnableCameraLag;
 			BaseData.FieldOfView = camera->FieldOfView;
 		}
-		BaseData.SetDataByNoneCurve(OwnerCharacter);
+		else
+			BaseData.SetDataByNoneCurve(OwnerCharacter);
 	}
 	State = Cast<UCStateComponent>(OwnerCharacter->GetComponentByClass(UCStateComponent::StaticClass()));
 	Camera = Cast<UCCameraComponent>(OwnerCharacter->GetComponentByClass(UCCameraComponent::StaticClass()));
 	if (AimCurve != nullptr)
 	{
 		FOnTimelineFloat timeline;
-		timeline.BindUFunction(this,"OnAiming");
-		Timeline->AddInterpFloat(AimCurve,timeline);
+		timeline.BindUFunction(this, "OnAiming");
+		Timeline->AddInterpFloat(AimCurve, timeline);
 		Timeline->SetLooping(false);
 		Timeline->SetPlayRate(AimSpeed);
 	}
@@ -130,18 +134,18 @@ bool ACWeapon::CanEquip()
 	b |= bReload;
 	b |= bFiring;
 	b |= State->IsInventoryMode() == true;
-	
+
 	return !b;
 }
 
 void ACWeapon::Equip()
 {
 	bEquipping = true;
-	if(State == nullptr)
+	if (State == nullptr)
 		return;
-	if(Camera != nullptr)
+	if (Camera != nullptr)
 		Camera->EnableControlRotation();
-		
+
 
 	State->SetEquipMode();
 
@@ -151,19 +155,19 @@ void ACWeapon::Equip()
 		EndEquip();
 		return;
 	}
-	
-	OwnerCharacter->PlayAnimMontage(EquipMontage,Equip_PlayRate);
+
+	OwnerCharacter->PlayAnimMontage(EquipMontage, Equip_PlayRate);
 }
 
 void ACWeapon::BeginEquip()
 {
 	if (RightHandSokcetName.IsValid())
-		AttachToComponent(OwnerCharacter->GetMesh(),FAttachmentTransformRules(EAttachmentRule::KeepRelative,true), RightHandSokcetName);
-}	
+		AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), RightHandSokcetName);
+}
 
 void ACWeapon::EndEquip()
 {
-	bEquipping =false;
+	bEquipping = false;
 }
 
 bool ACWeapon::CanUnequip()
@@ -173,15 +177,15 @@ bool ACWeapon::CanUnequip()
 	b |= bReload;
 	b |= bFiring;
 	b |= State->IsInventoryMode() == true;
-	
+
 	return !b;
 }
 
 void ACWeapon::Unequip()
 {
 	if (HolsterSocketName.IsValid() == true)
-		AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative,true), HolsterSocketName);
-	if(Camera != nullptr)
+		AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), HolsterSocketName);
+	if (Camera != nullptr)
 		Camera->DisableControlRoation();
 }
 
@@ -198,10 +202,10 @@ bool ACWeapon::CanFire()
 void ACWeapon::BeginFire()
 {
 	bFiring = true;
-	if(bAutoFire == true)
+	if (bAutoFire == true)
 	{
-		UE_LOG(LogTemp,Warning,TEXT("%f"),AutoFireInterval)
-		GetWorld()->GetTimerManager().SetTimer(AutoFireHandle, this, &ACWeapon::OnFireing,AutoFireInterval,true, 0);
+		UE_LOG(LogTemp, Warning, TEXT("%f"), AutoFireInterval)
+			GetWorld()->GetTimerManager().SetTimer(AutoFireHandle, this, &ACWeapon::OnFireing, AutoFireInterval, true, 0);
 		return;
 	}
 
@@ -210,18 +214,18 @@ void ACWeapon::BeginFire()
 
 void ACWeapon::EndFire()
 {
-	if(bFiring == false)
+	if (bFiring == false)
 		return;
-	if(GetWorld()->GetTimerManager().IsTimerActive(AutoFireHandle) )
+	if (GetWorld()->GetTimerManager().IsTimerActive(AutoFireHandle))
 		GetWorld()->GetTimerManager().ClearTimer(AutoFireHandle);
-	
+
 	bFiring = false;
 }
 
 void ACWeapon::OnFireing()
 {
 	if (FireMontage != nullptr)
-		OwnerCharacter->PlayAnimMontage(FireMontage,FireRate);
+		OwnerCharacter->PlayAnimMontage(FireMontage, FireRate);
 	UCameraComponent* camera = Cast<UCameraComponent>(OwnerCharacter->GetComponentByClass(UCameraComponent::StaticClass()));
 	FTransform transform{};
 	FVector direction{};
@@ -235,27 +239,27 @@ void ACWeapon::OnFireing()
 		direction = camera->GetForwardVector();
 		transform = camera->GetComponentToWorld();
 	}
-	
+
 
 	FVector start = transform.GetLocation() + direction;
 
 	direction = UKismetMathLibrary::RandomUnitVectorInConeInDegrees(direction, RecoilAngle);
 
-	FVector end = transform.GetLocation() + direction*HitDistance;
+	FVector end = transform.GetLocation() + direction * HitDistance;
 
 	TArray<AActor*> ignores;
 	FHitResult hitResult;
 
 	UKismetSystemLibrary::LineTraceSingle(GetWorld(), start, end, ETraceTypeQuery::TraceTypeQuery1, false, ignores, Debug, hitResult, true, DebugColor);
-	if(hitResult.bBlockingHit == true)
+	if (hitResult.bBlockingHit == true)
 	{
-		if(HitDecal != nullptr)
+		if (HitDecal != nullptr)
 		{
 			FRotator rotator = hitResult.ImpactNormal.Rotation();
 			UDecalComponent* decal = UGameplayStatics::SpawnDecalAtLocation(GetWorld(), HitDecal, HitDecalSize, hitResult.Location, rotator, HitDecalLifeTime);
 			decal->SetFadeScreenSize(0);
 		}
-		if(HitParticle != nullptr)
+		if (HitParticle != nullptr)
 		{
 			FRotator rotator = UKismetMathLibrary::FindLookAtRotation(hitResult.Location, hitResult.TraceStart);
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitParticle, hitResult.Location, rotator);
@@ -268,23 +272,29 @@ void ACWeapon::OnFireing()
 		UGameplayStatics::SpawnEmitterAttached(EjectParticle, Mesh, "Eject", FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset);
 	FVector muzzleLocation = Mesh->GetSocketLocation("Muzzle");
 	if (FireSound != nullptr)
-		UGameplayStatics::SpawnSoundAtLocation(GetWorld(),FireSound,muzzleLocation);
-	if(CameraShak != nullptr)
+		UGameplayStatics::SpawnSoundAtLocation(GetWorld(), FireSound, muzzleLocation);
+	if (CameraShak != nullptr)
 	{
+
 		APlayerController* controller = Cast<APlayerController>(OwnerCharacter->GetController());
 		if (controller != nullptr)
-			controller->PlayerCameraManager->StartCameraShake(CameraShak);
+		{
+			if (bInAim == true && AimCameraShak != nullptr)
+				controller->PlayerCameraManager->StartCameraShake(AimCameraShak);
+			else
+				controller->PlayerCameraManager->StartCameraShake(CameraShak);
+		}
 	}
 
-	OwnerCharacter->AddControllerPitchInput(-RecoilRate*UKismetMathLibrary::RandomFloatInRange(0.8f,1.2f));
+	OwnerCharacter->AddControllerPitchInput(-RecoilRate * UKismetMathLibrary::RandomFloatInRange(0.8f, 1.2f));
 
 	if (BulletClass != nullptr)
 	{
 		FVector location = Mesh->GetSocketLocation("Muzzle_Bullet");
 		FActorSpawnParameters param;
 		param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		
-		ACBullet* bullet = GetWorld()->SpawnActor<ACBullet>(BulletClass,location,direction.Rotation(),param);
+
+		ACBullet* bullet = GetWorld()->SpawnActor<ACBullet>(BulletClass, location, direction.Rotation(), param);
 		if (bullet != nullptr)
 			bullet->Shoot(direction);
 	}
@@ -317,7 +327,7 @@ void ACWeapon::Reload()
 	EndFire();
 
 	if (ReloadMontage != nullptr)
-		OwnerCharacter->PlayAnimMontage(ReloadMontage,ReloadPlayRate);
+		OwnerCharacter->PlayAnimMontage(ReloadMontage, ReloadPlayRate);
 
 	// ������ �Ϸ� �� CurrentMagazineCount�� �ִ� ź������ �缳��
 	CurrentMagazineCount = MaxMagazineCount;
@@ -326,12 +336,12 @@ void ACWeapon::Reload()
 void ACWeapon::Eject_Magazine()
 {
 	if (MagazineBoneName.IsValid() == true)
-		Mesh->HideBoneByName(MagazineBoneName,PBO_None);
+		Mesh->HideBoneByName(MagazineBoneName, PBO_None);
 	if (MagazineClass == nullptr)
 		return;
 
-	FTransform transform=Mesh->GetSocketTransform(MagazineBoneName);
-	ACMagazine* magazie =  GetWorld()->SpawnActorDeferred<ACMagazine>(MagazineClass,transform,nullptr,nullptr,ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+	FTransform transform = Mesh->GetSocketTransform(MagazineBoneName);
+	ACMagazine* magazie = GetWorld()->SpawnActorDeferred<ACMagazine>(MagazineClass, transform, nullptr, nullptr, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 	magazie->SetEject();
 	magazie->SetLifeSpan(5.0f);
 	magazie->FinishSpawning(transform);
@@ -343,8 +353,8 @@ void ACWeapon::Spawn_Magazine()
 		return;
 	FActorSpawnParameters param;
 	param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	Magazine = GetWorld()->SpawnActor<ACMagazine>(MagazineClass,param);
-	Magazine->AttachToComponent(OwnerCharacter->GetMesh(),FAttachmentTransformRules(EAttachmentRule::KeepRelative,true), MagazinSocketName);
+	Magazine = GetWorld()->SpawnActor<ACMagazine>(MagazineClass, param);
+	Magazine->AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), MagazinSocketName);
 }
 
 void ACWeapon::Load_Magazine()
@@ -379,7 +389,7 @@ void ACWeapon::BeginAim()
 		return;
 	bInAim = true;
 	if (BreathSound != nullptr)
-		UGameplayStatics::SpawnSoundAtLocation(GetWorld(), BreathSound,OwnerCharacter->GetActorLocation());
+		UGameplayStatics::SpawnSoundAtLocation(GetWorld(), BreathSound, OwnerCharacter->GetActorLocation());
 	if (AimCurve != nullptr)
 	{
 		Timeline->PlayFromStart();
@@ -391,7 +401,7 @@ void ACWeapon::BeginAim()
 
 void ACWeapon::EndAim()
 {
-	if  (bInAim == false)
+	if (bInAim == false)
 		return;
 	bInAim = false;
 
@@ -408,5 +418,5 @@ void ACWeapon::OnAiming(float Output)
 {
 	UCameraComponent* camera = Cast<UCameraComponent>(OwnerCharacter->GetComponentByClass(UCameraComponent::StaticClass()));
 	UE_LOG(LogTemp, Error, TEXT("Test"));
-	camera->FieldOfView = FMath::Lerp(AimData.FieldOfView,BaseData.FieldOfView,Output);
+	camera->FieldOfView = FMath::Lerp(AimData.FieldOfView, BaseData.FieldOfView, Output);
 }

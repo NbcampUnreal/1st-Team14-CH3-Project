@@ -9,6 +9,7 @@
 UENUM()
 enum class EReloadActionType : uint8
 {
+	Start,
 	Eject,
 	Spawn,
 	Load,

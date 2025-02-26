@@ -22,6 +22,7 @@ class START_API ACPlayer : public ACCharacter
 	GENERATED_BODY()
 public:
 	FORCEINLINE USpringArmComponent* GetSpringArm() const {return SpringArm;}
+	FORCEINLINE USkeletalMeshComponent* GetFirstPersonMesh() const { return FirstPersonMesh; }
 public:
 	ACPlayer();
 	FORCEINLINE UCameraComponent* GetCamera() const { return Camera; }
@@ -53,4 +54,5 @@ protected:
 	void ToggleView();
 	void MoveIfNotInInventory(const FInputActionValue& Value);
 	void JumpIfNotInInventory(const FInputActionValue& Value);
+	virtual void Tick(float DeltaSeconds) override;
 };
