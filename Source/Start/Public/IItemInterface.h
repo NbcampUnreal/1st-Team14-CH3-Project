@@ -11,12 +11,12 @@
 UENUM(BlueprintType)
 enum class EItemType : uint8
 {
-    EIT_None = 255 UMETA(DisplayName = "None"),  // ✅ 빈 슬롯 추가
     EIT_HealthPotion = 0 UMETA(DisplayName = "HealthPotion"),
     EIT_StaminaPotion = 1 UMETA(DisplayName = "StaminaPotion"),
     EIT_BulletBox = 2 UMETA(DisplayName = "BulletBox"),
     EIT_Bullet = 3 UMETA(DisplayName = "Bullet"),
-    EIT_Grenades = 4 UMETA(DisplayName = "Grenades")
+    EIT_Grenades = 4 UMETA(DisplayName = "Grenades"),
+    EIT_None = 255 UMETA(DisplayName = "None")  // ✅ 빈 슬롯 추가
 };
 
 // 🔹 블루프린트에서도 사용 가능하도록 인터페이스 추가

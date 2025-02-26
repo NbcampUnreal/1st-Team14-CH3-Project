@@ -5,6 +5,10 @@
 #include "Engine/World.h"
 #include "CPlayerController.h"
 #include "CBulletBoxItem.h"
+#include "CHealthPotionItem.h"
+#include "CStaminaPotionItem.h"
+#include "Weapon/CBullet.h"
+#include "CGrenadesItem.h"
 #include "GameFramework/Actor.h"
 
 // 생성자: 최대 슬롯 수 초기화
@@ -23,6 +27,27 @@ void UCInventoryComponent::BeginPlay()
         DropItemClasses.Add(EItemType::EIT_BulletBox, ACBulletBoxItem::StaticClass());
         UE_LOG(LogTemp, Warning, TEXT("✅ BulletBox 아이템이 DropItemClasses에 정상 등록됨."));
     }
+    if (ACHealthPotionItem::StaticClass())
+    {
+        DropItemClasses.Add(EItemType::EIT_HealthPotion, ACHealthPotionItem::StaticClass());
+        UE_LOG(LogTemp, Warning, TEXT("✅ HealthPotion 아이템이 DropItemClasses에 정상 등록됨."));
+    }
+    if (ACStaminaPotionItem::StaticClass())
+    {
+        DropItemClasses.Add(EItemType::EIT_StaminaPotion, ACStaminaPotionItem::StaticClass());
+        UE_LOG(LogTemp, Warning, TEXT("✅ StaminaPotion 아이템이 DropItemClasses에 정상 등록됨."));
+    }
+    if (ACBullet::StaticClass())
+    {
+        DropItemClasses.Add(EItemType::EIT_Bullet, ACBullet::StaticClass());
+        UE_LOG(LogTemp, Warning, TEXT("✅ Bullet 아이템이 DropItemClasses에 정상 등록됨."));
+    }
+    if (ACGrenadesItem::StaticClass())
+    {
+        DropItemClasses.Add(EItemType::EIT_Grenades, ACGrenadesItem::StaticClass());
+        UE_LOG(LogTemp, Warning, TEXT("✅ GrenadesItem 아이템이 DropItemClasses에 정상 등록됨."));
+    }
+
     else
     {
         UE_LOG(LogTemp, Error, TEXT("❌ ACBulletBoxItem::StaticClass()가 NULL임. DropItemClasses에 추가 실패!"));
@@ -39,11 +64,15 @@ ACBaseItem* UCInventoryComponent::GetItemInstance(EItemType ItemType)
 
     // 🔹 아이템의 기본 오브젝트 가져오기
     TSubclassOf<ACBaseItem> ItemClass = DropItemClasses[ItemType];
-    if (!ItemClass)
+	UE_LOG(LogTemp, Warning, TEXT("%d"), ItemType);
+    if (ItemClass.Get() == nullptr)
     {
         UE_LOG(LogTemp, Error, TEXT("❌ GetItemInstance 실패 - ItemClass(%d)가 NULL!"), static_cast<int32>(ItemType));
         return nullptr;
     }
+    else
+        UE_LOG(LogTemp, Error, TEXT("❌ GetItemInstance 성공"), static_cast<int32>(ItemType));
+
 
     ACBaseItem* DefaultItem = ItemClass->GetDefaultObject<ACBaseItem>();
     if (!DefaultItem)
@@ -102,6 +131,12 @@ bool UCInventoryComponent::AddToInventory(EItemType ItemType)
     InventoryItems.Add(ItemType, 1);
     UE_LOG(LogTemp, Warning, TEXT("✅ 새로운 아이템 추가됨: %d (현재 개수: %d / 최대: %d)"),
         static_cast<int32>(ItemType), InventoryItems[ItemType], MaxStackSize);
+
+    // 🚨 Bullet Box가 잘못 추가되었는지 확인
+    if (ItemType == EItemType::EIT_BulletBox)
+    {
+        UE_LOG(LogTemp, Error, TEXT("🚨 오류: AddToInventory에서 Bullet Box가 잘못 추가됨! 원인 확인 필요."));
+    }
 
     // ✅ UI 업데이트
     OnInventoryUpdated.Broadcast();
@@ -235,12 +270,13 @@ bool UCInventoryComponent::UseItem(EItemType ItemType, ACPlayer* Player)
     }
 
     // 🔹 사용 후 수량 감소
-    InventoryItems[ItemType]--;
+    //InventoryItems[ItemType]--;
     UE_LOG(LogTemp, Warning, TEXT("🛑 아이템(%d) 사용됨 - 남은 개수: %d"), static_cast<int32>(ItemType), InventoryItems[ItemType]);
 
-    if (InventoryItems[ItemType] <= 0)
+    if (InventoryItems[ItemType] != 0)
     {
-        InventoryItems.Remove(ItemType);
+        RemoveItem(ItemType);
+        //InventoryItems.Remove(ItemType);
         UE_LOG(LogTemp, Warning, TEXT("🚨 아이템(%d) 제거됨 - 개수 0"), static_cast<int32>(ItemType));
     }
 
@@ -267,8 +303,14 @@ void UCInventoryComponent::AddBulletsToInventory(int32 BulletCount)
 	UE_LOG(LogTemp, Warning, TEXT("📦 %d개의 총알이 인벤토리에 추가되었습니다! (현재 총알: %d)"), 
         BulletCount, InventoryItems[EItemType::EIT_Bullet]);
 
-	// 🔹 UI 업데이트
-	OnInventoryUpdated.Broadcast();
+    // 🚨 Bullet Box가 잘못 추가되는지 확인
+    if (InventoryItems.Contains(EItemType::EIT_BulletBox))
+    {
+        UE_LOG(LogTemp, Error, TEXT("🚨 오류: AddBulletsToInventory 실행 후 Bullet Box가 추가됨! 원인 확인 필요!"));
+    }
+
+    // 🔹 UI 업데이트
+    OnInventoryUpdated.Broadcast();
 }
 
 IIItemInterface* UCInventoryComponent::FindItemByType(EItemType ItemType)

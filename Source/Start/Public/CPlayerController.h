@@ -2,7 +2,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "CInventoryComponent.h"
 #include "CWBP_CInventory.h"
 #include "CPlayerController.generated.h"
 
@@ -87,12 +86,12 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
 
+	UCInventoryComponent* InventoryComponent;
+
 	UPROPERTY(BlueprintReadOnly, Category = "UI")
 	UUserWidget* CurrentWidget; //	현재 화면에 보이는 위젯
 
 	// ✅ 클래스 멤버 변수로 InventoryComponent 추가
-	UPROPERTY()
-	UCInventoryComponent* InventoryComponent;
 
 	// ✅ Pawn 변경 시 델리게이트 재설정용 캐시 변수
 	APawn* CachedPawn;

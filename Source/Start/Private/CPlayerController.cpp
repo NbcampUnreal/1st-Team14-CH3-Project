@@ -40,27 +40,6 @@ ACPlayerController::ACPlayerController()
 void ACPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-	ACPlayer* pl = Cast<ACPlayer>(GetPawn());
-	if (ULocalPlayer* LocalPlayer = GetLocalPlayer())
-	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem =
-			LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
-		{
-			if (InputMappingContext)
-			{
-				Subsystem->AddMappingContext(InputMappingContext, 0);
-			}
-		}
-	}
-
-	// ✅ Pawn 변경 감지를 위한 타이머 설정 (1초마다 체크)
-	GetWorld()->GetTimerManager().SetTimer(
-		DelegateCheckTimerHandle,
-		this,
-		&ACPlayerController::CheckPawnAndUpdateDelegate,
-		1.0f,
-		true
-	);
 
 	// =======
 	// UI 설정
@@ -80,7 +59,7 @@ void ACPlayerController::BeginPlay()
 			{
 				CurrentWidget->AddToViewport(100);
 				CurrentWidget->SetIsFocusable(true);
-				
+
 				FInputModeGameAndUI InputMode;
 				InputMode.SetWidgetToFocus(CurrentWidget->TakeWidget());
 				InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
@@ -118,6 +97,40 @@ void ACPlayerController::BeginPlay()
 			}
 		}
 	}
+	ACPlayer* player = Cast<ACPlayer>(GetPawn());
+	if (!player)
+	{
+		UE_LOG(LogTemp, Error, TEXT("❌ 플레이어를 찾을 수 없습니다!"));
+		return;
+	}
+	InventoryComponent = Cast<UCInventoryComponent>(player->GetComponentByClass(UCInventoryComponent::StaticClass()));
+	if (!InventoryComponent)
+	{
+		return;
+	}
+
+	if (ULocalPlayer* LocalPlayer = GetLocalPlayer())
+	{
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem =
+			LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
+		{
+			if (InputMappingContext)
+			{
+				Subsystem->AddMappingContext(InputMappingContext, 0);
+			}
+		}
+	}
+
+	// ✅ Pawn 변경 감지를 위한 타이머 설정 (1초마다 체크)
+	GetWorld()->GetTimerManager().SetTimer(
+		DelegateCheckTimerHandle,
+		this,
+		&ACPlayerController::CheckPawnAndUpdateDelegate,
+		1.0f,
+		true
+	);
+
+	
 }
 
 // ✅ Pawn 변경 감지 및 델리게이트 재설정
