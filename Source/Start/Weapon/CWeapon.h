@@ -45,6 +45,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Equip")
 	FVector LeftHandLocation;
 	UPROPERTY(EditDefaultsOnly, Category = "Equip")
+	FVector LeftHandAimLocation;
+	UPROPERTY(EditDefaultsOnly, Category = "Equip")
 	UAnimMontage* EquipMontage;
 	UPROPERTY(EditDefaultsOnly, Category = "Equip")
 	float Equip_PlayRate;
@@ -126,21 +128,19 @@ private:
 protected:
 	UPROPERTY(VisibleAnywhere)
 	USkeletalMeshComponent* Mesh;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	FText WeaponDisplayName;
 
 public:
 	FORCEINLINE bool IsAutoFire() { return bAutoFire; }
 	FORCEINLINE FVector GetLeftHandLocation() { return LeftHandLocation; }
+	FORCEINLINE FVector GetLeftHandAimLocation() { return LeftHandAimLocation; }
 
 	FORCEINLINE bool GetInAim() const { return bInAim; }
 	
 	// ź�� ������ HUD�� �����ϱ� ���� getter �Լ���
 	FORCEINLINE uint8 GetCurrentMagazineCount() const { return CurrentMagazineCount; }
 	FORCEINLINE uint8 GetMaxMagazineCount() const { return MaxMagazineCount; }
-	// ���ǻ� HUD ������ ��Ī �Լ� �߰�
-	//FORCEINLINE uint8 GetMaxAmmo() const { return GetMaxMagazineCount(); }
-	//FORCEINLINE uint8 GetCurrentAmmo() const { return GetCurrentMagazineCount(); }
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
-	FText WeaponDisplayName;
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	FText GetWeaponDisplayName() const { return WeaponDisplayName; }
