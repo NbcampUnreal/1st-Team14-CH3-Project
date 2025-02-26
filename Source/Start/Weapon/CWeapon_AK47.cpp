@@ -43,7 +43,7 @@ ACWeapon_AK47::ACWeapon_AK47()
 	
 	//Magazine
 	{
-		CurrentMagazineCount = 30;
+		MaxMagazineCount = 30;
 		static ConstructorHelpers::FObjectFinder<UAnimMontage> montage(TEXT("/Script/Engine.AnimMontage'/Game/Assets/Montages/Rifle/Reload/Reload_Rifle_Hip_Montage.Reload_Rifle_Hip_Montage'"));
 		if (montage.Succeeded() == true)
 			ReloadMontage = montage.Object;

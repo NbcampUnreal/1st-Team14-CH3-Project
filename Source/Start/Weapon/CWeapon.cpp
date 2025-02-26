@@ -137,11 +137,11 @@ void ACWeapon::Equip()
 	bEquipping = true;
 	if(State == nullptr)
 		return;
-	if(Camera == nullptr)
-		return;
+	if(Camera != nullptr)
+		Camera->EnableControlRotation();
+		
 
 	State->SetEquipMode();
-	Camera->EnableControlRotation();
 
 	if (EquipMontage == nullptr)
 	{
@@ -162,9 +162,6 @@ void ACWeapon::BeginEquip()
 void ACWeapon::EndEquip()
 {
 	bEquipping =false;
-
-	State->SetIdleMode();
-
 }
 
 bool ACWeapon::CanUnequip()
@@ -182,7 +179,8 @@ void ACWeapon::Unequip()
 {
 	if (HolsterSocketName.IsValid() == true)
 		AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative,true), HolsterSocketName);
-	Camera->DisableControlRoation();
+	if(Camera != nullptr)
+		Camera->DisableControlRoation();
 }
 
 bool ACWeapon::CanFire()
@@ -223,11 +221,19 @@ void ACWeapon::OnFireing()
 	if (FireMontage != nullptr)
 		OwnerCharacter->PlayAnimMontage(FireMontage,FireRate);
 	UCameraComponent* camera = Cast<UCameraComponent>(OwnerCharacter->GetComponentByClass(UCameraComponent::StaticClass()));
-	//if (camera == nullptr)
-	//	return;
+	FTransform transform{};
+	FVector direction{};
+	if (camera == nullptr)
+	{
+		transform = Mesh->GetSocketTransform("Muzzle_Bullet");//camera->GetComponentToWorld();
+		direction = transform.GetRotation().GetUpVector();//camera->GetForwardVector();
+	}
+	else
+	{
+		direction = camera->GetForwardVector();
+		transform = camera->GetComponentToWorld();
+	}
 	
-	FTransform transform = Mesh->GetSocketTransform("Muzzle_Bullet");//camera->GetComponentToWorld();
-	FVector direction = transform.GetRotation().GetUpVector();//camera->GetForwardVector();
 
 	FVector start = transform.GetLocation() + direction;
 
@@ -275,7 +281,7 @@ void ACWeapon::OnFireing()
 		FVector location = Mesh->GetSocketLocation("Muzzle_Bullet");
 		FActorSpawnParameters param;
 		param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
+		
 		ACBullet* bullet = GetWorld()->SpawnActor<ACBullet>(BulletClass,location,direction.Rotation(),param);
 		if (bullet != nullptr)
 			bullet->Shoot(direction);
@@ -311,7 +317,7 @@ void ACWeapon::Reload()
 	if (ReloadMontage != nullptr)
 		OwnerCharacter->PlayAnimMontage(ReloadMontage,ReloadPlayRate);
 
-	// ÀçÀåÀü ¿Ï·á ½Ã CurrentMagazineCount¸¦ ÃÖ´ë Åº¾àÀ¸·Î Àç¼³Á¤
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½ ï¿½ï¿½ CurrentMagazineCountï¿½ï¿½ ï¿½Ö´ï¿½ Åºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ç¼³ï¿½ï¿½
 	CurrentMagazineCount = MaxMagazineCount;
 }
 
