@@ -3,6 +3,9 @@
 
 #include "CEnemy.h"
 #include "CEnemyAIController.h"
+#include "Components/CWeaponComponent.h"
+#include "Weapon/CWeapon.h"
+#include "CGameState.h"
 #include "CCharacter.h"
 #include "CPlayer.h"
 #include "Components/CStateComponent.h"
@@ -109,6 +112,20 @@ void ACEnemy::GunAttackStart()
 void ACEnemy::GunAttackEnd()
 {
 	WeaponComponent->End_Fire();
+}
+
+void ACEnemy::DestroyEnemyInMaze()
+{
+	ACGameState* GameState = GetWorld()->GetGameState<ACGameState>();
+	if (GameState)
+	{
+		EGameState EGS = GameState->GetGameState();
+
+		if (EGS == EGameState::Labyrinth)
+		{
+			Destroy();
+		}
+	}
 }
 
 void ACEnemy::BeginPlay()
