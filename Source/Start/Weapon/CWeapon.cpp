@@ -309,6 +309,9 @@ void ACWeapon::Reload()
 
 	if (ReloadMontage != nullptr)
 		OwnerCharacter->PlayAnimMontage(ReloadMontage,ReloadPlayRate);
+
+	// 재장전 완료 시 CurrentMagazineCount를 최대 탄약으로 재설정
+	CurrentMagazineCount = MaxMagazineCount;
 }
 
 void ACWeapon::Eject_Magazine()

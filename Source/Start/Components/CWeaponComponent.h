@@ -14,12 +14,9 @@ enum class EWeaponType : uint8
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FWeaponTypeChanged, EWeaponType, InPrevType, EWeaponType, InNewType);
-
-// ź�� ���� ���� ��������Ʈ ���� (���� ź��, �ִ� ź��)
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAmmoChanged, int32, CurrentAmmo, int32, MaxAmmo);
-
-// Aim ���� ���� ��������Ʈ: true�� aim ��, false�� ����
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAimChanged, bool, bIsAiming);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FWeaponNameChanged, FText, NewWeaponName);
 
 UCLASS (ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class START_API UCWeaponComponent : public UActorComponent
@@ -28,6 +25,10 @@ class START_API UCWeaponComponent : public UActorComponent
 private:
 	UPROPERTY(EditAnywhere, Category ="Settings")
 	TArray<TSubclassOf<class ACWeapon>> WeaponClasses;
+
+	// 연발 사격 시 HUD 업데이트용 타이머 핸들
+	FTimerHandle AmmoUpdateTimerHandle;
+
 public:
 	FORCEINLINE bool IsUnarmedModeMode(){return Type == EWeaponType::Max;}
 	FORCEINLINE bool IsRifleMode(){return Type == EWeaponType::Rifle;}
@@ -69,10 +70,14 @@ public:
 	void ToggleAutoFire();
 	void Reload();
 
+	// 연발 사격 중 매 발마다 HUD 업데이트를 위한 함수
+	void PollAmmoUpdate();
+
 public:
-	FWeaponTypeChanged OnWeaponTypeChanged; // ���� Ÿ�� ���� ��������Ʈ
-	FAmmoChanged OnAmmoChanged; // ź�� ���� ���� ��������Ʈ
-	FAimChanged OnAimChanged; // Aim ���� ���� ��������Ʈ
+	FWeaponTypeChanged OnWeaponTypeChanged;
+	FAmmoChanged OnAmmoChanged;
+	FAimChanged OnAimChanged;
+	FWeaponNameChanged OnWeaponNameChanged;
 	
 private:
 	EWeaponType Type = EWeaponType::Max;
