@@ -204,11 +204,6 @@ void UCWeaponComponent::Reload()
 	if(GetCurrentWeapon() == nullptr)
 		return;
 	GetCurrentWeapon()->Reload();
-
-	// 재장전 후 최신 탄약 정보 전달 (HUD 업데이트용)
-	int32 CurrentAmmo = GetCurrentWeapon()->GetCurrentMagazineCount();
-	int32 MaxAmmo = GetCurrentWeapon()->GetMaxMagazineCount();
-	OnAmmoChanged.Broadcast(CurrentAmmo, MaxAmmo);
 }
 
 void UCWeaponComponent::PollAmmoUpdate()
@@ -251,5 +246,9 @@ void UCWeaponComponent::End_Magazine()
 		return;
 
 	GetCurrentWeapon()->End_Magazine();
+	// 재장전 후 최신 탄약 정보 전달 (HUD 업데이트용)
+	int32 CurrentAmmo = GetCurrentWeapon()->GetCurrentMagazineCount();
+	int32 MaxAmmo = GetCurrentWeapon()->GetMaxMagazineCount();
+	OnAmmoChanged.Broadcast(CurrentAmmo, MaxAmmo);
 }
 
