@@ -28,6 +28,7 @@ ACPlayer::ACPlayer()
 
 	bIsFirstPerson = true;
 
+	InventoryComponent = CreateDefaultSubobject<UCInventoryComponent>(TEXT("InventoryComponent"));
 }
 
 void ACPlayer::BeginPlay()

@@ -51,17 +51,29 @@ void UCWBP_CInventorySlot::NativeOnMouseEnter(const FGeometry& InGeometry, const
     Super::NativeOnMouseEnter(InGeometry, InMouseEvent);
 
     if (!InventoryComponent || !InventoryComponent->GetOwner()) return;
-
+    ACharacter* player = Cast<ACharacter>(InventoryComponent->GetOwner());
+    if (player == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("❌ 플레이어를 찾을 수 없습니다!"));
+		return;
+	}
     // 🔹 플레이어 컨트롤러 가져오기
-    APlayerController* PC = Cast<APlayerController>(InventoryComponent->GetOwner()->GetInstigatorController());
+    APlayerController* PC = Cast<APlayerController>(player->GetController());
     if (!PC) return;
 
     ACPlayerController* CustomPC = Cast<ACPlayerController>(PC);
-    if (!CustomPC) return;
-
+    if (!CustomPC) 
+    {
+		UE_LOG(LogTemp, Warning, TEXT("❌ 플레이어 컨트로러를 찾을 수 없습니다!"));
+        return;
+    }
     // 🔹 인벤토리 위젯 가져오기
     UCWBP_CInventory* InventoryWidget = CustomPC->GetInventoryWidget();
-    if (!InventoryWidget) return;
+    if (!InventoryWidget)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("❌ 인벤토리 찾을 수 없습니다!"));
+        return;
+    }
 
     // 🔹 StoredItemType을 기반으로 아이템 객체 찾기
     IIItemInterface* FoundItem = InventoryComponent->FindItemByType(StoredItemType);

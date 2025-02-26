@@ -5,6 +5,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CStateComponent.h"
+#include "CInventoryComponent.h"
 #include "CPlayer.generated.h"
 
 class UCCameraComponent;
@@ -39,6 +40,9 @@ protected:
 	USpringArmComponent* SpringArm;
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 	UCCameraComponent* CameraComponent;
+
+	UPROPERTY()
+	UCInventoryComponent* InventoryComponent;
 
 	bool bIsFirstPerson;
 	void ToggleView();

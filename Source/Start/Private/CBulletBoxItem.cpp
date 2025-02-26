@@ -32,7 +32,10 @@ void ACBulletBoxItem::Use(AActor* Target)
     ACCharacter* Character = Cast<ACCharacter>(Target);
     if (!Character) return;
 
-    UCInventoryComponent* InventoryComponent = Character->FindComponentByClass<UCInventoryComponent>();
+	ACPlayer* Player = Cast<ACPlayer>(Character);
+    if (!Player) return;
+
+	UCInventoryComponent* InventoryComponent = Cast<UCInventoryComponent>(Player->GetComponentByClass(UCInventoryComponent::StaticClass()));
     if (!InventoryComponent) return;
 
     // 🔹 5~10개 랜덤 개수의 총알 생성

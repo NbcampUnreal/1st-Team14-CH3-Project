@@ -6,6 +6,7 @@
 
 ACBullet::ACBullet()
 {
+	ItemType = EItemType::EIT_Bullet;
 	Capsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule"));
 	SetRootComponent(Capsule);
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
