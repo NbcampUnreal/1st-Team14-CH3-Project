@@ -37,7 +37,7 @@ void UCAnimNotifyState_Equip::NotifyBegin(USkeletalMeshComponent* MeshComp, UAni
 		UE_LOG(LogTemp,Error,TEXT("Weapon Component is NULL"));
 		return;
 	}
-	state->SetEquipMode();
+	
 	weapon->Begin_Equip();
 }
 

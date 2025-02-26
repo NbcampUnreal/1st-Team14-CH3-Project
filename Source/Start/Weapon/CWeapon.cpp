@@ -137,11 +137,11 @@ void ACWeapon::Equip()
 	bEquipping = true;
 	if(State == nullptr)
 		return;
-	if(Camera == nullptr)
-		return;
+	if(Camera != nullptr)
+		Camera->EnableControlRotation();
+		
 
 	State->SetEquipMode();
-	Camera->EnableControlRotation();
 
 	if (EquipMontage == nullptr)
 	{
@@ -162,9 +162,6 @@ void ACWeapon::BeginEquip()
 void ACWeapon::EndEquip()
 {
 	bEquipping =false;
-
-	State->SetIdleMode();
-
 }
 
 bool ACWeapon::CanUnequip()
@@ -182,7 +179,8 @@ void ACWeapon::Unequip()
 {
 	if (HolsterSocketName.IsValid() == true)
 		AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative,true), HolsterSocketName);
-	Camera->DisableControlRoation();
+	if(Camera != nullptr)
+		Camera->DisableControlRoation();
 }
 
 bool ACWeapon::CanFire()
