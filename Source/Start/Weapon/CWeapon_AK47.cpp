@@ -59,6 +59,4 @@ ACWeapon_AK47::ACWeapon_AK47()
 void ACWeapon_AK47::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	
 }
