@@ -97,6 +97,7 @@ void ACEnemy::UnEquip()
 	if(bIsEqueped)
 	{
 		WeaponComponent->SetUnarmedMode();
+		bIsEqueped = false;
 	}
 }
 
