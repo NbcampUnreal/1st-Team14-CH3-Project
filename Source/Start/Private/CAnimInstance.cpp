@@ -43,7 +43,7 @@ void UCAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	Direction = PrevRotation.Yaw;
 	Pitch = UKismetMathLibrary::FInterpTo(Pitch, OwnerCharacter->GetBaseAimRotation().Pitch, DeltaSeconds,25);
 	Pitch = FMath::Clamp(Pitch,-45,45);
-UE_LOG(LogTemp,Error,TEXT("Pitch = %f"),Pitch);
+	UE_LOG(LogTemp,Error,TEXT("Pitch = %f"),Pitch);
 	Yaw = UKismetMathLibrary::FInterpTo(Yaw, UKismetMathLibrary::Clamp(OwnerCharacter->GetBaseAimRotation().Yaw, -90,90), DeltaSeconds,25);
 	bCanMove = Speed > 3.0f && Movement->GetCurrentAcceleration() != FVector::ZeroVector;
 	bIsFalling = Movement->IsFalling();
@@ -51,7 +51,7 @@ UE_LOG(LogTemp,Error,TEXT("Pitch = %f"),Pitch);
 	bInAim = Weapon->GetInAim();
 	bUseHandIk = Weapon->IsUnarmedModeMode() == false;
 	LeftHandLocation = Weapon->GetLefttHandLocation();
-	LeftHandAimLocation = Weapon->GetLefttHandAimLocation();
+	LeftHandAimLocation = Weapon->GetLeftHandAimLocation();
 }
 
 void UCAnimInstance::OnWeaponTypeChanged(EWeaponType InPrevType, EWeaponType InNewType)

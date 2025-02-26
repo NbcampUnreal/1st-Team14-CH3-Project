@@ -66,7 +66,7 @@ public:
 	void EndAim();
 	bool GetInAim();
 	FVector GetLefttHandLocation();
-	FVector GetLefttHandAimLocation();
+	FVector GetLeftHandAimLocation();
 
 	void ToggleAutoFire();
 	void Reload();

@@ -184,7 +184,7 @@ FVector UCWeaponComponent::GetLefttHandLocation()
 	return GetCurrentWeapon()->GetLeftHandLocation();
 }
 
-FVector UCWeaponComponent::GetLefttHandAimLocation()
+FVector UCWeaponComponent::GetLeftHandAimLocation()
 {
 	if (GetCurrentWeapon() == nullptr)
 		return FVector::Zero();
