@@ -24,6 +24,9 @@ void UCWeaponComponent::BeginPlay()
 			Weapons.Add(weapon);
 		}
 	}
+
+	OnWeaponAim_Arms_Begin.AddDynamic(this, &UCWeaponComponent::On_Begin_Aim);
+	OnWeaponAim_Arms_End.AddDynamic(this, &UCWeaponComponent::On_End_Aim);
 }
 
 void UCWeaponComponent::TickComponent(float DeltaTime, enum ELevelTick TickType,
@@ -150,13 +153,16 @@ void UCWeaponComponent::End_Fire() // 무기 발사 종료
 	GetWorld()->GetTimerManager().ClearTimer(AmmoUpdateTimerHandle); // 폴링 타이머 해제
 }
 
-void UCWeaponComponent::BeginAim()
+bool UCWeaponComponent::BeginAim()
 {
 	if (GetCurrentWeapon() == nullptr)
-		return;
+		return false;
+	if(GetCurrentWeapon()->CanAim() == false)
+		return false;
 
 	GetCurrentWeapon()->BeginAim();
 	OnAimChanged.Broadcast(true); // Aim 상태 변경(줌인) 델리게이트 호출
+	return true;
 }
 
 void UCWeaponComponent::EndAim()
@@ -252,3 +258,23 @@ void UCWeaponComponent::End_Magazine()
 	OnAmmoChanged.Broadcast(CurrentAmmo, MaxAmmo);
 }
 
+void UCWeaponComponent::On_Begin_Aim(ACWeapon* InThisWeapon)
+{
+	if(GetCurrentWeapon() == nullptr)
+		return;
+	for (ACWeapon* weapon : Weapons)
+	{
+		if (weapon != InThisWeapon)
+			weapon->SetHidden(true);
+		else
+			weapon->SetHidden(false);
+	}
+}
+
+void UCWeaponComponent::On_End_Aim()
+{
+	if (GetCurrentWeapon() == nullptr)
+		return;
+	for (ACWeapon* weapon : Weapons)
+			weapon->SetHidden(false);
+}

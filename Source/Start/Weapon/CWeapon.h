@@ -43,6 +43,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Equip")
 	FName RightHandSokcetName;
 	UPROPERTY(EditDefaultsOnly, Category = "Equip")
+	FName RightHandAimSokcetName;
+	UPROPERTY(EditDefaultsOnly, Category = "Equip")
 	FVector LeftHandLocation;
 	UPROPERTY(EditDefaultsOnly, Category = "Equip")
 	FVector LeftHandAimLocation;
@@ -51,6 +53,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Equip")
 	float Equip_PlayRate;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Aim")
+	UStaticMeshComponent* SightMesh;
 	UPROPERTY(EditDefaultsOnly, category = "Aim")
 	bool bIsCustom;
 	UPROPERTY(EditDefaultsOnly, category = "Aim")
@@ -90,6 +94,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Fire")
 	TSubclassOf<UCameraShakeBase> CameraShak;
 	UPROPERTY(EditDefaultsOnly, Category = "Fire")
+	TSubclassOf<UCameraShakeBase> AimCameraShak;
+	UPROPERTY(EditDefaultsOnly, Category = "Fire")
 	float AutoFireInterval;
 	UPROPERTY(EditDefaultsOnly, Category = "Fire")
 	float RecoilRate;
@@ -108,6 +114,13 @@ protected:
 	TSubclassOf<ACMagazine> MagazineClass;
 	UPROPERTY(EditDefaultsOnly, Category = "Magazine")
 	FName MagazinSocketName;
+
+protected:
+	UPROPERTY(EditDefaultsOnly, Category = "Arms")
+	FTransform ArmsMeshTransform;
+	UPROPERTY(EditDefaultsOnly, Category = "Arms")
+	FTransform ArmsLeftHandTransform;
+
 private:
 	UPROPERTY(EditAnywhere, Category = "Debug")
 	TEnumAsByte<EDrawDebugTrace::Type> Debug;
@@ -200,8 +213,9 @@ private:
 	bool bEquipping;
 	bool bInAim;
 	bool bFiring;
-	bool bReload;
 	bool bAutoFire = true;
+protected:
+	bool bReload;
 
 	ACMagazine* Magazine;
 	

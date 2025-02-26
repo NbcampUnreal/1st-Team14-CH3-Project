@@ -20,4 +20,7 @@ public:
 	ACWeapon_AK47();
 protected:
 	virtual void BeginPlay() override;
+public:
+	virtual void BeginAim() override;
+	virtual void EndAim() override;
 };

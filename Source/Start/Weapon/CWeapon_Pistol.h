@@ -21,9 +21,9 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-	virtual void EndEquip() override;
 public:
 	virtual void BeginEquip() override;
+	virtual void EndEquip() override;
 	virtual void BeginAim() override;
 	virtual void EndAim() override;
 };
