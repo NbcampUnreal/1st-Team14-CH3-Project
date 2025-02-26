@@ -9,6 +9,7 @@ struct FInputActionValue;
 UENUM()
 enum class ESpeedType : uint8
 {
+	Aim,
 	Walk,
 	Run,
 	Max,
@@ -21,13 +22,14 @@ class START_API UCMovementComponent : public UActorComponent
 private:
 
 	UPROPERTY(EditAnywhere, category="Speed")
-	float Speed[(int32)ESpeedType::Max] = {400.0f, 600.0f};
+	float Speed[(int32)ESpeedType::Max] = {200.0f,400.0f, 600.0f};
 	
 public:
 	FORCEINLINE bool GetCanMove() { return bCanMove; }
 	FORCEINLINE void Move() { bCanMove = true; }
 	FORCEINLINE void Stop() { bCanMove = false; }
 
+	FORCEINLINE float GetAimSpeed() {return Speed[int32(ESpeedType::Aim)];}
 	FORCEINLINE float GetWarkSpeed() {return Speed[int32(ESpeedType::Walk)];}
 	FORCEINLINE float GetRunSpeed() {return Speed[int32(ESpeedType::Run)];}
 

@@ -69,7 +69,9 @@ ACWeapon::ACWeapon()
 	static  ConstructorHelpers::FObjectFinder<USoundWave> fireSound(TEXT("/Script/Engine.SoundWave'/Game/Assets/Sounds/S_RifleShoot.S_RifleShoot'"));
 	if (fireSound.Succeeded() == true)
 		FireSound = fireSound.Object;
-
+	static ConstructorHelpers::FObjectFinder<USoundWave> breth(TEXT("/Script/Engine.SoundWave'/Game/Sound/Sniper_Breath.Sniper_Breath'"));
+	if (breth.Succeeded() == true)
+		BreathSound = breth.Object;
 	AutoFireHandle = FTimerHandle();
 }
 
@@ -376,6 +378,8 @@ void ACWeapon::BeginAim()
 	if (!Player)
 		return;
 	bInAim = true;
+	if (BreathSound != nullptr)
+		UGameplayStatics::SpawnSoundAtLocation(GetWorld(), BreathSound,OwnerCharacter->GetActorLocation());
 	if (AimCurve != nullptr)
 	{
 		Timeline->PlayFromStart();
