@@ -223,11 +223,11 @@ void ACWeapon::OnFireing()
 	if (FireMontage != nullptr)
 		OwnerCharacter->PlayAnimMontage(FireMontage,FireRate);
 	UCameraComponent* camera = Cast<UCameraComponent>(OwnerCharacter->GetComponentByClass(UCameraComponent::StaticClass()));
-	if (camera == nullptr)
-		return;
-
-	FVector direction = camera->GetForwardVector();
-	FTransform transform = camera->GetComponentToWorld();
+	//if (camera == nullptr)
+	//	return;
+	
+	FTransform transform = Mesh->GetSocketTransform("Muzzle_Bullet");//camera->GetComponentToWorld();
+	FVector direction = transform.GetRotation().GetUpVector();//camera->GetForwardVector();
 
 	FVector start = transform.GetLocation() + direction;
 
