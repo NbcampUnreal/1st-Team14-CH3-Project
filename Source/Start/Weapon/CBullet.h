@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "CBaseItem.h"
 #include "GameFramework/Actor.h"
 #include "CBullet.generated.h"
 
@@ -8,7 +9,7 @@ class UProjectileMovementComponent;
 class UCapsuleComponent;
 
 UCLASS()
-class START_API ACBullet : public AActor
+class START_API ACBullet : public ACBaseItem
 {
 	GENERATED_BODY()
 private:

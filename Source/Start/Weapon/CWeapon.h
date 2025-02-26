@@ -158,7 +158,7 @@ public:
 	bool CanEquip();
 	void Equip();
 	virtual void BeginEquip();
-	void EndEquip();
+	virtual void EndEquip();
 
 	bool CanUnequip();
 	void Unequip();
@@ -184,8 +184,8 @@ public:
 	void End_Magazine();
 public:
 	bool CanAim();
-	void BeginAim();
-	void EndAim();
+	virtual void BeginAim();
+	virtual void EndAim();
 
 private:
 	UFUNCTION()

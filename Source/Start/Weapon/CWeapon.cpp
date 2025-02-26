@@ -281,7 +281,7 @@ void ACWeapon::OnFireing()
 		FVector location = Mesh->GetSocketLocation("Muzzle_Bullet");
 		FActorSpawnParameters param;
 		param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
+		
 		ACBullet* bullet = GetWorld()->SpawnActor<ACBullet>(BulletClass,location,direction.Rotation(),param);
 		if (bullet != nullptr)
 			bullet->Shoot(direction);

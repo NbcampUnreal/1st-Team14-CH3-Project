@@ -12,7 +12,7 @@ ACWeapon_Pistol::ACWeapon_Pistol()
 	//Equip
 	{
 		HolsterSocketName = NAME_None;
-		static ConstructorHelpers::FObjectFinder<UAnimMontage> montage(TEXT("/Script/Engine.AnimSequence'/Game/Assets/Animation/Military_Skel/Equip_Pistol_Standing.Equip_Pistol_Standing'"));
+		static ConstructorHelpers::FObjectFinder<UAnimMontage> montage(TEXT("/Script/Engine.AnimMontage'/Game/Assets/Montages/Pistol/Equip_Pistol_Standing_Montage.Equip_Pistol_Standing_Montage'"));
 		if (montage.Succeeded() == true)
 			EquipMontage = montage.Object;
 		Equip_PlayRate = 1.0f;
@@ -27,30 +27,57 @@ ACWeapon_Pistol::ACWeapon_Pistol()
 		AimData.FieldOfView = 55;
 	}
 
-	//Fire
-	{
+	////Fire
+	//{
+	//	FireRate = 1.0f;
+	//	RecoilAngle = 0.75f;
+	//	static ConstructorHelpers::FClassFinder<UCameraShakeBase> cameraShake(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/Weapon/AK/BP_AK47_CameraShake.BP_AK47_CameraShake_C'"));
+	//	if (cameraShake.Succeeded() == true)
+	//		CameraShak = cameraShake.Class;
+	//	AutoFireInterval = 6.0f;
+	//	RecoilRate = 4.0f;
+	//}
 
-		FireRate = 1.0f;
-		RecoilAngle = 0.75f;
-		static ConstructorHelpers::FClassFinder<UCameraShakeBase> cameraShake(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/Weapon/AK/BP_AK47_CameraShake.BP_AK47_CameraShake_C'"));
-		if (cameraShake.Succeeded() == true)
-			CameraShak = cameraShake.Class;
-		AutoFireInterval = 0.15f;
-		RecoilRate = 0.05f;
-	}
+	////Magazine
+	//{
+	//	MaxMagazineCount = 5;
+	//	static ConstructorHelpers::FObjectFinder<UAnimMontage> montage(TEXT("/Script/Engine.AnimMontage'/Game/Assets/Montages/Pistol/Reload_Pistol_Montage.Reload_Pistol_Montage'"));
+	//	if (montage.Succeeded() == true)
+	//		ReloadMontage = montage.Object;
+	//	ReloadPlayRate = 1.5f;
+	//	MagazineBoneName = NAME_None;
+	//	static ConstructorHelpers::FClassFinder<ACMagazine> magazine(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/Weapon/Pistol/BP_CMagazine_Pistol.BP_CMagazine_Pistol_C'"));
+	//	if (magazine.Succeeded() == true)
+	//		MagazineClass = magazine.Class;
+	//	MagazinSocketName = "Pistol_Magazine";
+	//}
 
-	//Magazine
-	{
-		CurrentMagazineCount = 30;
-		static ConstructorHelpers::FObjectFinder<UAnimMontage> montage(TEXT("/Script/Engine.AnimMontage'/Game/Assets/Montages/Rifle/Reload/Reload_Rifle_Hip_Montage.Reload_Rifle_Hip_Montage'"));
-		if (montage.Succeeded() == true)
-			ReloadMontage = montage.Object;
-		ReloadPlayRate = 1.0f;
-		MagazineBoneName = "b_gun_mag";
-		static ConstructorHelpers::FClassFinder<ACMagazine> magazine(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/Weapon/AK/BP_CMagazine.BP_CMagazine_C'"));
-		if (magazine.Succeeded() == true)
-			MagazineClass = magazine.Class;
-		MagazinSocketName = "Rifle_Magazine";
-	}
+}
 
+void ACWeapon_Pistol::BeginPlay()
+{
+	Super::BeginPlay();
+	Mesh->SetVisibility(false);
+}
+
+void ACWeapon_Pistol::EndEquip()
+{
+	Super::EndEquip();
+}
+
+void ACWeapon_Pistol::BeginEquip()
+{
+	Super::BeginEquip();
+	
+	Mesh->SetVisibility(true);
+}
+
+void ACWeapon_Pistol::BeginAim()
+{
+	Super::BeginAim();
+}
+
+void ACWeapon_Pistol::EndAim()
+{
+	Super::EndAim();
 }
