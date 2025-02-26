@@ -15,7 +15,7 @@ void UCHUDWidget::NativeConstruct()
 	if (HealthBar)	{HealthBar->SetPercent(1.0f);}
 	if (StaminaBar) {StaminaBar->SetPercent(1.0f);}
 	if (AmmoText) {AmmoText->SetText(FText::FromString("0 / 0")); }
-	if (WeaponNameText)	{WeaponNameText->SetText(FText::FromString("None"));}
+	if (WeaponNameText)	{WeaponNameText->SetText(FText::FromString(""));}
 	if (ScoreText) {ScoreText->SetText(FText::AsNumber(0));}
 
 	// DamageOverlay客 ItemPickupText绰 扁夯利栏肺 见辫 贸府

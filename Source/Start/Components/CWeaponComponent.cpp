@@ -45,6 +45,10 @@ void UCWeaponComponent::SetUnarmedMode()
 		return;
 	GetCurrentWeapon()->Unequip();
 	ChangeType(EWeaponType::Max);
+
+	// 무기가 해제되었으므로 HUD에 무기 이름을 비움
+	OnWeaponNameChanged.Broadcast(FText::GetEmpty());
+
 }
 
 void UCWeaponComponent::SetRifleMode()
@@ -70,7 +74,6 @@ void UCWeaponComponent::SetMode(EWeaponType InType)
 	if (Type == InType)
 	{
 		SetUnarmedMode();
-		
 		return;
 	}
 	else if(IsUnarmedModeMode() == false)
@@ -78,7 +81,6 @@ void UCWeaponComponent::SetMode(EWeaponType InType)
 		//무기를 장착하고 있는 상태라면 현재 무기를 장착해제할 수 있는지 체크한뒤 무기 장착 해제
 		if(GetCurrentWeapon()->CanUnequip() == false)
 			return;
-
 		GetCurrentWeapon()->Unequip();
 	}
 
@@ -93,6 +95,13 @@ void UCWeaponComponent::SetMode(EWeaponType InType)
 	int32 CurrentAmmo = Weapons[(int32)InType]->GetCurrentMagazineCount();
 	int32 MaxAmmo = Weapons[(int32)InType]->GetMaxMagazineCount();
 	OnAmmoChanged.Broadcast(CurrentAmmo, MaxAmmo); // 즉시 업데이트
+
+	// 무기 장착 시 무기 이름을 HUD에 전달
+	if (ACWeapon* CurrentWeapon = GetCurrentWeapon())
+	{
+		FText WeaponName = CurrentWeapon->GetWeaponDisplayName();
+		OnWeaponNameChanged.Broadcast(WeaponName);
+	}
 }
 
 void UCWeaponComponent::ChangeType(EWeaponType InType)
@@ -126,11 +135,9 @@ void UCWeaponComponent::Begin_Fire() // 무기 발사 시작
 		return;
 
 	GetCurrentWeapon()->BeginFire();
-
-	// 발사 후 최신 탄약 정보 전달 (HUD 업데이트용)
-	int32 CurrentAmmo = GetCurrentWeapon()->GetCurrentMagazineCount();
-	int32 MaxAmmo = GetCurrentWeapon()->GetMaxMagazineCount(); 
-	OnAmmoChanged.Broadcast(CurrentAmmo, MaxAmmo);
+	
+	// 연발 시 매 발마다 HUD 업데이트를 위한 폴링 타이머 시작
+	GetWorld()->GetTimerManager().SetTimer(AmmoUpdateTimerHandle, this, &UCWeaponComponent::PollAmmoUpdate, 0.05f, true);
 }
 
 void UCWeaponComponent::End_Fire() // 무기 발사 종료
@@ -139,6 +146,8 @@ void UCWeaponComponent::End_Fire() // 무기 발사 종료
 		return;
 
 	GetCurrentWeapon()->EndFire();
+
+	GetWorld()->GetTimerManager().ClearTimer(AmmoUpdateTimerHandle); // 폴링 타이머 해제
 }
 
 void UCWeaponComponent::BeginAim()
@@ -197,6 +206,16 @@ void UCWeaponComponent::Reload()
 	GetCurrentWeapon()->Reload();
 
 	// 재장전 후 최신 탄약 정보 전달 (HUD 업데이트용)
+	int32 CurrentAmmo = GetCurrentWeapon()->GetCurrentMagazineCount();
+	int32 MaxAmmo = GetCurrentWeapon()->GetMaxMagazineCount();
+	OnAmmoChanged.Broadcast(CurrentAmmo, MaxAmmo);
+}
+
+void UCWeaponComponent::PollAmmoUpdate()
+{
+	if (GetCurrentWeapon() == nullptr)
+		return;
+	// 연발 사격 중 매 발마다 탄약 정보를 HUD에 전달
 	int32 CurrentAmmo = GetCurrentWeapon()->GetCurrentMagazineCount();
 	int32 MaxAmmo = GetCurrentWeapon()->GetMaxMagazineCount();
 	OnAmmoChanged.Broadcast(CurrentAmmo, MaxAmmo);

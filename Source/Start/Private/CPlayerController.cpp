@@ -113,6 +113,7 @@ void ACPlayerController::BeginPlay()
 					WeaponComp->OnAmmoChanged.AddDynamic(HUD, &UCHUDWidget::UpdateAmmo);
 					WeaponComp->OnWeaponTypeChanged.AddDynamic(HUD, &UCHUDWidget::UpdateWeaponType);
 					WeaponComp->OnAimChanged.AddDynamic(HUD, &UCHUDWidget::SetCrosshairVisibility);
+					WeaponComp->OnWeaponNameChanged.AddDynamic(HUD, &UCHUDWidget::UpdateWeapon);
 				}
 			}
 		}

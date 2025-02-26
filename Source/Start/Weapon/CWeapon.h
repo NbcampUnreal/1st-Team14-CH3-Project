@@ -45,8 +45,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Equip")
 	FVector LeftHandLocation;
 	UPROPERTY(EditDefaultsOnly, Category = "Equip")
-	FVector LeftHandAimLocation;
-	UPROPERTY(EditDefaultsOnly, Category = "Equip")
 	UAnimMontage* EquipMontage;
 	UPROPERTY(EditDefaultsOnly, Category = "Equip")
 	float Equip_PlayRate;
@@ -132,7 +130,6 @@ protected:
 public:
 	FORCEINLINE bool IsAutoFire() { return bAutoFire; }
 	FORCEINLINE FVector GetLeftHandLocation() { return LeftHandLocation; }
-	FORCEINLINE FVector GetLeftHandAimLocation() { return LeftHandAimLocation; }
 
 	FORCEINLINE bool GetInAim() const { return bInAim; }
 	
@@ -142,6 +139,11 @@ public:
 	// ���ǻ� HUD ������ ��Ī �Լ� �߰�
 	//FORCEINLINE uint8 GetMaxAmmo() const { return GetMaxMagazineCount(); }
 	//FORCEINLINE uint8 GetCurrentAmmo() const { return GetCurrentMagazineCount(); }
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	FText WeaponDisplayName;
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	FText GetWeaponDisplayName() const { return WeaponDisplayName; }
 
 public:	
 	ACWeapon();
