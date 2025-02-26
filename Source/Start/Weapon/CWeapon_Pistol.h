@@ -18,4 +18,12 @@ private:
 	UAnimMontage* Montage;
 public:
 	ACWeapon_Pistol();
+
+protected:
+	virtual void BeginPlay() override;
+	virtual void EndEquip() override;
+public:
+	virtual void BeginEquip() override;
+	virtual void BeginAim() override;
+	virtual void EndAim() override;
 };

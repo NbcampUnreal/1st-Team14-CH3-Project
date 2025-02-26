@@ -40,7 +40,7 @@ ACPlayerController::ACPlayerController()
 void ACPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-
+	ACPlayer* pl = Cast<ACPlayer>(GetPawn());
 	if (ULocalPlayer* LocalPlayer = GetLocalPlayer())
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem =
