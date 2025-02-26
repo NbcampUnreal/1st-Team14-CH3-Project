@@ -61,6 +61,8 @@ protected:
 	UCurveFloat* AimCurve;
 	UPROPERTY(EditDefaultsOnly, category = "Aim")
 	float AimSpeed = 200.0f;
+	UPROPERTY(EditDefaultsOnly, category = "Aim")
+	USoundWave* BreathSound;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Hit")
 	float HitDistance = 3000;
