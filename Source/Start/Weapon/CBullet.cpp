@@ -32,6 +32,7 @@ ACBullet::ACBullet()
 	Projectile->InitialSpeed = 2000;
 	Projectile->MaxSpeed = 2000;
 	Projectile->ProjectileGravityScale = 0;
+	
 }
 
 void ACBullet::BeginPlay()
