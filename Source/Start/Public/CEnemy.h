@@ -59,6 +59,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void GunAttackEnd();
 
+	UFUNCTION(BlueprintCallable)
+	void DestroyEnemyInMaze();
+
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser) override;
