@@ -3,6 +3,7 @@
 
 #include "CEnemy.h"
 #include "CEnemyAIController.h"
+#include "Weapon/CWeapon.h"
 #include "Components/CWeaponComponent.h"
 #include "Weapon/CWeapon.h"
 #include "CGameState.h"
@@ -52,6 +53,16 @@ void ACEnemy::EnemyAttack()
 void ACEnemy::SetIdleMode()
 {
 	StateComponent->SetIdleMode();
+}
+
+void ACEnemy::SetEquipMode()
+{
+	StateComponent->SetEquipMode();
+}
+
+void ACEnemy::SetActionMode()
+{
+	StateComponent->SetActionMode();
 }
 
 void ACEnemy::SetRun()
@@ -104,6 +115,16 @@ void ACEnemy::UnEquip()
 	}
 }
 
+void ACEnemy::ToggleAutoFire()
+{
+	if (ACWeapon* Weapon = WeaponComponent->GetCurrentWeapon())
+	{
+		Weapon->ToggleAutoFire();
+		GEngine->AddOnScreenDebugMessage(1, 2.0f, FColor::Green, FString::Printf(TEXT("Toggle")));
+	}
+		
+}
+
 void ACEnemy::GunAttackStart()
 {
 	WeaponComponent->Begin_Fire();
@@ -146,8 +167,6 @@ void ACEnemy::Tick(float DeltaTime)
 		{
 			HPBarWidgetComponent->SetWorldRotation(UKismetMathLibrary::FindLookAtRotation(HPBarWidgetComponent->GetComponentLocation(), CameraManager->GetCameraLocation()));
 		}
-
-		
 	}
 
 }

@@ -38,6 +38,10 @@ public:
 	void EnemyAttack();
 	UFUNCTION(BlueprintCallable)
 	void SetIdleMode();
+	UFUNCTION(BlueprintCallable)
+	void SetEquipMode();
+	UFUNCTION(BlueprintCallable)
+	void SetActionMode();
 
 	UFUNCTION(BlueprintCallable)
 	void SetRun();
@@ -52,6 +56,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void UnEquip();
+
+	UFUNCTION(BlueprintCallable)
+	void ToggleAutoFire();
 
 	UFUNCTION(BlueprintCallable)
 	void GunAttackStart();
