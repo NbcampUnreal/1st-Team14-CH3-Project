@@ -2,7 +2,7 @@
 #include "MyGameState.h"
 #include "MyGameInstance.h"
 #include "Kismet/GameplayStatics.h"
-#include "SpawnVolume.h"
+#include "CSpawnVolume.h"
 #include "CoinItem.h"
 #include "SP_PlayerController.h"
 #include "Blueprint/UserWidget.h"
@@ -62,29 +62,29 @@ void AMyGameState::StartLevel()
 	SpawnedCoinCount = 0;
 	CollectCoinCount = 0;
 
-	int32 ItemToSpawn = 30; // 기본값
-	if (ItemsPerLevel.IsValidIndex(CurrentLevelIndex)) {
-		ItemToSpawn = ItemsPerLevel[CurrentLevelIndex]; // 현재 레벨에 맞는 아이템 개수 적용
-	}
+	//int32 ItemToSpawn = 30; // 기본값
+	//if (ItemsPerLevel.IsValidIndex(CurrentLevelIndex)) {
+	//	ItemToSpawn = ItemsPerLevel[CurrentLevelIndex]; // 현재 레벨에 맞는 아이템 개수 적용
+	//}
 
-	// 현재 맵의 SpawnVolume을 찾아 XX개 아이템 스폰
-	TArray<AActor*> FoundVolumes;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(),ASpawnVolume::StaticClass(),FoundVolumes);
-	
-	for (int32 i = 0; i < ItemToSpawn; i++)
-	{
-		if (FoundVolumes.Num() > 0)
-		{
-			if (ASpawnVolume* SpawnVolume = Cast<ASpawnVolume>(FoundVolumes[0]))
-			{
-				AActor* SpawnedActor = SpawnVolume->SpawnRandomItem();
-				if (SpawnedActor && SpawnedActor->IsA(ACoinItem::StaticClass())) // CoinItem의 하위 클래스인 Big, Small도 인식된다
-				{
-					SpawnedCoinCount++;
-				}
-			}
-		}
-	}
+	//// 현재 맵의 SpawnVolume을 찾아 XX개 아이템 스폰
+	//TArray<AActor*> FoundVolumes;
+	//UGameplayStatics::GetAllActorsOfClass(GetWorld(),ASpawnVolume::StaticClass(),FoundVolumes);
+	//
+	//for (int32 i = 0; i < ItemToSpawn; i++)
+	//{
+	//	if (FoundVolumes.Num() > 0)
+	//	{
+	//		if (ASpawnVolume* SpawnVolume = Cast<ASpawnVolume>(FoundVolumes[0]))
+	//		{
+	//			AActor* SpawnedActor = SpawnVolume->SpawnRandomItem();
+	//			if (SpawnedActor && SpawnedActor->IsA(ACoinItem::StaticClass())) // CoinItem의 하위 클래스인 Big, Small도 인식된다
+	//			{
+	//				SpawnedCoinCount++;
+	//			}
+	//		}
+	//	}
+	//}
 
 	UpdateHUD();
 	
