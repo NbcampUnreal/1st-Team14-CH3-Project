@@ -216,6 +216,8 @@ void UCWeaponComponent::Reload()
 {
 	if(GetCurrentWeapon() == nullptr)
 		return;
+	if(GetCurrentWeapon()->CanReload() == false)
+		return;
 	GetCurrentWeapon()->Reload();
 }
 
