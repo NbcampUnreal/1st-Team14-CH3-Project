@@ -7,7 +7,7 @@
 class ACWeapon;
 class ACCharacter;
 
-UENUM(meta = (BlueprintSpawnableComponent))
+UENUM(BlueprintType)
 enum class EWeaponType : uint8
 {
 	Rifle, Pistol, Knife, Max	
