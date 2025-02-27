@@ -26,8 +26,9 @@ ACWeapon_AK47::ACWeapon_AK47()
 		Equip_PlayRate = 1.0f;
 		RightHandSokcetName = "Rifle_Hand";
 		RightHandAimSokcetName = "Rifle_hand_Aim";
-		LeftHandLocation = FVector(-34.197836,12.642071,8.645998);
+		LeftHandLocation = Mesh->GetSocketLocation("LeftHand");//FVector(-34.197836,12.642071,8.645998);
 		LeftHandAimLocation = FVector(-32.453343,-1.028387,14.791615);
+		WeapoLeftHandTransform = Mesh->GetSocketTransform("LeftHand");
 	}
 
 	//Aim
@@ -92,34 +93,34 @@ void ACWeapon_AK47::BeginPlay()
 void ACWeapon_AK47::BeginAim()
 {
 	Super::BeginAim();
-	//if(SightMesh->GetStaticMesh() == nullptr)
-	//	return;
-	////if (CrossHair != nullptr)
-	////	CrossHair->SetVisibility(ESlateVisibility::Hidden);
-	//ACPlayer* player = Cast<ACPlayer>(OwnerCharacter);
-	//if(player == nullptr)
-	//	return;
-	//player->GetMesh()->SetVisibility(false);
-	//player->GetFirstPersonMesh()->SetVisibility(true);
+	if(SightMesh->GetStaticMesh() == nullptr)
+		return;
+	//if (CrossHair != nullptr)
+	//	CrossHair->SetVisibility(ESlateVisibility::Hidden);
+	/*ACPlayer* player = Cast<ACPlayer>(OwnerCharacter);
+	if(player == nullptr)
+		return;
+	player->GetMesh()->SetVisibility(false);
+	player->GetFirstPersonMesh()->SetVisibility(true);
 
-	//AttachToComponent(player->GetFirstPersonMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), RightHandAimSokcetName);
+	AttachToComponent(player->GetFirstPersonMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), RightHandAimSokcetName);
 
-	//UCWeaponComponent* weapon = Cast<UCWeaponComponent>(player->GetComponentByClass(UCWeaponComponent::StaticClass()));
-	//if(weapon->OnWeaponAim_Arms_Begin.IsBound() == true)
-	//	weapon->OnWeaponAim_Arms_Begin.Broadcast(this);
+	UCWeaponComponent* weapon = Cast<UCWeaponComponent>(player->GetComponentByClass(UCWeaponComponent::StaticClass()));
+	if(weapon->OnWeaponAim_Arms_Begin.IsBound() == true)
+		weapon->OnWeaponAim_Arms_Begin.Broadcast(this);*/
 }
 
 void ACWeapon_AK47::EndAim()
 {
 	Super::EndAim();
-	//if (SightMesh->GetStaticMesh() == nullptr)
-	//	return;
-	////if (CrossHair != nullptr)
-	////	CrossHair->SetVisibility(ESlateVisibility::Visible);
+	if (SightMesh->GetStaticMesh() == nullptr)
+		return;
+	//if (CrossHair != nullptr)
+	//	CrossHair->SetVisibility(ESlateVisibility::Visible);
 	//ACPlayer* player = Cast<ACPlayer>(OwnerCharacter);
 	//if (player == nullptr)
 	//	return;
-	//player->GetFirstPersonMesh()->SetVisibility(false);
+	////player->GetFirstPersonMesh()->SetVisibility(false);
 	//player->GetMesh()->SetVisibility(true);
 	//AttachToComponent(player->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), RightHandSokcetName);
 

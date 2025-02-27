@@ -11,6 +11,25 @@ class UCMontagesComponent;
 class UCMovementComponent;
 class UCWeaponComponent;
 
+USTRUCT(BlueprintType)
+struct FHittedInfo
+{
+    GENERATED_BODY()
+
+public:
+    UPROPERTY(BlueprintReadWrite)
+    float Power;
+
+    UPROPERTY(BlueprintReadWrite)
+    ACharacter* Character;
+
+    UPROPERTY(BlueprintReadWrite)
+    AActor* Causer;
+
+    FHittedInfo()
+        : Power(0.0f), Character(nullptr), Causer(nullptr) {
+    }
+};
 UCLASS()
 class START_API ACCharacter : public ACharacter, public IICharacter
 {
@@ -57,10 +76,16 @@ protected:
     UPROPERTY(VisibleAnywhere, Category = "Component")
     UCMontagesComponent* MontagesComponent;
     UPROPERTY(VisibleAnywhere, Category = "Component")
-
     UCStatusComponent* StatusComponent;
     void Die();  // 🔹 사망 처리 함수
+    void Hitted();
 
+
+    UFUNCTION()
+    void HandleStateChanged(EStateType PreviousType, EStateType NewType);
+
+
+    FHittedInfo HittedInfo; // 🔹 구조체 변수 추가
 private:
     void SaveHealthToGameInstance();
     void LoadHealthFromGameInstance();

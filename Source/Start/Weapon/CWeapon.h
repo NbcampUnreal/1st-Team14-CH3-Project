@@ -7,6 +7,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "CWeapon.generated.h"
 
+class UMaterialInstanceConstant;
 class ACMagazine;
 class ACBullet;
 class UCCameraComponent;
@@ -48,6 +49,8 @@ protected:
 	FVector LeftHandLocation;
 	UPROPERTY(EditDefaultsOnly, Category = "Equip")
 	FVector LeftHandAimLocation;
+	UPROPERTY(EditDefaultsOnly, Category = "Equip")
+	FTransform WeapoLeftHandTransform;
 	UPROPERTY(EditDefaultsOnly, Category = "Equip")
 	UAnimMontage* EquipMontage;
 	UPROPERTY(EditDefaultsOnly, Category = "Equip")
@@ -150,6 +153,7 @@ public:
 	FORCEINLINE bool IsAutoFire() { return bAutoFire; }
 	FORCEINLINE FVector GetLeftHandLocation() { return LeftHandLocation; }
 	FORCEINLINE FVector GetLeftHandAimLocation() { return LeftHandAimLocation; }
+	FORCEINLINE FTransform GetWeaponLeftHandAimTransform() { return WeapoLeftHandTransform; }
 
 	FORCEINLINE bool GetInAim() const { return bInAim; }
 	

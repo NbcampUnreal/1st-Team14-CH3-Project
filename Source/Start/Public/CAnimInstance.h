@@ -16,10 +16,13 @@ UCLASS()
 class UCAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
-protected:
-	UPROPERTY(BlueprintReadWrite,EditAnywhere, Category = "EWeaponType")
+	
+public:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "EWeaponType")
 	EWeaponType WeaponType = EWeaponType::Max;
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "A7nimation")
+
+protected:
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Animation")
 	FVector Velocity;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Animation")
 	float Direction;
@@ -41,6 +44,8 @@ protected:
 	FVector LeftHandLocation;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Weapon")
 	FVector LeftHandAimLocation;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Weapon")
+	FTransform WeaponLeftHandAimTransform;
 public:
 	virtual void NativeBeginPlay() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;

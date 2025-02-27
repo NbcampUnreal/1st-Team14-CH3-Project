@@ -7,7 +7,7 @@
 class ACWeapon;
 class ACCharacter;
 
-UENUM(meta = (BlueprintSpawnableComponent))
+UENUM(BlueprintType)
 enum class EWeaponType : uint8
 {
 	Rifle, Pistol, Knife, Max	
@@ -17,9 +17,6 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FWeaponTypeChanged, EWeaponType, In
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAmmoChanged, int32, CurrentAmmo, int32, MaxAmmo);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAimChanged, bool, bIsAiming);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FWeaponNameChanged, FText, NewWeaponName);
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FWeaponAim_Arms_Begin, ACWeapon*, InThisWeapon);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FWeaponAim_Arms_End);
 
 UCLASS (ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class START_API UCWeaponComponent : public UActorComponent
@@ -65,7 +62,7 @@ public:
 	void Begin_Fire();
 	void End_Fire();
 
-	bool BeginAim();
+	void BeginAim();
 	void EndAim();
 	bool GetInAim();
 	FVector GetLeftHandLocation();
@@ -81,20 +78,11 @@ public:
 	// 연발 사격 중 매 발마다 HUD 업데이트를 위한 함수
 	void PollAmmoUpdate();
 
-private:
-	UFUNCTION()
-	void On_Begin_Aim(ACWeapon* InThisWeapon);
-	UFUNCTION()
-	void On_End_Aim();
-
 public:
 	FWeaponTypeChanged OnWeaponTypeChanged;
 	FAmmoChanged OnAmmoChanged;
 	FAimChanged OnAimChanged;
 	FWeaponNameChanged OnWeaponNameChanged;
-
-	FWeaponAim_Arms_Begin OnWeaponAim_Arms_Begin;
-	FWeaponAim_Arms_End OnWeaponAim_Arms_End;
 	
 private:
 	EWeaponType Type = EWeaponType::Max;

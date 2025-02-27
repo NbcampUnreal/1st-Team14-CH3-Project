@@ -198,6 +198,13 @@ FVector UCWeaponComponent::GetLeftHandAimLocation()
 	return GetCurrentWeapon()->GetLeftHandAimLocation();
 }
 
+FTransform UCWeaponComponent::GetWeaponLeftHandTransform()
+{
+	if (GetCurrentWeapon() == nullptr)
+		return FTransform();
+	return GetCurrentWeapon()->GetWeaponLeftHandAimTransform();
+}
+
 void UCWeaponComponent::ToggleAutoFire()
 {
 	if(GetCurrentWeapon() == nullptr)
@@ -208,6 +215,8 @@ void UCWeaponComponent::ToggleAutoFire()
 void UCWeaponComponent::Reload()
 {
 	if(GetCurrentWeapon() == nullptr)
+		return;
+	if(GetCurrentWeapon()->CanReload() == false)
 		return;
 	GetCurrentWeapon()->Reload();
 }

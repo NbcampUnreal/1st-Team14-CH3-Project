@@ -7,6 +7,7 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Weapon/CWeapon.h"
 
 void UCAnimInstance::NativeBeginPlay()
 {
@@ -50,6 +51,7 @@ void UCAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	bUseHandIk = Weapon->IsUnarmedModeMode() == false;
 	LeftHandLocation = Weapon->GetLeftHandLocation();
 	LeftHandAimLocation = Weapon->GetLeftHandAimLocation();
+	WeaponLeftHandAimTransform = Weapon->GetWeaponLeftHandTransform();
 }
 
 void UCAnimInstance::OnWeaponTypeChanged(EWeaponType InPrevType, EWeaponType InNewType)

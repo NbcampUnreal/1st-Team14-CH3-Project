@@ -5,6 +5,7 @@
 #include "GameFramework/Actor.h"
 #include "CBullet.generated.h"
 
+class UMaterialInstanceConstant;
 class UProjectileMovementComponent;
 class UCapsuleComponent;
 
