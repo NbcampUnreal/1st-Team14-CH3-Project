@@ -17,9 +17,9 @@ class UCAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
 protected:
-	UPROPERTY(BlueprintReadOnly,EditAnywhere, Category = "EWeaponType")
+	UPROPERTY(BlueprintReadWrite,EditAnywhere, Category = "EWeaponType")
 	EWeaponType WeaponType = EWeaponType::Max;
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Animation")
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "A7nimation")
 	FVector Velocity;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Animation")
 	float Direction;

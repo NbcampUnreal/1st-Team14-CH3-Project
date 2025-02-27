@@ -52,7 +52,7 @@ void UCMovementComponent::OnMove(const FInputActionValue& Value)
 void UCMovementComponent::OnJump(const FInputActionValue& Value)
 {
 	bool value = Value.Get<bool>();
-	if(value == false && OwnerCharacter->GetController() == nullptr && bCanMove == false)
+	if(value == false && OwnerCharacter->GetController() == nullptr || bCanMove == false)
 		return;
 
 	OwnerCharacter->Jump();
