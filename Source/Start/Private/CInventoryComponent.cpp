@@ -306,7 +306,6 @@ void UCInventoryComponent::AddBulletsToInventory(int32 BulletCount)
     // 🚨 Bullet Box가 잘못 추가되는지 확인
     if (InventoryItems.Contains(EItemType::EIT_BulletBox))
     {
-        UE_LOG(LogTemp, Error, TEXT("🚨 오류: AddBulletsToInventory 실행 후 Bullet Box가 추가됨! 원인 확인 필요!"));
     }
 
     // 🔹 UI 업데이트
@@ -324,4 +323,13 @@ IIItemInterface* UCInventoryComponent::FindItemByType(EItemType ItemType)
 
     UE_LOG(LogTemp, Warning, TEXT("✅ FindItemByType 성공 - 아이템(%d) 반환!"), static_cast<int32>(ItemType));
     return Cast<IIItemInterface>(FoundItem);
+}
+
+int32 UCInventoryComponent::GetBulletCount() const
+{
+    if (InventoryItems.Contains(EItemType::EIT_Bullet))
+    {
+        return InventoryItems[EItemType::EIT_Bullet]; // 🔹 현재 총알 개수 반환
+    }
+    return 0; // 🔹 인벤토리에 총알이 없으면 0 반환
 }

@@ -44,5 +44,8 @@ void ACBulletBoxItem::Use(AActor* Target)
     // 🔹 인벤토리에 총알 추가
     InventoryComponent->AddBulletsToInventory(BulletCount);
 
+    // 🔹 현재 총알 개수 가져오기
+    int32 CurrentBullets = InventoryComponent->GetBulletCount();
+
     UE_LOG(LogTemp, Warning, TEXT("📦 %d개의 총알이 인벤토리에 추가되었습니다!"), BulletCount);
 }

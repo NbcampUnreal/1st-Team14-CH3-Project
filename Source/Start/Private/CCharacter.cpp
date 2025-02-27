@@ -5,6 +5,7 @@
 #include "Components/CMovementComponent.h"
 #include "Components/CStatusComponent.h"
 #include "Components/CWeaponComponent.h"
+#include "Components/CStateComponent.h"
 #include "GameFramework/Actor.h"
 
 ACCharacter::ACCharacter()
@@ -26,7 +27,54 @@ void ACCharacter::BeginPlay()
     Super::BeginPlay();
 
 	LoadHealthFromGameInstance();
+
+    if (StateComponent)
+    {
+        // 🔹 델리게이트를 현재 캐릭터의 `HandleStateChanged()`에 연결
+        StateComponent->OnStateTypeChanged.AddDynamic(this, &ACCharacter::HandleStateChanged);
+    }
 }
+
+void ACCharacter::HandleStateChanged(EStateType PreviousType, EStateType NewType)
+{
+    UE_LOG(LogTemp, Warning, TEXT("🔹 상태 변경: %d → %d"), (int32)PreviousType, (int32)NewType);
+
+    switch (NewType)
+    {
+    case EStateType::Hitted:
+        Hitted();
+        break;
+
+    case EStateType::Dead:
+        Die();
+        break;
+
+    default:
+        break;
+    }
+}
+
+void ACCharacter::Hitted()
+{
+    if (StatusComponent)
+    {
+        StatusComponent->Damage(HittedInfo.Power);
+
+        if (!StatusComponent->IsDead()) // 🔹 살아있으면 피격 애니메이션 실행
+        {
+            if (MontagesComponent)
+            {
+                MontagesComponent->PlayHitMode(); // 🔹 PlayHit() → PlayHitMode()로 변경
+            }
+            return;
+        }
+    }
+
+    // 🔹 사망 상태로 전환
+    StateComponent->SetDeadMode();
+}
+
+
 void ACCharacter::SaveHealthToGameInstance()
 {
     UCGameInstance* GameInstance = Cast<UCGameInstance>(GetGameInstance());
@@ -74,11 +122,15 @@ void ACCharacter::ModifyHealth(float Amount)
 
 float ACCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-    if (bIsDead) return 0.0f; // 사망 상태라면 데미지 무효
+    if (StatusComponent->IsDead()) return 0.0f; // 사망한 경우 데미지 무효
 
-    ModifyHealth(-DamageAmount);
+    // 🔹 구조체에 데미지 정보 저장
+    HittedInfo.Power = DamageAmount;
+    HittedInfo.Character = Cast<ACharacter>(DamageCauser);
+    HittedInfo.Causer = DamageCauser;
 
-    UE_LOG(LogTemp, Warning, TEXT("캐릭터가 %f 데미지를 받음"), DamageAmount);
+    // 🔹 상태 변경 (SetHittedMode() 사용)
+    StateComponent->SetHittedMode();  // 내부적으로 ChangeType(Hitted) 실행됨
 
     return DamageAmount;
 }
@@ -94,26 +146,10 @@ void ACCharacter::Heal(float HealAmount)
 
 void ACCharacter::Die()
 {
-    if (bIsDead) return;
-
-    bIsDead = true;
-    UE_LOG(LogTemp, Warning, TEXT("캐릭터 사망!"));
-
-    //// 🔹 플레이어인지 아닌지 판단하여 사망 처리 방식 결정
-    //if (IsPlayerControlled())
-    //{
-    //    // 🔹 플레이어가 사망하면 게임 오버 처리
-    //    ACGameState* GameState = GetWorld()->GetGameState<ACGameState>();
-    //    if (GameState)
-    //    {
-    //        GameState->SetGameState(EGameState::GameOver);
-    //    }
-    //}
-    //else
-    //{
-    //    // 🔹 AI 적은 사망 시 그냥 소멸
-    //    Destroy();
-    //}
+    if (MontagesComponent)
+    {
+        MontagesComponent->PlayDeadMode();
+    }
 }
 
 
