@@ -6,11 +6,10 @@
 
 class ACWeapon;
 class ACCharacter;
-
-UENUM(meta = (BlueprintSpawnableComponent))
+UENUM(BlueprintType)
 enum class EWeaponType : uint8
 {
-	Rifle, Pistol, Knife, Max	
+	Rifle = 0, Pistol, Knife ,Max	
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FWeaponTypeChanged, EWeaponType, InPrevType, EWeaponType, InNewType);
@@ -70,6 +69,7 @@ public:
 	bool GetInAim();
 	FVector GetLeftHandLocation();
 	FVector GetLeftHandAimLocation();
+	FTransform GetWeaponLeftHandTransform();
 
 	void ToggleAutoFire();
 	void Reload();
