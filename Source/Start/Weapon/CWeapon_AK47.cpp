@@ -93,34 +93,34 @@ void ACWeapon_AK47::BeginPlay()
 void ACWeapon_AK47::BeginAim()
 {
 	Super::BeginAim();
-	//if(SightMesh->GetStaticMesh() == nullptr)
-	//	return;
-	////if (CrossHair != nullptr)
-	////	CrossHair->SetVisibility(ESlateVisibility::Hidden);
-	//ACPlayer* player = Cast<ACPlayer>(OwnerCharacter);
-	//if(player == nullptr)
-	//	return;
-	//player->GetMesh()->SetVisibility(false);
-	//player->GetFirstPersonMesh()->SetVisibility(true);
+	if(SightMesh->GetStaticMesh() == nullptr)
+		return;
+	//if (CrossHair != nullptr)
+	//	CrossHair->SetVisibility(ESlateVisibility::Hidden);
+	/*ACPlayer* player = Cast<ACPlayer>(OwnerCharacter);
+	if(player == nullptr)
+		return;
+	player->GetMesh()->SetVisibility(false);
+	player->GetFirstPersonMesh()->SetVisibility(true);
 
-	//AttachToComponent(player->GetFirstPersonMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), RightHandAimSokcetName);
+	AttachToComponent(player->GetFirstPersonMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), RightHandAimSokcetName);
 
-	//UCWeaponComponent* weapon = Cast<UCWeaponComponent>(player->GetComponentByClass(UCWeaponComponent::StaticClass()));
-	//if(weapon->OnWeaponAim_Arms_Begin.IsBound() == true)
-	//	weapon->OnWeaponAim_Arms_Begin.Broadcast(this);
+	UCWeaponComponent* weapon = Cast<UCWeaponComponent>(player->GetComponentByClass(UCWeaponComponent::StaticClass()));
+	if(weapon->OnWeaponAim_Arms_Begin.IsBound() == true)
+		weapon->OnWeaponAim_Arms_Begin.Broadcast(this);*/
 }
 
 void ACWeapon_AK47::EndAim()
 {
 	Super::EndAim();
-	//if (SightMesh->GetStaticMesh() == nullptr)
-	//	return;
-	////if (CrossHair != nullptr)
-	////	CrossHair->SetVisibility(ESlateVisibility::Visible);
+	if (SightMesh->GetStaticMesh() == nullptr)
+		return;
+	//if (CrossHair != nullptr)
+	//	CrossHair->SetVisibility(ESlateVisibility::Visible);
 	//ACPlayer* player = Cast<ACPlayer>(OwnerCharacter);
 	//if (player == nullptr)
 	//	return;
-	//player->GetFirstPersonMesh()->SetVisibility(false);
+	////player->GetFirstPersonMesh()->SetVisibility(false);
 	//player->GetMesh()->SetVisibility(true);
 	//AttachToComponent(player->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), RightHandSokcetName);
 

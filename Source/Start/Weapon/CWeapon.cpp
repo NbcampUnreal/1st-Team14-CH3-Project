@@ -316,6 +316,7 @@ bool ACWeapon::CanReload()
 	bool b = false;
 	b |= bEquipping;
 	b |= bReload;
+	b |= CurrentMagazineCount != MaxMagazineCount;
 	//b |= State->IsInventoryMode() == true;
 	return !b;
 }
