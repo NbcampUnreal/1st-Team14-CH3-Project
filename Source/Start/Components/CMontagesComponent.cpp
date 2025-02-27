@@ -31,6 +31,11 @@ void UCMontagesComponent::BeginPlay()
 			}
 }
 
+void UCMontagesComponent::PlayHitMode()
+{
+	PlayAinMontage(EStateType::Hitted);
+}
+
 void UCMontagesComponent::PlayDeadMode()
 {
 	PlayAinMontage(EStateType::Dead);
