@@ -65,6 +65,7 @@ void ACCharacter::ModifyHealth(float Amount)
 
     if (Health <= 0.0f)
     {
+        StateComponent->SetDeadMode();
         Die();
     }
 

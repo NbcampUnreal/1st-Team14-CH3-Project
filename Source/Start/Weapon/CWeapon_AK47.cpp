@@ -26,8 +26,9 @@ ACWeapon_AK47::ACWeapon_AK47()
 		Equip_PlayRate = 1.0f;
 		RightHandSokcetName = "Rifle_Hand";
 		RightHandAimSokcetName = "Rifle_hand_Aim";
-		LeftHandLocation = FVector(-34.197836,12.642071,8.645998);
+		LeftHandLocation = Mesh->GetSocketLocation("LeftHand");//FVector(-34.197836,12.642071,8.645998);
 		LeftHandAimLocation = FVector(-32.453343,-1.028387,14.791615);
+		WeapoLeftHandTransform = Mesh->GetSocketTransform("LeftHand");
 	}
 
 	//Aim

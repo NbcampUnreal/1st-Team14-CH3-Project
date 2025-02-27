@@ -198,6 +198,13 @@ FVector UCWeaponComponent::GetLeftHandAimLocation()
 	return GetCurrentWeapon()->GetLeftHandAimLocation();
 }
 
+FTransform UCWeaponComponent::GetWeaponLeftHandTransform()
+{
+	if (GetCurrentWeapon() == nullptr)
+		return FTransform();
+	return GetCurrentWeapon()->GetWeaponLeftHandAimTransform();
+}
+
 void UCWeaponComponent::ToggleAutoFire()
 {
 	if(GetCurrentWeapon() == nullptr)

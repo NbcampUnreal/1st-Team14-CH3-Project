@@ -38,6 +38,7 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	void PlayHitMode();
 	void PlayDeadMode();
 
 private:

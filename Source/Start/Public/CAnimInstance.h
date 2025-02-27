@@ -41,6 +41,8 @@ protected:
 	FVector LeftHandLocation;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Weapon")
 	FVector LeftHandAimLocation;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Weapon")
+	FTransform WeaponLeftHandAimTransform;
 public:
 	virtual void NativeBeginPlay() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
