@@ -8,7 +8,7 @@
 class UMaterialInstanceConstant;
 class UProjectileMovementComponent;
 class UCapsuleComponent;
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FProjectileHit, AActor*, InCauser, ACharacter*, InOtherCharacter);
 UCLASS()
 class START_API ACBullet : public ACBaseItem
 {
@@ -37,5 +37,9 @@ private:
 	UFUNCTION()
 	void OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit );
 
+public:
+	FProjectileHit OnHit;
+private:
+	TArray<AActor*> Ignores;
 };
 

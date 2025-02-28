@@ -55,6 +55,10 @@ protected:
 	UAnimMontage* EquipMontage;
 	UPROPERTY(EditDefaultsOnly, Category = "Equip")
 	float Equip_PlayRate;
+	UPROPERTY(EditDefaultsOnly, Category = "Equip")
+	USoundWave* EquipSound;
+	UPROPERTY(EditDefaultsOnly, Category = "Equip")
+	USoundWave* UnequipSound;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Aim")
 	UStaticMeshComponent* SightMesh;
@@ -117,6 +121,8 @@ protected:
 	TSubclassOf<ACMagazine> MagazineClass;
 	UPROPERTY(EditDefaultsOnly, Category = "Magazine")
 	FName MagazinSocketName;
+	UPROPERTY(EditDefaultsOnly, Category = "Magazine")
+	USoundBase* ReloadSound;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Arms")
@@ -210,6 +216,9 @@ private:
 	UFUNCTION()
 	void OnAiming(float Output);
 
+	UFUNCTION()
+	void OnBullet(AActor* InCauser, ACharacter* InOtherCharacter);
+
 protected:
 	ACCharacter* OwnerCharacter;
 private:
@@ -218,6 +227,7 @@ private:
 	bool bInAim;
 	bool bFiring;
 	bool bAutoFire = true;
+
 protected:
 	bool bReload;
 
