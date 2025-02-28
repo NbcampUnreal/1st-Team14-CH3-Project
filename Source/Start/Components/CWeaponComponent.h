@@ -81,7 +81,9 @@ public:
 	void PollAmmoUpdate();
 
 private:
+	UFUNCTION()
 	void On_Begin_Aim(ACWeapon* InThisWeapon);
+	UFUNCTION()
 	void On_End_Aim();
 
 public:
