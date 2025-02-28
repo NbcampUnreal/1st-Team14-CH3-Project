@@ -10,6 +10,8 @@
 ACWeapon_Rifle::ACWeapon_Rifle()
 {
 	ItemType = EItemType::EIT_Rifle;
+	GunType = EGunType::AK;
+
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> asset(TEXT("/Script/Engine.SkeletalMesh'/Game/Assets/Mesh/Weapons/Meshes/Ka47/SK_KA47.SK_KA47'"));
 	if (asset.Succeeded() == true)
 		Mesh->SetSkeletalMesh(asset.Object);

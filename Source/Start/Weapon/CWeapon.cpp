@@ -450,5 +450,4 @@ void ACWeapon::OnBullet(AActor* InCauser, ACharacter* InOtherCharacter)
 {
 	FDamageEvent e;
 	UGameplayStatics::ApplyDamage(InOtherCharacter, 10, OwnerCharacter->GetController(), this,UDamageType::StaticClass());
-//	TakeDamage(10, e, OwnerCharacter->GetController(), this);
 }

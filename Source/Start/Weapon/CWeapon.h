@@ -15,6 +15,12 @@ class UCStateComponent;
 class ACCharacter;
 class UTimelineComponent;
 
+UENUM(BlueprintType)
+enum class EGunType : uint8
+{
+	AK, AR4, Shotgun, Pistol, Knife, Max
+};
+
 USTRUCT()
 struct FWeaponAimData
 {
@@ -39,6 +45,9 @@ class START_API ACWeapon : public ACBaseItem
 {
 	GENERATED_BODY()
 protected:
+	UPROPERTY(EditDefaultsOnly, Category = "Type")
+	EGunType GunType = EGunType::Max;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Equip")
 	FName HolsterSocketName;
 	UPROPERTY(EditDefaultsOnly, Category = "Equip")
@@ -166,6 +175,7 @@ public:
 public:
 	FORCEINLINE void EnableCombo() { bEnable = true; }
 	FORCEINLINE void DisableCombo() { bEnable = false; }
+	FORCEINLINE EGunType GetGunType() { return GunType; }
 
 
 public:
@@ -226,6 +236,7 @@ protected:
 	UCStateComponent* State;
 	UCCameraComponent* Camera;
 	UCWeaponComponent* Weapon;
+
 private:
 	FTimerHandle AutoFireHandle;
 	bool bEquipping;

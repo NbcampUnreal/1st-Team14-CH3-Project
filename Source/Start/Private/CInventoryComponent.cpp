@@ -366,7 +366,7 @@ void UCInventoryComponent::EquipWeapon(EItemType WeaponType, ACPlayer* Player)
     }
 
     // ✅ 변환된 인덱스를 이용해 무기 장착
-    WeaponComp->SetMode((EWeaponType)WeaponIndex);
+    //WeaponComp->SetMode((EWeaponType)WeaponIndex);
 
     UE_LOG(LogTemp, Warning, TEXT("✅ 무기 장착 완료: %d (WeaponIndex: %d)"), static_cast<int32>(WeaponType), WeaponIndex);
 }

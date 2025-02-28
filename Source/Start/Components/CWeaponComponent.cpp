@@ -1,6 +1,7 @@
 #include "Components/CWeaponComponent.h"
 #include "CCharacter.h"
 #include "Weapon/CWeapon.h"
+#include "Weapon/CWeapon_Rifle.h"
 
 UCWeaponComponent::UCWeaponComponent()
 {
@@ -56,6 +57,14 @@ void UCWeaponComponent::SetUnarmedMode()
 
 void UCWeaponComponent::SetRifleMode()
 {
+	int32 count{};
+	for(auto a : Weapons)
+	{
+		if (a->GetItemType() == EItemType::EIT_Rifle)
+			count++;
+	}
+	if(count == 0)
+		return;
 	SetMode(EWeaponType::Rifle);
 }
 
@@ -310,7 +319,46 @@ void UCWeaponComponent::On_End_Aim()
 
 int32 UCWeaponComponent::GetWeaponIndexFromItemType(EItemType ItemType)
 {
+	
+	/*if(GetCurrentWeapon() != nullptr && GetCurrentWeapon()->GetItemType() == ItemType)
+	{
+		UE_LOG(LogTemp, Error, TEXT("❌ 같은 타입의 무기 장착중입니다."));
+		return -1;
+	}
+
+	for (auto a : WeaponClasses)
+	{
+		ACWeapon* weapon = NewObject<ACWeapon>(a);
+		if (weapon->GetIteypType() == ItemType)
+		{
+			weapon->ConditionalBeginDestroy();
+			UE_LOG(LogTemp, Error, TEXT("❌ 같은 타입의 무기 장착중입니다."));
+			return -1;
+		}
+		weapon->ConditionalBeginDestroy();
+	}*/
+
 	switch (ItemType)
+	{
+	case EItemType::EIT_Rifle:
+		TSubclassOf<ACWeapon_Rifle> rifle = ACWeapon_Rifle::StaticClass();
+		WeaponClasses.Add(rifle);
+		if (rifle == nullptr)
+			UE_LOG(LogTemp, Warning, L"1");
+		FActorSpawnParameters param;
+		param.Owner = Owner;
+		param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		ACWeapon* W = Owner->GetWorld()->SpawnActor<ACWeapon_Rifle>(rifle, param);
+		Weapons.Add(W);
+		break;
+		
+	/*case EItemType::EIT_Pistol:
+		TSubclassOf<ACWeapon> pistol = ACWeapon::StaticClass();
+		WeaponClasses.Add(pistol);
+		break;*/
+	}
+
+	/*switch (ItemType)
 	{
 	case EItemType::EIT_Pistol: return 0;
 	case EItemType::EIT_Rifle: return 1;
@@ -318,5 +366,8 @@ int32 UCWeaponComponent::GetWeaponIndexFromItemType(EItemType ItemType)
 	default:
 		UE_LOG(LogTemp, Error, TEXT("❌ GetWeaponIndexFromItemType: 잘못된 ItemType (%d)"), (int32)ItemType);
 		return -1;
-	}
+	}*/
+
+
+	return 0;
 }
