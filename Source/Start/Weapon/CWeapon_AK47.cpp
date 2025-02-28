@@ -29,7 +29,13 @@ ACWeapon_AK47::ACWeapon_AK47()
 		LeftHandLocation = Mesh->GetSocketLocation("LeftHand");//FVector(-34.197836,12.642071,8.645998);
 		LeftHandAimLocation = FVector(-32.453343,-1.028387,14.791615);
 		WeapoLeftHandTransform = Mesh->GetSocketTransform("LeftHand");
-	}
+		static ConstructorHelpers::FObjectFinder<USoundWave> equipSound(TEXT("/Script/Engine.SoundWave'/Game/Sound/Gun_Equip.Gun_Equip'"));
+		if (equipSound.Succeeded() == true)
+			EquipSound = equipSound.Object;
+		static ConstructorHelpers::FObjectFinder<USoundWave> unequipSound(TEXT("/Script/Engine.SoundWave'/Game/Sound/Gun_Unarmed.Gun_Unarmed'"));
+		if (unequipSound.Succeeded() == true)
+			UnequipSound = unequipSound.Object;
+	}	
 
 	//Aim
 	{
@@ -68,6 +74,9 @@ ACWeapon_AK47::ACWeapon_AK47()
 		if (magazine.Succeeded() == true)
 			MagazineClass = magazine.Class;
 		MagazinSocketName = "Rifle_Magazine";
+		static ConstructorHelpers::FObjectFinder<USoundBase> sound(TEXT("/Script/Engine.SoundCue'/Game/Sound/GunReloadCue.GunReloadCue'"));
+		if (sound.Succeeded() == true)
+			ReloadSound= sound.Object;
 	}
 
 	// Arms

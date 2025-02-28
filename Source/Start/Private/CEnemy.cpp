@@ -10,6 +10,7 @@
 #include "CPlayer.h"
 #include "Components/CStateComponent.h"
 #include "Components/CMovementComponent.h"
+#include "Components/CStatusComponent.h"
 #include "Components/CWeaponComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Components/ProgressBar.h"
@@ -37,7 +38,7 @@ void ACEnemy::UpdateOverheadHP()
 
 	if (UProgressBar* HPBar = Cast<UProgressBar>(OverheadHPWidgetInstance->GetWidgetFromName(TEXT("HP"))))
 	{
-		HPBar->SetPercent(GetHealth() / GetMaxHealth());
+		HPBar->SetPercent(StatusComponent->GetHealth() /StatusComponent->GetMaxHealth());
 	}
 
 }

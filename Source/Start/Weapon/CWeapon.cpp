@@ -20,6 +20,7 @@
 #include "Materials/MaterialInstanceConstant.h"
 #include "Particles/ParticleSystem.h"
 #include "Camera/CameraShakeBase.h"
+#include "Engine/DamageEvents.h"
 
 void FWeaponAimData::SetData(class ACCharacter* InOwner)
 {
@@ -29,7 +30,6 @@ void FWeaponAimData::SetData(class ACCharacter* InOwner)
 	springArm->bEnableCameraLag = bEnableCameraLag;
 	UCameraComponent* camera = Cast<UCameraComponent>(InOwner->GetComponentByClass(UCameraComponent::StaticClass()));
 	camera->FieldOfView = FieldOfView;
-	UE_LOG(LogTemp, Error, TEXT("%f"), camera->FieldOfView);
 }
 
 void FWeaponAimData::SetDataByNoneCurve(class ACCharacter* InOwner)
@@ -124,6 +124,7 @@ void ACWeapon::BeginPlay()
 void ACWeapon::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	UE_LOG(LogTemp, Warning, TEXT("%d"), CurrentMagazineCount);
 
 }
 
@@ -148,6 +149,8 @@ void ACWeapon::Equip()
 
 
 	State->SetEquipMode();
+	if (EquipSound != nullptr)
+		UGameplayStatics::SpawnSoundAtLocation(OwnerCharacter->GetWorld(), EquipSound, FVector::ZeroVector, FRotator::ZeroRotator);
 
 	if (EquipMontage == nullptr)
 	{
@@ -183,6 +186,8 @@ bool ACWeapon::CanUnequip()
 
 void ACWeapon::Unequip()
 {
+	if (UnequipSound != nullptr)
+		UGameplayStatics::SpawnSoundAtLocation(OwnerCharacter->GetWorld(), UnequipSound, FVector::ZeroVector, FRotator::ZeroRotator);
 	if (HolsterSocketName.IsValid() == true)
 		AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), HolsterSocketName);
 	if (Camera != nullptr)
@@ -204,8 +209,7 @@ void ACWeapon::BeginFire()
 	bFiring = true;
 	if (bAutoFire == true)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("%f"), AutoFireInterval)
-			GetWorld()->GetTimerManager().SetTimer(AutoFireHandle, this, &ACWeapon::OnFireing, AutoFireInterval, true, 0);
+		GetWorld()->GetTimerManager().SetTimer(AutoFireHandle, this, &ACWeapon::OnFireing, AutoFireInterval, true, 0);
 		return;
 	}
 
@@ -295,6 +299,7 @@ void ACWeapon::OnFireing()
 		param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 		ACBullet* bullet = GetWorld()->SpawnActor<ACBullet>(BulletClass, location, direction.Rotation(), param);
+		bullet->OnHit.AddDynamic(this, &ACWeapon::OnBullet);
 		if (bullet != nullptr)
 			bullet->Shoot(direction);
 	}
@@ -316,7 +321,7 @@ bool ACWeapon::CanReload()
 	bool b = false;
 	b |= bEquipping;
 	b |= bReload;
-	b |= CurrentMagazineCount != MaxMagazineCount;
+	b |= CurrentMagazineCount == MaxMagazineCount;
 	//b |= State->IsInventoryMode() == true;
 	return !b;
 }
@@ -332,6 +337,7 @@ void ACWeapon::Reload()
 
 	// ������ �Ϸ� �� CurrentMagazineCount�� �ִ� ź������ �缳��
 	CurrentMagazineCount = MaxMagazineCount;
+	UGameplayStatics::PlaySoundAtLocation(OwnerCharacter->GetWorld(), ReloadSound, FVector::ZeroVector, FRotator::ZeroRotator);
 }
 
 void ACWeapon::Eject_Magazine()
@@ -418,6 +424,12 @@ void ACWeapon::EndAim()
 void ACWeapon::OnAiming(float Output)
 {
 	UCameraComponent* camera = Cast<UCameraComponent>(OwnerCharacter->GetComponentByClass(UCameraComponent::StaticClass()));
-	UE_LOG(LogTemp, Error, TEXT("Test"));
 	camera->FieldOfView = FMath::Lerp(AimData.FieldOfView, BaseData.FieldOfView, Output);
+}
+
+void ACWeapon::OnBullet(AActor* InCauser, ACharacter* InOtherCharacter)
+{
+	FDamageEvent e;
+	UGameplayStatics::ApplyDamage(InOtherCharacter, 10, OwnerCharacter->GetController(), this,UDamageType::StaticClass());
+//	TakeDamage(10, e, OwnerCharacter->GetController(), this);
 }

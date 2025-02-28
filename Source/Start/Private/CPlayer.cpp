@@ -149,7 +149,7 @@ void ACPlayer::MoveIfNotInInventory(const FInputActionValue& Value)
 		return;
 	}
 
-	MovementComponent->OnMove(Value);
+	//MovementComponent->OnMove(Value);
 }
 
 void ACPlayer::JumpIfNotInInventory(const FInputActionValue& Value)
@@ -171,7 +171,7 @@ void ACPlayer::JumpIfNotInInventory(const FInputActionValue& Value)
 		return;
 	}
 
-	MovementComponent->OnJump(Value);
+	//MovementComponent->OnJump(Value);
 }
 
 void ACPlayer::Tick(float DeltaSeconds)

@@ -1,6 +1,7 @@
 #include "Weapon/CBullet.h"
 
 #include "Components/CapsuleComponent.h"
+#include "GameFramework/Character.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Materials/MaterialInstanceConstant.h"
 
@@ -41,6 +42,8 @@ void ACBullet::BeginPlay()
 	Super::BeginPlay();
 	Projectile->SetActive(false);
 	Capsule->OnComponentHit.AddDynamic(this,&ACBullet::OnComponentHit);
+
+	Ignores.Add(GetOwner());
 }
 
 void ACBullet::Shoot(const FVector& InDirection)
@@ -54,5 +57,14 @@ void ACBullet::Shoot(const FVector& InDirection)
 void ACBullet::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
+	for (AActor* actor : Ignores)
+		if(actor == OtherActor)
+			return;
+
+	Capsule->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	ACharacter* character = Cast<ACharacter>(OtherActor);
+	if (character != nullptr && OnHit.IsBound())
+		OnHit.Broadcast(this, character);
+
 	Destroy();
 }
