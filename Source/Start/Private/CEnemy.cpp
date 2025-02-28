@@ -149,6 +149,15 @@ void ACEnemy::DestroyEnemyInMaze()
 	}
 }
 
+void ACEnemy::SpawnRandomItemAfterDie()
+{
+	ACWeapon* Weapon = WeaponComponent->GetCurrentWeapon();
+	if (Weapon)
+	{
+		
+	}
+}
+
 void ACEnemy::BeginPlay()
 {
 	Super::BeginPlay();
