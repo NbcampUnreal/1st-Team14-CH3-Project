@@ -206,17 +206,54 @@ void UCWBP_CInventorySlot::OnSlotRightClicked()
         UE_LOG(LogTemp, Warning, TEXT("❌ OnSlotRightClicked 실행 취소 - InventoryComponent가 없음!"));
         return;
     }
-    // 🔹 일반 아이템 드랍 처리
-    const TMap<EItemType, int32>& CurrentItems = InventoryComponent->GetInventoryItems();
-    UE_LOG(LogTemp, Warning, TEXT("📌 현재 인벤토리 상태:"));
-    for (const auto& Item : CurrentItems)
+
+    if (bIsDropping)
     {
-        UE_LOG(LogTemp, Warning, TEXT("- 아이템: %d, 개수: %d"), static_cast<int32>(Item.Key), Item.Value);
+        UE_LOG(LogTemp, Warning, TEXT("❌ 이미 드랍 중인 아이템입니다."));
+        return;
     }
 
+    const TMap<EItemType, int32>& CurrentItems = InventoryComponent->GetInventoryItems();
+    if (!CurrentItems.Contains(StoredItemType))
+    {
+        UE_LOG(LogTemp, Warning, TEXT("❌ 슬롯에 표시된 아이템(%d)은 인벤토리에 없습니다!"), static_cast<int32>(StoredItemType));
+        return;
+    }
+
+    // ✅ RemoveItem 먼저 실행
+    bool bRemoved = InventoryComponent->RemoveItem(StoredItemType);
+    if (!bRemoved)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("❌ RemoveItem 실패 - 인벤토리에서 제거되지 않음!"));
+        return;
+    }
+
+    // ✅ 아이템 드랍 실행
     if (InventoryComponent->DropItem(StoredItemType))
     {
         UE_LOG(LogTemp, Warning, TEXT("✅ 아이템 정상 드랍됨: %d"), static_cast<int32>(StoredItemType));
+        bIsDropping = true; // 드랍 성공 후에만 플래그 설정
+
+        // 🚨 만약 드랍된 Bullet Box가 다시 추가되면 삭제
+        if (StoredItemType == EItemType::EIT_BulletBox)
+        {
+            FTimerHandle RemoveTimer;
+            GetWorld()->GetTimerManager().SetTimer(RemoveTimer, FTimerDelegate::CreateLambda([=, this]()
+                {
+                    if (!InventoryComponent)
+                    {
+                        UE_LOG(LogTemp, Error, TEXT("🚨 InventoryComponent가 nullptr임!"));
+                        return;
+                    }
+
+                    if (InventoryComponent->GetInventoryItems().Contains(StoredItemType))
+                    {
+                        InventoryComponent->RemoveItem(StoredItemType);
+                        UE_LOG(LogTemp, Error, TEXT("🚨 Bullet Box가 다시 추가됨 - 즉시 삭제!"));
+                    }
+                }), 0.1f, false);
+        }
+
         InventoryComponent->OnInventoryUpdated.Broadcast();
     }
     else
@@ -224,30 +261,7 @@ void UCWBP_CInventorySlot::OnSlotRightClicked()
         UE_LOG(LogTemp, Warning, TEXT("❌ 아이템 드랍 실패: %d"), static_cast<int32>(StoredItemType));
     }
 
-    // ✅ 인벤토리에서 아이템 제거
-    if (CurrentItems.Contains(StoredItemType))
-    {
-        UE_LOG(LogTemp, Warning, TEXT("RemoveItem 호출됨: %d"), static_cast<int32>(StoredItemType));
-
-        if (bIsDropping)
-        {
-            UE_LOG(LogTemp, Warning, TEXT("❌ 이미 드랍 중인 아이템입니다."));
-            return;
-        }
-        bIsDropping = true;
-
-        bool bRemoved = InventoryComponent->RemoveItem(StoredItemType);
-        if (!bRemoved)
-        {
-            UE_LOG(LogTemp, Warning, TEXT("❌ 슬롯에 표시된 아이템이 실제 인벤토리에 존재하지 않습니다!"));
-        }
-
-        // ✅ 0.1초 후 다시 클릭 가능
-        GetWorld()->GetTimerManager().SetTimer(DropCooldownTimerHandle, this, &UCWBP_CInventorySlot::ResetDropFlag, 0.1f, false);
-    }
-    else
-    {
-        UE_LOG(LogTemp, Warning, TEXT("❌ 슬롯에 표시된 아이템(%d)은 인벤토리에 없습니다!"), static_cast<int32>(StoredItemType));
-    }
+    // ✅ 드랍 쿨다운 추가
+    GetWorld()->GetTimerManager().SetTimer(DropCooldownTimerHandle, this, &UCWBP_CInventorySlot::ResetDropFlag, 0.1f, false);
 }
 

@@ -218,9 +218,8 @@ bool UCInventoryComponent::DropItem(EItemType ItemType)
     }
 
     UE_LOG(LogTemp, Warning, TEXT("✅ 아이템 드랍 성공: %d (위치: %s)"), static_cast<int32>(ItemType), *DropLocation.ToString());
-    // 🔹 UI 업데이트 강제 실행
-    OnInventoryUpdated.Broadcast();
 
+    // 🔹 여기서 UI 업데이트를 제거하고, RemoveItem()에서만 실행되도록 변경
     return true;
 }
 

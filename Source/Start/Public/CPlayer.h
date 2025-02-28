@@ -26,7 +26,6 @@ public:
 public:
 	ACPlayer();
 	FORCEINLINE UCameraComponent* GetCamera() const { return Camera; }
-	UCWeaponComponent* GetWeaponComponent() const { return WeaponComponent; }
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
