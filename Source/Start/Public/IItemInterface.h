@@ -16,6 +16,9 @@ enum class EItemType : uint8
     EIT_BulletBox = 2 UMETA(DisplayName = "BulletBox"),
     EIT_Bullet = 3 UMETA(DisplayName = "Bullet"),
     EIT_Grenades = 4 UMETA(DisplayName = "Grenades"),
+    EIT_Pistol = 5 UMETA(DisplayName = "Pistol"),
+    EIT_Rifle = 6 UMETA(DisplayName = "Rifle"),
+    EIT_Shotgun = 7 UMETA(DisplayName = "Shotgun"),
     EIT_None = 255 UMETA(DisplayName = "None")  // ✅ 빈 슬롯 추가
 };
 

@@ -1,4 +1,4 @@
-#include "CWeapon_AK47.h"
+#include "CWeapon_Rifle.h"
 
 #include "CCharacter.h"
 #include "Camera/CameraShakeBase.h"
@@ -7,8 +7,9 @@
 #include "Components/CWeaponComponent.h"
 #include "Components/SlateWrapperTypes.h"
 
-ACWeapon_AK47::ACWeapon_AK47()
+ACWeapon_Rifle::ACWeapon_Rifle()
 {
+	ItemType = EItemType::EIT_Rifle;
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> asset(TEXT("/Script/Engine.SkeletalMesh'/Game/Assets/Mesh/Weapons/Meshes/Ka47/SK_KA47.SK_KA47'"));
 	if (asset.Succeeded() == true)
 		Mesh->SetSkeletalMesh(asset.Object);
@@ -89,7 +90,7 @@ ACWeapon_AK47::ACWeapon_AK47()
 	}
 }
 
-void ACWeapon_AK47::BeginPlay()
+void ACWeapon_Rifle::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -99,7 +100,7 @@ void ACWeapon_AK47::BeginPlay()
 	player->GetFirstPersonMesh()->SetRelativeTransform(ArmsMeshTransform);
 }
 
-void ACWeapon_AK47::BeginAim()
+void ACWeapon_Rifle::BeginAim()
 {
 	Super::BeginAim();
 	if(SightMesh->GetStaticMesh() == nullptr)
@@ -119,7 +120,7 @@ void ACWeapon_AK47::BeginAim()
 		weapon->OnWeaponAim_Arms_Begin.Broadcast(this);*/
 }
 
-void ACWeapon_AK47::EndAim()
+void ACWeapon_Rifle::EndAim()
 {
 	Super::EndAim();
 	if (SightMesh->GetStaticMesh() == nullptr)

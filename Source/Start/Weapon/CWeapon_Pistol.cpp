@@ -7,6 +7,7 @@
 
 ACWeapon_Pistol::ACWeapon_Pistol()
 {
+	ItemType = EItemType::EIT_Pistol;
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> mesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Assets/Mesh/MilitaryWeapSilver/Weapons/Pistols_A.Pistols_A'"));
 	if (mesh.Succeeded() == true)
 		Mesh->SetSkeletalMesh(mesh.Object);

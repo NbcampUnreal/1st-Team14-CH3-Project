@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "CBaseItem.h"
 #include "GameFramework/Actor.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "CWeapon.generated.h"
@@ -35,7 +36,7 @@ public:
 };
 
 UCLASS(Abstract)
-class START_API ACWeapon : public AActor
+class START_API ACWeapon : public ACBaseItem
 {
 	GENERATED_BODY()
 protected:

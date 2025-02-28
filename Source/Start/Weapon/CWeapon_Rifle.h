@@ -5,19 +5,19 @@
 #include "CoreMinimal.h"
 #include "CWeapon.h"
 #include "CWeapon.h"
-#include "CWeapon_AK47.generated.h"
+#include "CWeapon_Rifle.generated.h"
 
 class UStaticMeshComponent;
 /**
  * 
  */
 UCLASS()
-class START_API ACWeapon_AK47 : public ACWeapon
+class START_API ACWeapon_Rifle : public ACWeapon
 {
 	GENERATED_BODY()
 
 public:
-	ACWeapon_AK47();
+	ACWeapon_Rifle();
 protected:
 	virtual void BeginPlay() override;
 public:
