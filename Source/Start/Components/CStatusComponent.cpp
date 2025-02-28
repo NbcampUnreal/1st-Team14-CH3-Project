@@ -2,7 +2,6 @@
 
 
 #include "Components/CStatusComponent.h"
-
 #include "GameFramework/Character.h"
 
 // Sets default values for this component's properties
