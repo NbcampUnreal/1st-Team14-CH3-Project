@@ -4,6 +4,7 @@
 #include "Components/ActorComponent.h"
 #include "IItemInterface.h"
 #include "Delegates/DelegateCombinations.h" 
+#include "Components/CWeaponComponent.h"
 #include "CInventoryComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInventoryUpdated);
@@ -17,6 +18,13 @@ class START_API UCInventoryComponent : public UActorComponent
     GENERATED_BODY()
 
 public:
+    UPROPERTY()
+    UCWeaponComponent* WeaponComponent;  // 무기 관리 컴포넌트
+
+    bool AddWeaponToInventory(EItemType WeaponType);
+    bool EquipWeaponFromInventory(EItemType WeaponType);
+    bool DropWeaponFromInventory();
+
     UCInventoryComponent();
     void BeginPlay();
 

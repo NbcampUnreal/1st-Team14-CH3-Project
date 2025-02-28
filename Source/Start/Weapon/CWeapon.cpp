@@ -204,7 +204,7 @@ void ACWeapon::BeginFire()
 	bFiring = true;
 	if (bAutoFire == true)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("%f"), AutoFireInterval)
+		//UE_LOG(LogTemp, Warning, TEXT("%f"), AutoFireInterval)
 			GetWorld()->GetTimerManager().SetTimer(AutoFireHandle, this, &ACWeapon::OnFireing, AutoFireInterval, true, 0);
 		return;
 	}

@@ -16,6 +16,10 @@ enum class EItemType : uint8
     EIT_BulletBox = 2 UMETA(DisplayName = "BulletBox"),
     EIT_Bullet = 3 UMETA(DisplayName = "Bullet"),
     EIT_Grenades = 4 UMETA(DisplayName = "Grenades"),
+    // 🔫 무기 추가
+    EIT_Pistol = 5 UMETA(DisplayName = "Pistol"),
+    EIT_Rifle = 6 UMETA(DisplayName = "Rifle"),
+    EIT_Shotgun = 7 UMETA(DisplayName = "Shotgun"),
     EIT_None = 255 UMETA(DisplayName = "None")  // ✅ 빈 슬롯 추가
 };
 
@@ -56,6 +60,13 @@ public:
             return TEXT("Bullet");
         case EItemType::EIT_Grenades:
             return TEXT("Grenades");
+            // 🔫 무기 추가
+        case EItemType::EIT_Pistol:
+            return TEXT("Pistol");
+        case EItemType::EIT_Rifle:
+            return TEXT("Rifle");
+        case EItemType::EIT_Shotgun:
+            return TEXT("Shotgun");
         default:
             return TEXT("Unknown Item");
         }

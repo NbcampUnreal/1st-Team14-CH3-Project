@@ -93,7 +93,10 @@ bool UCInventoryComponent::AddToInventory(EItemType ItemType)
         {EItemType::EIT_HealthPotion, 10},  // 🔹 체력 포션은 최대 10개까지
         {EItemType::EIT_StaminaPotion, 10},
         {EItemType::EIT_Grenades, 5},  // 🔹 수류탄은 최대 5개까지
-        {EItemType::EIT_BulletBox, 5}  // 🔹 총알 박스는 최대 5개까지
+        {EItemType::EIT_BulletBox, 5},  // 🔹 총알 박스는 최대 5개까지
+        {EItemType::EIT_Pistol, 1 }, // 🔹 권총은 최대 1개까지
+        {EItemType::EIT_Rifle, 1 }, // 🔹 라이플은 최대 1개까지
+        {EItemType::EIT_Shotgun, 1 } // 🔹 샷건은 최대 1개까지
     };
 
     const int32 MaxStackSize = MaxStackLimits.Contains(ItemType) ? MaxStackLimits[ItemType] : 999;  // 기본값 99
@@ -333,3 +336,80 @@ int32 UCInventoryComponent::GetBulletCount() const
     }
     return 0; // 🔹 인벤토리에 총알이 없으면 0 반환
 }
+
+bool UCInventoryComponent::AddWeaponToInventory(EItemType WeaponType)
+{
+    if (!WeaponComponent)
+    {
+        UE_LOG(LogTemp, Error, TEXT("❌ WeaponComponent가 없음! 무기 추가 실패"));
+        return false;
+    }
+
+    // 같은 무기가 이미 있는지 확인
+    if (InventoryItems.Contains(WeaponType))
+    {
+        UE_LOG(LogTemp, Warning, TEXT("⚠️ 동일한 무기가 이미 있음. 기존 무기를 버려야 새 무기 획득 가능"));
+        return false;
+    }
+
+    // 인벤토리에 추가
+    InventoryItems.Add(WeaponType, 1);
+    UE_LOG(LogTemp, Warning, TEXT("✅ 무기 획득: %d"), static_cast<int32>(WeaponType));
+
+    // 무기 자동 장착
+    EquipWeaponFromInventory(WeaponType);
+
+    OnInventoryUpdated.Broadcast();
+    return true;
+}
+
+bool UCInventoryComponent::EquipWeaponFromInventory(EItemType WeaponType)
+{
+    if (!WeaponComponent)
+    {
+        UE_LOG(LogTemp, Error, TEXT("❌ WeaponComponent가 없음! 무기 장착 실패"));
+        return false;
+    }
+
+    if (!InventoryItems.Contains(WeaponType))
+    {
+        UE_LOG(LogTemp, Warning, TEXT("❌ 장착 실패 - 인벤토리에 해당 무기가 없음: %d"), static_cast<int32>(WeaponType));
+        return false;
+    }
+
+    // 무기 장착
+    WeaponComponent->SetMode((EWeaponType)WeaponType);
+    UE_LOG(LogTemp, Warning, TEXT("✅ 무기 장착 완료: %d"), static_cast<int32>(WeaponType));
+
+    return true;
+}
+
+bool UCInventoryComponent::DropWeaponFromInventory()
+{
+    if (!WeaponComponent)
+    {
+        UE_LOG(LogTemp, Error, TEXT("❌ WeaponComponent가 없음! 무기 드랍 실패"));
+        return false;
+    }
+
+    // 현재 장착 중인 무기 가져오기
+    EWeaponType EquippedWeapon = WeaponComponent->GetCurrentWeaponType();
+    if (EquippedWeapon == EWeaponType::Max)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("❌ 드랍 실패 - 장착된 무기가 없음"));
+        return false;
+    }
+
+    // 무기 장착 해제
+    WeaponComponent->SetUnarmedMode();
+
+    // 인벤토리에서 삭제
+    RemoveItem((EItemType)EquippedWeapon);
+
+    // 무기를 바닥에 드랍
+    DropItem((EItemType)EquippedWeapon);
+
+    UE_LOG(LogTemp, Warning, TEXT("✅ 무기 드랍 완료: %d"), static_cast<int32>(EquippedWeapon));
+    return true;
+}
+

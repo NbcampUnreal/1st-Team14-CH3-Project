@@ -167,18 +167,27 @@ void UCWBP_CInventorySlot::OnSlotClicked()
     }
 
     UE_LOG(LogTemp, Warning, TEXT("✅ OnSlotClicked 호출됨 - 아이템 사용 요청: %d"), static_cast<int32>(StoredItemType));
-    // 아이템 사용
-    bool bUsed = InventoryComponent->UseItem(StoredItemType, Player);
-    if (bUsed)
+    // 무기 아이템인지 확인
+    if (StoredItemType >= EItemType::EIT_Pistol && StoredItemType <= EItemType::EIT_Shotgun)
     {
-        UE_LOG(LogTemp, Warning, TEXT("✅ 아이템 사용됨: %d"), static_cast<int32>(StoredItemType));
+        UE_LOG(LogTemp, Warning, TEXT("🔫 무기 장착 시도: %d"), static_cast<int32>(StoredItemType));
+        bool bEquipped = InventoryComponent->EquipWeaponFromInventory(StoredItemType);
 
-        // UI 업데이트 강제 실행
-        InventoryComponent->OnInventoryUpdated.Broadcast();
+        if (bEquipped)
+        {
+            UE_LOG(LogTemp, Warning, TEXT("✅ 무기 장착 성공: %d"), static_cast<int32>(StoredItemType));
+            InventoryComponent->OnInventoryUpdated.Broadcast();
+        }
     }
     else
     {
-        UE_LOG(LogTemp, Warning, TEXT("❌ 아이템 사용 실패: %d"), static_cast<int32>(StoredItemType));
+        // 기존 아이템 사용 처리
+        bool bUsed = InventoryComponent->UseItem(StoredItemType, Player);
+        if (bUsed)
+        {
+            UE_LOG(LogTemp, Warning, TEXT("✅ 아이템 사용됨: %d"), static_cast<int32>(StoredItemType));
+            InventoryComponent->OnInventoryUpdated.Broadcast();
+        }
     }
 }
 
@@ -189,37 +198,55 @@ void UCWBP_CInventorySlot::ResetDropFlag()
 
 void UCWBP_CInventorySlot::OnSlotRightClicked()
 {
-        if (!InventoryComponent)
-        {
-            UE_LOG(LogTemp, Warning, TEXT("❌ OnSlotRightClicked 실행 취소 - InventoryComponent가 없음!"));
-            return;
-        }
+    if (!InventoryComponent)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("❌ OnSlotRightClicked 실행 취소 - InventoryComponent가 없음!"));
+        return;
+    }
 
-        // 🔹 인벤토리 상태 확인 (디버그 로그 추가)
-        const TMap<EItemType, int32>& CurrentItems = InventoryComponent->GetInventoryItems();
-        UE_LOG(LogTemp, Warning, TEXT("📌 현재 인벤토리 상태:"));
-        for (const auto& Item : CurrentItems)
-        {
-            UE_LOG(LogTemp, Warning, TEXT("- 아이템: %d, 개수: %d"), static_cast<int32>(Item.Key), Item.Value);
-        }
+    // 🔹 무기인지 확인 (Pistol, Rifle, Shotgun 등)
+    if (StoredItemType == EItemType::EIT_Pistol ||
+        StoredItemType == EItemType::EIT_Rifle ||
+        StoredItemType == EItemType::EIT_Shotgun)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("🔫 무기 드랍 시도: %d"), static_cast<int32>(StoredItemType));
+        bool bDropped = InventoryComponent->DropWeaponFromInventory();
 
-        if (InventoryComponent->DropItem(StoredItemType))
+        if (bDropped)
         {
-            UE_LOG(LogTemp, Warning, TEXT("✅ 아이템 정상 드랍됨: %d"), static_cast<int32>(StoredItemType));
-
-            // ✅ UI 업데이트 강제 실행
+            UE_LOG(LogTemp, Warning, TEXT("✅ 무기 드랍 성공: %d"), static_cast<int32>(StoredItemType));
             InventoryComponent->OnInventoryUpdated.Broadcast();
         }
         else
         {
-            UE_LOG(LogTemp, Warning, TEXT("❌ 아이템 드랍 실패: %d"), static_cast<int32>(StoredItemType));
+            UE_LOG(LogTemp, Warning, TEXT("❌ 무기 드랍 실패: %d"), static_cast<int32>(StoredItemType));
         }
+        return;  // ✅ 무기 드랍이 끝났으므로 일반 아이템 드랍 로직 실행 안함
+    }
 
+    // 🔹 일반 아이템 드랍 처리
+    const TMap<EItemType, int32>& CurrentItems = InventoryComponent->GetInventoryItems();
+    UE_LOG(LogTemp, Warning, TEXT("📌 현재 인벤토리 상태:"));
+    for (const auto& Item : CurrentItems)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("- 아이템: %d, 개수: %d"), static_cast<int32>(Item.Key), Item.Value);
+    }
+
+    if (InventoryComponent->DropItem(StoredItemType))
+    {
+        UE_LOG(LogTemp, Warning, TEXT("✅ 아이템 정상 드랍됨: %d"), static_cast<int32>(StoredItemType));
+        InventoryComponent->OnInventoryUpdated.Broadcast();
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("❌ 아이템 드랍 실패: %d"), static_cast<int32>(StoredItemType));
+    }
+
+    // ✅ 인벤토리에서 아이템 제거
     if (CurrentItems.Contains(StoredItemType))
     {
         UE_LOG(LogTemp, Warning, TEXT("RemoveItem 호출됨: %d"), static_cast<int32>(StoredItemType));
 
-        // ✅ 중복 실행 방지
         if (bIsDropping)
         {
             UE_LOG(LogTemp, Warning, TEXT("❌ 이미 드랍 중인 아이템입니다."));
@@ -230,7 +257,7 @@ void UCWBP_CInventorySlot::OnSlotRightClicked()
         bool bRemoved = InventoryComponent->RemoveItem(StoredItemType);
         if (!bRemoved)
         {
-            UE_LOG(LogTemp, Warning, TEXT("슬롯에 표시된 아이템이 실제 인벤토리에 존재하지 않습니다!"));
+            UE_LOG(LogTemp, Warning, TEXT("❌ 슬롯에 표시된 아이템이 실제 인벤토리에 존재하지 않습니다!"));
         }
 
         // ✅ 0.1초 후 다시 클릭 가능
@@ -238,7 +265,7 @@ void UCWBP_CInventorySlot::OnSlotRightClicked()
     }
     else
     {
-        UE_LOG(LogTemp, Warning, TEXT("슬롯에 표시된 아이템(%d)은 인벤토리에 없습니다!"), static_cast<int32>(StoredItemType));
+        UE_LOG(LogTemp, Warning, TEXT("❌ 슬롯에 표시된 아이템(%d)은 인벤토리에 없습니다!"), static_cast<int32>(StoredItemType));
     }
 }
 

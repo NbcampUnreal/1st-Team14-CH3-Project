@@ -52,9 +52,9 @@ public:
 	void SetPistolMode();
 	void SetRifleMode();
 	void SetKnifeMode();
+	void SetMode(EWeaponType InType);
 
 private:
-	void SetMode(EWeaponType InType);
 	void ChangeType(EWeaponType InType);
 
 public:
@@ -81,7 +81,9 @@ public:
 	void PollAmmoUpdate();
 
 private:
+	UFUNCTION()
 	void On_Begin_Aim(ACWeapon* InThisWeapon);
+	UFUNCTION()
 	void On_End_Aim();
 
 public:
@@ -91,6 +93,8 @@ public:
 	FWeaponNameChanged OnWeaponNameChanged;
 	FWeaponAim_Arms_Begin OnWeaponAim_Arms_Begin;
 	FWeaponAim_Arms_End OnWeaponAim_Arms_End;
+	UFUNCTION(BlueprintCallable)
+	EWeaponType GetCurrentWeaponType() const { return Type; }
 	
 private:
 	EWeaponType Type = EWeaponType::Max;
