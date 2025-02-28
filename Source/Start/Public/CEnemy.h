@@ -21,6 +21,13 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
 	UWidgetComponent* OverheadHPWidget;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
+	TSubclassOf<UUserWidget> BossHPWidgetClass;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
+	UUserWidget* BossHPWidgetInstance;
+
+	UPROPERTY(VisibleAnywhere)
+	class UCSpawnComponent* SpawnComp;
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnEnemyAttack OnEnemyAttack;
@@ -31,9 +38,18 @@ public:
 	bool bIsGunUsed;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsEqueped;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	FText EnemyName;
 	
+	UFUNCTION(BlueprintCallable)
 	void UpdateOverheadHP();
 
+	UFUNCTION(BlueprintCallable)
+	float GetEnemyHP() const;
+	UFUNCTION(BlueprintCallable)
+	void VisibleEnemyHPBar();
+	UFUNCTION(BlueprintCallable)
+	void HiddenEnemyHPBar();
 	UFUNCTION(BlueprintCallable)
 	void EnemyAttack();
 	UFUNCTION(BlueprintCallable)
@@ -42,6 +58,8 @@ public:
 	void SetEquipMode();
 	UFUNCTION(BlueprintCallable)
 	void SetActionMode();
+	UFUNCTION(BlueprintCallable)
+	bool IsEnemyActionMode();
 
 	UFUNCTION(BlueprintCallable)
 	void SetRun();
@@ -65,9 +83,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void GunAttackEnd();
-
-	UFUNCTION(BlueprintCallable)
-	void DestroyEnemyInMaze();
 
 	UFUNCTION(BlueprintCallable)
 	void SpawnRandomItemAfterDie();
