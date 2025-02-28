@@ -48,15 +48,23 @@ void UCMainMenuWidget::OnStartGameButtonClicked()
 	// 게임 시작 요청 발생
 	OnStartGameRequested.Broadcast();
 
-	// XX초 뒤에 게임 레벨로 전환하면서 입력 모드를 게임 전용으로 변경
 	UWorld* World = GetWorld();
 	if (World)
 	{
-		FTimerHandle TimerHandle;
-		World->GetTimerManager().SetTimer(TimerHandle, [this, World]()
-			{
-				UGameplayStatics::OpenLevel(World, LevelName);
-			}, 1.0f, false);
+		// 컷씬 시퀀스가 할당되어 있다면 컷씬 맵 레벨로 이동
+		if (CutsceneSequence)
+		{
+			FTimerHandle TimerHandle;
+			World->GetTimerManager().SetTimer(TimerHandle, [this, World]()
+				{
+					UGameplayStatics::OpenLevel(World, CutsceneMapName);
+				}, 1.0f, false);
+			return;
+		}
+		else
+		{
+			UGameplayStatics::OpenLevel(World, GameMapName);
+		}
 	}
 	else
 	{
@@ -69,7 +77,7 @@ void UCMainMenuWidget::OnQuitClicked()
 	// 게임 종료 요청 발생
 	OnQuitGameRequested.Broadcast();
 
-	// 게임 종료를 위해 0.8초 딜레이 적용
+	// 게임 종료를 위해 1.0초 딜레이 적용
 	if (UWorld* World = GetWorld())
 	{
 		FTimerHandle TimerHandle;
@@ -77,7 +85,7 @@ void UCMainMenuWidget::OnQuitClicked()
 			{
 				APlayerController* PC = GetOwningPlayer();
 				UKismetSystemLibrary::QuitGame(World, PC, EQuitPreference::Quit, false);
-			}, 1.0f, false);
+			}, 0.8f, false);
 	}
 	else
 	{

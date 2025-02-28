@@ -4,6 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "LevelSequence.h"
+#include "LevelSequencePlayer.h"
+#include "LevelSequenceActor.h"
 #include "CMainMenuWidget.generated.h"
 
 /**
@@ -33,16 +36,27 @@ protected:
 	// UMG에서 바인딩된 버튼들 (위젯 블루프린트와 동일 이름을 사용해야 함)
 	UPROPERTY(meta = (BindWidget))
 	class UButton* StartGameButton;
+
 	UPROPERTY(meta = (BindWidget))
 	class UButton* QuitButton;
 
 	// 버튼 클릭 이벤트 핸들러
 	UFUNCTION()
 	void OnStartGameButtonClicked();
+
 	UFUNCTION()
 	void OnQuitClicked();
 
-	// 에디터나 블루프린트에서 수정할 수 있도록 함
+
+	// 컷씬을 재생할 때 이동할 맵 레벨 이름
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Main Menu")
-	FName LevelName = FName("Map_Post-Apocalyptic_NightLight");
+	FName CutsceneMapName = FName("Map_Post-Apocalyptic_DayLight");
+
+	// 실제 게임이 시작되는 맵 레벨 이름
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Main Menu")
+	FName GameMapName = FName("Map_Post-Apocalyptic_NightLight");
+
+	// 에디터에서 할당할 컷씬(시퀀스)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Main Menu")
+	ULevelSequence* CutsceneSequence = nullptr;
 };
