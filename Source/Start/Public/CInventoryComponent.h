@@ -12,7 +12,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInventoryUpdated);
 class ACBaseItem;
 class ACPlayer;
 
-UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
+UCLASS(ClassGroup = (Custom), Blueprintable, meta = (BlueprintSpawnableComponent))
 class START_API UCInventoryComponent : public UActorComponent
 {
     GENERATED_BODY()
@@ -73,6 +73,14 @@ protected:
     // 현재 인벤토리에 있는 아이템 (종류별 개수 저장)
     UPROPERTY(VisibleAnywhere, Category = "Inventory")
     TMap<EItemType, int32> InventoryItems;
+
+    // 📌 아이템 상세 정보 저장 (새로 추가)
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory")
+    TMap<EItemType, FItemData> ItemDetails;
+
+    // 📌 아이템 데이터 테이블
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory", meta = (AllowPrivateAccess = "true"))
+    UDataTable* ItemDataTable;
 
     UPROPERTY(EditDefaultsOnly, Category = "Inventory")
     TMap<EItemType, TSubclassOf<ACBaseItem>> DropItemClasses;

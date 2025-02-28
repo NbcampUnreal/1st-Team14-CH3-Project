@@ -7,6 +7,7 @@ ACHealthPotionItem::ACHealthPotionItem()
 {
 	HealAmount = 20.f;
 	ItemType = EItemType::EIT_HealthPotion;
+
 }
 
 void ACHealthPotionItem::KeyPressedActivate(AActor* Activator)

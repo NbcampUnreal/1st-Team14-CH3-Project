@@ -15,14 +15,11 @@ class START_API ACInteractable : public AActor, public IIInteractableInterface
 public:	
 	ACInteractable();
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Interactable|Component")
+	class UBoxComponent* InteractableCollision;
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Interactable|Component") 
 	USceneComponent* Scene;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Interactable|Component")
-	class UBoxComponent* InteractableCollision;
-
-
 
 	virtual void OnInteractableOverlap(UPrimitiveComponent* OverlapPrimitiveComp,
 		AActor* OtherActor,

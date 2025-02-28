@@ -10,18 +10,37 @@
 #include "Weapon/CBullet.h"
 #include "CGrenadesItem.h"
 #include "Weapon/CWeapon_Pistol.h"
+#include "Components/BoxComponent.h"
 #include "GameFramework/Actor.h"
 
 // 생성자: 최대 슬롯 수 초기화
 UCInventoryComponent::UCInventoryComponent()
 {
     MaxSlots = 12;
+    static ConstructorHelpers::FObjectFinder<UDataTable> DataTableRef(TEXT("/Game/DataTable/ItemDataTable.ItemDataTable"));
+    if (DataTableRef.Succeeded())
+    {
+        ItemDataTable = DataTableRef.Object;
+        UE_LOG(LogTemp, Warning, TEXT("✅ C++에서 ItemDataTable을 강제로 설정했습니다."));
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("❌ C++에서 ItemDataTable을 찾을 수 없습니다. 경로를 확인하세요."));
+    }
 }
 
 void UCInventoryComponent::BeginPlay()
 {
     Super::BeginPlay();  // 🔹 부모 클래스의 BeginPlay 호출 (중요)
 
+    if (!ItemDataTable)
+    {
+        UE_LOG(LogTemp, Error, TEXT("❌ ItemDataTable이 설정되지 않았습니다! 블루프린트에서 확인하세요."));
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("✅ ItemDataTable이 정상적으로 로드되었습니다."));
+    }
     // ✅ DropItemClasses에 BulletBoxItem 추가
     if (ACBulletBoxItem::StaticClass())
     {
@@ -93,42 +112,70 @@ ACBaseItem* UCInventoryComponent::GetItemInstance(EItemType ItemType)
 
 bool UCInventoryComponent::AddToInventory(EItemType ItemType)
 {
-    // 🔹 아이템별 최대 스택 제한 설정 (기본값 99)
+    if (!ItemDataTable)
+    {
+        UE_LOG(LogTemp, Error, TEXT("❌ ItemDataTable이 설정되지 않았습니다."));
+        return false;
+    }
+
+    // ✅ 데이터 테이블에서 해당 아이템의 정보 찾기
+    FString ContextString;
+    FName RowName = IIItemInterface::GetRowNameFromItemType(ItemType);
+    FItemData* ItemData = ItemDataTable->FindRow<FItemData>(RowName, ContextString);
+
+    if (!ItemData)
+    {
+        UE_LOG(LogTemp, Error, TEXT("❌ 해당 아이템(%s)의 데이터를 찾을 수 없습니다."), *RowName.ToString());
+        return false;
+    }
+
+    // ✅ 아이템별 최대 개수 설정
     static TMap<EItemType, int32> MaxStackLimits = {
-        {EItemType::EIT_Bullet, 300},  // 🔹 총알은 최대 300개까지 저장 가능
-        {EItemType::EIT_HealthPotion, 10},  // 🔹 체력 포션은 최대 10개까지
+        {EItemType::EIT_Bullet, 300},
+        {EItemType::EIT_HealthPotion, 10},
         {EItemType::EIT_StaminaPotion, 10},
-        {EItemType::EIT_Grenades, 5},  // 🔹 수류탄은 최대 5개까지
-        {EItemType::EIT_BulletBox, 5},  // 🔹 총알 박스는 최대 5개까지
-        {EItemType::EIT_Pistol, 1 }, // 🔹 권총은 최대 1개까지
-        {EItemType::EIT_Rifle, 1 }, // 🔹 라이플은 최대 1개까지
-        {EItemType::EIT_Shotgun, 1 } // 🔹 샷건은 최대 1개까지
+        {EItemType::EIT_Grenades, 5},
+        {EItemType::EIT_BulletBox, 5},
+        {EItemType::EIT_Pistol, 1},  // ✅ 무기는 중복되지 않도록 함
+        {EItemType::EIT_Rifle, 1},
+        {EItemType::EIT_Shotgun, 1}
     };
 
-    const int32 MaxStackSize = MaxStackLimits.Contains(ItemType) ? MaxStackLimits[ItemType] : 999;  // 기본값 99
+    int32 MaxStackSize = MaxStackLimits.Contains(ItemType) ? MaxStackLimits[ItemType] : 999; // 기본값 999
 
-    // 🔹 기존 아이템이 있는 경우 개수 증가
+    // ✅ 총기류는 1개만 보유 가능하도록 제한
+    if (ItemType == EItemType::EIT_Pistol || ItemType == EItemType::EIT_Rifle || ItemType == EItemType::EIT_Shotgun)
+    {
+        if (InventoryItems.Contains(ItemType))
+        {
+            UE_LOG(LogTemp, Warning, TEXT("⚠️ 이미 보유한 무기입니다! (아이템 타입: %d)"), static_cast<int32>(ItemType));
+            GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT("⚠️ 이미 보유한 무기입니다!"));
+            return false;
+        }
+    }
+
+    // ✅ 기존 아이템 개수 증가 (최대 개수 제한 확인)
     if (InventoryItems.Contains(ItemType))
     {
         if (InventoryItems[ItemType] < MaxStackSize)
         {
             InventoryItems[ItemType]++;
-            UE_LOG(LogTemp, Warning, TEXT("✅ 아이템 추가됨: %d (현재 개수: %d / 최대: %d)"),
-                static_cast<int32>(ItemType), InventoryItems[ItemType], MaxStackSize);
+            ItemDetails.Add(ItemType, *ItemData);  // ✅ 아이템 정보를 저장
+            UE_LOG(LogTemp, Warning, TEXT("✅ 아이템 추가됨: %s (현재 개수: %d / 최대: %d)"),
+                *ItemData->Name.ToString(), InventoryItems[ItemType], MaxStackSize);
 
-            // ✅ UI 업데이트
             OnInventoryUpdated.Broadcast();
             return true;
         }
         else
         {
-            UE_LOG(LogTemp, Warning, TEXT("⚠️ 최대 개수를 초과할 수 없습니다! (아이템 타입: %d)"), static_cast<int32>(ItemType));
+            UE_LOG(LogTemp, Warning, TEXT("⚠️ 최대 개수를 초과할 수 없습니다! (아이템: %s)"), *ItemData->Name.ToString());
             GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT("⚠️ 최대 개수를 초과할 수 없습니다!"));
             return false;
         }
     }
 
-    // 🔹 새로운 아이템을 추가하는 경우, 인벤토리 슬롯 제한 체크
+    // ✅ 새로운 아이템 추가 (인벤토리 슬롯 제한 체크)
     if (InventoryItems.Num() >= MaxSlots)
     {
         UE_LOG(LogTemp, Warning, TEXT("❌ 인벤토리가 가득 찼습니다! (현재 슬롯: %d / 최대 슬롯: %d)"), InventoryItems.Num(), MaxSlots);
@@ -136,22 +183,18 @@ bool UCInventoryComponent::AddToInventory(EItemType ItemType)
         return false;
     }
 
-    // 🔹 새로운 아이템 추가
     InventoryItems.Add(ItemType, 1);
-    UE_LOG(LogTemp, Warning, TEXT("✅ 새로운 아이템 추가됨: %d (현재 개수: %d / 최대: %d)"),
-        static_cast<int32>(ItemType), InventoryItems[ItemType], MaxStackSize);
+    ItemDetails.Add(ItemType, *ItemData);  // ✅ 새로운 아이템 정보 저장
 
-    // 🚨 Bullet Box가 잘못 추가되었는지 확인
-    if (ItemType == EItemType::EIT_BulletBox)
-    {
-        UE_LOG(LogTemp, Error, TEXT("🚨 오류: AddToInventory에서 Bullet Box가 잘못 추가됨! 원인 확인 필요."));
-    }
+    UE_LOG(LogTemp, Warning, TEXT("✅ 새로운 아이템 추가됨: %s (현재 개수: %d / 최대: %d)"),
+        *ItemData->Name.ToString(), InventoryItems[ItemType], MaxStackSize);
 
     // ✅ UI 업데이트
     OnInventoryUpdated.Broadcast();
 
     return true;
 }
+
 
 // 인벤토리에서 아이템 제거
 bool UCInventoryComponent::RemoveItem(EItemType ItemType)
@@ -217,7 +260,40 @@ bool UCInventoryComponent::DropItem(EItemType ItemType)
         return false;
     }
 
+    // ✅ 디버깅 코드 - StaticMeshComponent가 nullptr인지 확인
+    if (!SpawnedItem->StaticMesh)
+    {
+        UE_LOG(LogTemp, Error, TEXT("❌ 스폰된 아이템에 StaticMeshComponent가 없음! 아이템이 보이지 않을 수 있음."));
+    }
+    else if (!SpawnedItem->StaticMesh->GetStaticMesh())
+    {
+        UE_LOG(LogTemp, Error, TEXT("❌ 스폰된 아이템의 StaticMesh가 설정되지 않음! 블루프린트에서 확인하세요."));
+    }
+
+    // ✅ 아이템 정보 설정 (ItemDetails에서 가져오기)
+    if (ItemDetails.Contains(ItemType))
+    {
+        FItemData ItemData = ItemDetails[ItemType];
+        UE_LOG(LogTemp, Warning, TEXT("📦 드롭된 아이템: %s | 설명: %s"), *ItemData.Name.ToString(), *ItemData.Description.ToString());
+    }
+
+    // ✅ 스폰된 아이템이 보이도록 설정
+    SpawnedItem->SetActorHiddenInGame(false);
+    SpawnedItem->SetActorScale3D(FVector(1.0f, 1.0f, 1.0f));
+
+    // ✅ 콜리전 설정 (RootComponent가 UPrimitiveComponent인지 확인 후 설정)
+    if (UPrimitiveComponent* RootPrimitive = Cast<UPrimitiveComponent>(SpawnedItem->GetRootComponent()))
+    {
+        RootPrimitive->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+        RootPrimitive->SetCollisionResponseToAllChannels(ECR_Block);
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("❌ SpawnedItem의 RootComponent가 UPrimitiveComponent가 아닙니다! (콜리전 설정 실패)"));
+    }
+
     UE_LOG(LogTemp, Warning, TEXT("✅ 아이템 드랍 성공: %d (위치: %s)"), static_cast<int32>(ItemType), *DropLocation.ToString());
+
     // 🔹 UI 업데이트 강제 실행
     OnInventoryUpdated.Broadcast();
 
@@ -225,13 +301,16 @@ bool UCInventoryComponent::DropItem(EItemType ItemType)
 }
 
 
+
 // 현재 인벤토리 상태 출력 (디버그용)
 void UCInventoryComponent::PrintInventory()
 {
-    FString InventoryText = TEXT("🔹 현재 인벤토리:\n");
+    FString InventoryText = TEXT("🔹 현재 인벤토리 상태:\n");
+
     for (const auto& Item : InventoryItems)
     {
-        InventoryText += FString::Printf(TEXT("- %s: %d 개\n"), *UEnum::GetValueAsString(Item.Key), Item.Value);
+        FString ItemName = ItemDetails.Contains(Item.Key) ? ItemDetails[Item.Key].Name.ToString() : TEXT("Unknown Item");
+        InventoryText += FString::Printf(TEXT("- %s: %d 개\n"), *ItemName, Item.Value);
     }
 
     GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, InventoryText);

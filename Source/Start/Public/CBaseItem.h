@@ -25,6 +25,9 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
     UTexture2D* ItemIcon;
 
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Item|Component")
+    UStaticMeshComponent* StaticMesh;
+
 protected:
     virtual void BeginPlay() override;
 
@@ -32,9 +35,6 @@ protected:
     void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
         UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
         const FHitResult& SweepResult);
-
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Item|Component")
-    UStaticMeshComponent* StaticMesh;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item|Attribute")
     EItemType ItemType;
