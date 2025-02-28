@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -8,6 +6,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "CWeapon.generated.h"
 
+class UCWeaponComponent;
 class UMaterialInstanceConstant;
 class ACMagazine;
 class ACBullet;
@@ -31,8 +30,8 @@ public:
 	bool bEnableCameraLag;
 
 public:
-	void SetData(class ACCharacter*  InOwner);
-	void SetDataByNoneCurve(class ACCharacter*  InOwner);
+	void SetData(class ACCharacter* InOwner);
+	void SetDataByNoneCurve(class ACCharacter* InOwner);
 };
 
 UCLASS(Abstract)
@@ -44,6 +43,8 @@ protected:
 	FName HolsterSocketName;
 	UPROPERTY(EditDefaultsOnly, Category = "Equip")
 	FName RightHandSokcetName;
+	UPROPERTY(EditDefaultsOnly, Category = "Equip")
+	FName FistHandSokcetName;//주먹이 있을때만 그클래스에서 충돌체 만들어서 사용
 	UPROPERTY(EditDefaultsOnly, Category = "Equip")
 	FName RightHandAimSokcetName;
 	UPROPERTY(EditDefaultsOnly, Category = "Equip")
@@ -75,7 +76,7 @@ protected:
 	float AimSpeed = 200.0f;
 	UPROPERTY(EditDefaultsOnly, category = "Aim")
 	USoundWave* BreathSound;
-	
+
 	UPROPERTY(EditDefaultsOnly, Category = "Hit")
 	float HitDistance = 3000;
 	UPROPERTY(EditDefaultsOnly, Category = "Hit")
@@ -136,17 +137,11 @@ private:
 	TEnumAsByte<EDrawDebugTrace::Type> Debug;
 	UPROPERTY(EditDefaultsOnly, Category = "Debug")
 	FLinearColor DebugColor = FColor::Red;
-	
+
 private:
 	UPROPERTY(VisibleAnywhere)
 	UTimelineComponent* Timeline;
 
-	
-private:
-	UPROPERTY(VisibleAnywhere)
-	UCStateComponent* State;
-	UPROPERTY(VisibleAnywhere)
-	UCCameraComponent* Camera;
 
 protected:
 	UPROPERTY(VisibleAnywhere)
@@ -161,21 +156,25 @@ public:
 	FORCEINLINE FTransform GetWeaponLeftHandAimTransform() { return WeapoLeftHandTransform; }
 
 	FORCEINLINE bool GetInAim() const { return bInAim; }
-	
-	// ź�� ������ HUD�� �����ϱ� ���� getter �Լ���
+
 	FORCEINLINE uint8 GetCurrentMagazineCount() const { return CurrentMagazineCount; }
 	FORCEINLINE uint8 GetMaxMagazineCount() const { return MaxMagazineCount; }
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	FText GetWeaponDisplayName() const { return WeaponDisplayName; }
 
-public:	
+public:
+	FORCEINLINE void EnableCombo() { bEnable = true; }
+	FORCEINLINE void DisableCombo() { bEnable = false; }
+
+
+public:
 	ACWeapon();
 
 protected:
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	virtual void Tick(float DeltaTime) override;
 
 public:
@@ -185,9 +184,13 @@ public:
 	virtual void EndEquip();
 
 	bool CanUnequip();
-	void Unequip();
+	virtual void Unequip();
 
 public:
+	virtual void DonAction();
+	virtual void BeginAction();
+	virtual void EndAction();
+
 	bool CanFire();
 	void BeginFire();
 	void EndFire();
@@ -220,6 +223,9 @@ private:
 
 protected:
 	ACCharacter* OwnerCharacter;
+	UCStateComponent* State;
+	UCCameraComponent* Camera;
+	UCWeaponComponent* Weapon;
 private:
 	FTimerHandle AutoFireHandle;
 	bool bEquipping;
@@ -231,7 +237,9 @@ protected:
 	bool bReload;
 
 	ACMagazine* Magazine;
-	
+
 protected:
 	uint8 CurrentMagazineCount;
+	bool bBeginAction;
+	bool bEnable;
 };

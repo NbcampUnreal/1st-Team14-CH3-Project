@@ -34,6 +34,7 @@ public:
 	FORCEINLINE bool IsRifleMode(){return Type == EWeaponType::Rifle;}
 	FORCEINLINE bool IsPistolMode(){return Type == EWeaponType::Pistol;}
 	FORCEINLINE bool IsKnifeMode(){return Type == EWeaponType::Knife;}
+	FORCEINLINE TArray<TSubclassOf<ACWeapon>> GetWeaponClasses() { return WeaponClasses; }
 public:
 	UCWeaponComponent();
 
@@ -58,6 +59,10 @@ private:
 public:
 	void Begin_Equip();
 	void End_Equip();
+
+	void DoAction();
+	void Begin_DoAction();
+	void End_DoAction();
 
 	void Begin_Fire();
 	void End_Fire();
