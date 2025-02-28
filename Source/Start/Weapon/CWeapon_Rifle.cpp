@@ -13,7 +13,6 @@ ACWeapon_Rifle::ACWeapon_Rifle()
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> asset(TEXT("/Script/Engine.SkeletalMesh'/Game/Assets/Mesh/Weapons/Meshes/Ka47/SK_KA47.SK_KA47'"));
 	if (asset.Succeeded() == true)
 		Mesh->SetSkeletalMesh(asset.Object);
-
 	SightMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Sight Mesh"));
 	SightMesh->SetupAttachment(Mesh,"Dotsight");
 	SightMesh->SetCollisionProfileName("NoCollision");

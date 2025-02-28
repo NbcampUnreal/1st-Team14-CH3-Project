@@ -107,6 +107,7 @@ void ACWeapon::BeginPlay()
 	}
 	State = Cast<UCStateComponent>(OwnerCharacter->GetComponentByClass(UCStateComponent::StaticClass()));
 	Camera = Cast<UCCameraComponent>(OwnerCharacter->GetComponentByClass(UCCameraComponent::StaticClass()));
+	Weapon = Cast<UCWeaponComponent>(OwnerCharacter->GetComponentByClass(UCWeaponComponent::StaticClass()));
 	if (AimCurve != nullptr)
 	{
 		FOnTimelineFloat timeline;
@@ -169,6 +170,7 @@ void ACWeapon::BeginEquip()
 void ACWeapon::EndEquip()
 {
 	bEquipping = false;
+	State->SetIdleMode();
 }
 
 bool ACWeapon::CanUnequip()
@@ -192,6 +194,22 @@ void ACWeapon::Unequip()
 		Camera->DisableControlRoation();
 }
 
+void ACWeapon::DonAction()
+{
+	State->SetActionMode();
+}
+
+void ACWeapon::BeginAction()
+{
+	bBeginAction = true;
+}
+
+void ACWeapon::EndAction()
+{
+	bBeginAction = false;
+	State->SetIdleMode();
+}
+
 bool ACWeapon::CanFire()
 {
 	bool b = false;
@@ -205,6 +223,8 @@ bool ACWeapon::CanFire()
 void ACWeapon::BeginFire()
 {
 	bFiring = true;
+
+	State->SetActionMode();
 	if (bAutoFire == true)
 	{
 		GetWorld()->GetTimerManager().SetTimer(AutoFireHandle, this, &ACWeapon::OnFireing, AutoFireInterval, true, 0);
@@ -220,7 +240,7 @@ void ACWeapon::EndFire()
 		return;
 	if (GetWorld()->GetTimerManager().IsTimerActive(AutoFireHandle))
 		GetWorld()->GetTimerManager().ClearTimer(AutoFireHandle);
-
+	State->SetIdleMode();
 	bFiring = false;
 }
 
@@ -383,6 +403,7 @@ bool ACWeapon::CanAim()
 	b |= bEquipping;
 	b |= bReload;
 	b |= bFiring;
+	b |= Weapon->IsKnifeMode() == true;
 	//b |= State->IsInventoryMode() == true;
 	return !b;
 }

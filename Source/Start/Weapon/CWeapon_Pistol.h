@@ -24,6 +24,7 @@ protected:
 public:
 	virtual void BeginEquip() override;
 	virtual void EndEquip() override;
+	virtual void Unequip() override;
 	virtual void BeginAim() override;
 	virtual void EndAim() override;
 };

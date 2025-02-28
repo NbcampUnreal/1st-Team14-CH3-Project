@@ -87,6 +87,12 @@ void ACWeapon_Pistol::EndEquip()
 	Super::EndEquip();
 }
 
+void ACWeapon_Pistol::Unequip()
+{
+	Super::Unequip();
+	Mesh->SetVisibility(false);
+}
+
 void ACWeapon_Pistol::BeginAim()
 {
 	Super::BeginAim();

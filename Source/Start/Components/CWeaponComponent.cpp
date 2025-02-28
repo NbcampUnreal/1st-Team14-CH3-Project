@@ -130,6 +130,33 @@ void UCWeaponComponent::End_Equip()
 	GetCurrentWeapon()->EndEquip();
 }
 
+void UCWeaponComponent::DoAction()
+{
+	if(GetCurrentWeapon() == nullptr)
+		return;
+	if (IsRifleMode() == true || IsPistolMode() == true)
+	{
+		Begin_Fire();
+		return;
+	}
+
+	GetCurrentWeapon()->DonAction();
+}
+
+void UCWeaponComponent::Begin_DoAction()
+{
+	if(GetCurrentWeapon() == nullptr)
+		return;
+	GetCurrentWeapon()->BeginAction();
+}
+
+void UCWeaponComponent::End_DoAction()
+{
+	if (GetCurrentWeapon() == nullptr)
+		return;
+	GetCurrentWeapon()->EndAction();
+}
+
 void UCWeaponComponent::Begin_Fire() // 무기 발사 시작
 {
 	if (GetCurrentWeapon() == nullptr)
