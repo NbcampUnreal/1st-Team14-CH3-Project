@@ -168,6 +168,7 @@ void ACEnemy::Equip()
 	{
 		WeaponComponent->SetRifleMode();
 		bIsEqueped = true;
+		ToggleAutoFire();
 	}
 }
 
@@ -208,6 +209,7 @@ void ACEnemy::SpawnRandomItemAfterDie()
 	{
 		Weapon->FindComponentByClass<USkeletalMeshComponent>()->SetSimulatePhysics(true);
 	}
+	Destroy();
 }
 
 void ACEnemy::BeginPlay()
