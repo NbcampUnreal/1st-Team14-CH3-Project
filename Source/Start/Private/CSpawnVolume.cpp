@@ -1,5 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "CSpawnVolume.h"
+#include "CSpawnComponent.h"
 #include "Components/BoxComponent.h"
 
 ASpawnVolume::ASpawnVolume() :
@@ -14,7 +15,9 @@ ASpawnVolume::ASpawnVolume() :
 	SpawningBox = CreateDefaultSubobject<UBoxComponent>(TEXT("SpawningBox"));
 	SpawningBox->SetupAttachment(Scene);
 
-	ActorDataTable = nullptr;
+	SpawnComp = CreateDefaultSubobject<UCSpawnComponent>(TEXT("SpawnComp"));
+
+	//ActorDataTable = nullptr;
 }
 
 void ASpawnVolume::BeginPlay()
@@ -32,37 +35,37 @@ void ASpawnVolume::BeginPlay()
 
 }
 
-FItemSpawnRow* ASpawnVolume::GetRandomActor() const
-{
-	if (!ActorDataTable) return nullptr;
-
-	TArray<FItemSpawnRow*> AllRows;
-	static const FString ContextString(TEXT("ActorSpawnContext"));
-	ActorDataTable->GetAllRows(ContextString, AllRows);
-
-	if (AllRows.IsEmpty()) return nullptr;
-
-	float TotalChance = 0.f;
-	for (const FItemSpawnRow* Row : AllRows)
-	{
-		if (Row)
-		{
-			TotalChance += Row->SpawnChance;
-		}
-	}
-	const float RandValue = FMath::FRandRange(0.f, TotalChance);
-	float AccumulatedChance = 0.f;
-
-	for (FItemSpawnRow* Row : AllRows)
-	{
-		AccumulatedChance += Row->SpawnChance;
-		if (RandValue <= AccumulatedChance)
-		{
-			return Row;
-		}
-	}
-	return nullptr;
-}
+//FItemSpawnRow* ASpawnVolume::GetRandomActor() const
+//{
+//	if (!ActorDataTable) return nullptr;
+//
+//	TArray<FItemSpawnRow*> AllRows;
+//	static const FString ContextString(TEXT("ActorSpawnContext"));
+//	ActorDataTable->GetAllRows(ContextString, AllRows);
+//
+//	if (AllRows.IsEmpty()) return nullptr;
+//
+//	float TotalChance = 0.f;
+//	for (const FItemSpawnRow* Row : AllRows)
+//	{
+//		if (Row)
+//		{
+//			TotalChance += Row->SpawnChance;
+//		}
+//	}
+//	const float RandValue = FMath::FRandRange(0.f, TotalChance);
+//	float AccumulatedChance = 0.f;
+//
+//	for (FItemSpawnRow* Row : AllRows)
+//	{
+//		AccumulatedChance += Row->SpawnChance;
+//		if (RandValue <= AccumulatedChance)
+//		{
+//			return Row;
+//		}
+//	}
+//	return nullptr;
+//}
 
 FVector ASpawnVolume::GetRandomPointInVolume() const
 {
@@ -76,22 +79,21 @@ FVector ASpawnVolume::GetRandomPointInVolume() const
 	);
 }
 
-void ASpawnVolume::SpawnActorToPoint(FVector SpawnLocation, FRotator SpawnRotation)
-{
-	if (FItemSpawnRow* SelectedRow = GetRandomActor())
-	{
-		if (UClass* ActualClass = SelectedRow->ActorClass.Get())
-		{
-			GetWorld()->SpawnActor<AActor>(ActualClass, SpawnLocation, SpawnRotation);
-		}
-	}
-
-}
+//void ASpawnVolume::SpawnActorToPoint(FVector SpawnLocation, FRotator SpawnRotation)
+//{
+//	if (FItemSpawnRow* SelectedRow = GetRandomActor())
+//	{
+//		if (UClass* ActualClass = SelectedRow->ActorClass.Get())
+//		{
+//			GetWorld()->SpawnActor<AActor>(ActualClass, SpawnLocation, SpawnRotation);
+//		}
+//	}
+//
+//}
 
 void ASpawnVolume::SpawnActorToRandomPosition()
 {
-	
-	SpawnActorToPoint(GetRandomPointInVolume(), GetActorRotation());
+	SpawnComp->SpawnRandomActorToPoint(GetRandomPointInVolume(), FRotator::ZeroRotator);
 }
 
 void ASpawnVolume::SpawnActorContinuously()

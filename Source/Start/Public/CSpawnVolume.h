@@ -22,6 +22,8 @@ protected:
 	USceneComponent* Scene;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spawn")
 	UBoxComponent* SpawningBox;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spawn")
+	class UCSpawnComponent* SpawnComp;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawn") 
 	UDataTable* ActorDataTable;
 
@@ -37,9 +39,9 @@ protected:
 	FTimerHandle SpawnTimerHandle;
 
 private:
-	FItemSpawnRow* GetRandomActor() const;
+	//FItemSpawnRow* GetRandomActor() const;
 	FVector GetRandomPointInVolume() const;
-	void SpawnActorToPoint(FVector SpawnLocation, FRotator SpawnRotation);
+	//void SpawnActorToPoint(FVector SpawnLocation, FRotator SpawnRotation);
 	void SpawnActorToRandomPosition();
 	void SpawnActorContinuously();
 	void SpawnActorOnce(int SpawnNum);
