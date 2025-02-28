@@ -47,10 +47,8 @@ void FWeaponAimData::SetDataByNoneCurve(class ACCharacter* InOwner)
 ACWeapon::ACWeapon()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	Root = CreateDefaultSubobject<USceneComponent>("Root");
-	SetRootComponent(Root);
 	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>("Mesh");
-	Mesh->SetupAttachment(Root);
+	Mesh->SetupAttachment(Scene);
 	Timeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("Time Line"));
 	static ConstructorHelpers::FObjectFinder<UCurveFloat> curve(TEXT("/Script/Engine.CurveFloat'/Game/Blueprints/Weapon/AK/Curve_Aim.Curve_Aim'"));
 	if (curve.Object != nullptr)

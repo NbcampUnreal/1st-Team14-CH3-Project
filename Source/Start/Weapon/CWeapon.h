@@ -144,8 +144,6 @@ private:
 	
 private:
 	UPROPERTY(VisibleAnywhere)
-	USceneComponent* Root;
-	UPROPERTY(VisibleAnywhere)
 	UCStateComponent* State;
 	UPROPERTY(VisibleAnywhere)
 	UCCameraComponent* Camera;
