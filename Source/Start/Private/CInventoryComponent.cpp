@@ -352,13 +352,13 @@ int32 UCInventoryComponent::GetBulletCount() const
 
 void UCInventoryComponent::EquipWeapon(EItemType WeaponType, ACPlayer* Player)
 {
-    if (!Player || !Player->GetWeaponComponent())
+    if (!Player)
     {
         UE_LOG(LogTemp, Error, TEXT("❌ EquipWeapon 실패 - Player 또는 WeaponComponent가 없음"));
         return;
     }
 
-    UCWeaponComponent* WeaponComp = Player->GetWeaponComponent();
+    UCWeaponComponent* WeaponComp = Cast<UCWeaponComponent>(Player->GetComponentByClass(UCWeaponComponent::StaticClass()));
 
     // 🔹 EItemType을 WeaponClasses 배열의 인덱스로 변환
     int32 WeaponIndex = WeaponComp->GetWeaponIndexFromItemType(WeaponType);
@@ -371,7 +371,7 @@ void UCInventoryComponent::EquipWeapon(EItemType WeaponType, ACPlayer* Player)
     }
 
     // ✅ 변환된 인덱스를 이용해 무기 장착
-    WeaponComp->SetMode((EWeaponType)WeaponIndex);
+    //WeaponComp->SetMode((EWeaponType)WeaponIndex);
 
     UE_LOG(LogTemp, Warning, TEXT("✅ 무기 장착 완료: %d (WeaponIndex: %d)"), static_cast<int32>(WeaponType), WeaponIndex);
 }

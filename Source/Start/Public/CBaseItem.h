@@ -14,7 +14,7 @@ UCLASS()
 class START_API ACBaseItem : public ACInteractable, public IIItemInterface
 {
 	GENERATED_BODY()
-	
+
 public:
     ACBaseItem();
 
