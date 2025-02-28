@@ -280,3 +280,16 @@ void UCWeaponComponent::On_End_Aim()
 	for (ACWeapon* weapon : Weapons)
 			weapon->SetHidden(false);
 }
+
+int32 UCWeaponComponent::GetWeaponIndexFromItemType(EItemType ItemType)
+{
+	switch (ItemType)
+	{
+	case EItemType::EIT_Pistol: return 0;
+	case EItemType::EIT_Rifle: return 1;
+	case EItemType::EIT_Shotgun: return 2;
+	default:
+		UE_LOG(LogTemp, Error, TEXT("❌ GetWeaponIndexFromItemType: 잘못된 ItemType (%d)"), (int32)ItemType);
+		return -1;
+	}
+}

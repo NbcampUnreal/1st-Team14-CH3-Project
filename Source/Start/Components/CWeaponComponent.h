@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "IItemInterface.h"
 #include "CWeaponComponent.generated.h"
 
 class ACWeapon;
@@ -25,9 +26,6 @@ class START_API UCWeaponComponent : public UActorComponent
 {
 	GENERATED_BODY()
 private:
-	UPROPERTY(EditAnywhere, Category ="Settings")
-	TArray<TSubclassOf<class ACWeapon>> WeaponClasses;
-
 	// 연발 사격 시 HUD 업데이트용 타이머 핸들
 	FTimerHandle AmmoUpdateTimerHandle;
 
@@ -95,7 +93,9 @@ public:
 	FWeaponAim_Arms_End OnWeaponAim_Arms_End;
 	UFUNCTION(BlueprintCallable)
 	EWeaponType GetCurrentWeaponType() const { return Type; }
-	
+	int32 GetWeaponIndexFromItemType(EItemType ItemType);
+	UPROPERTY(EditAnywhere, Category = "Settings")
+	TArray<TSubclassOf<class ACWeapon>> WeaponClasses;
 private:
 	EWeaponType Type = EWeaponType::Max;
 	ACCharacter* Owner;

@@ -9,6 +9,7 @@
 #include "CStaminaPotionItem.h"
 #include "Weapon/CBullet.h"
 #include "CGrenadesItem.h"
+#include "Weapon/CWeapon_Pistol.h"
 #include "GameFramework/Actor.h"
 
 // 생성자: 최대 슬롯 수 초기화
@@ -46,6 +47,11 @@ void UCInventoryComponent::BeginPlay()
     {
         DropItemClasses.Add(EItemType::EIT_Grenades, ACGrenadesItem::StaticClass());
         UE_LOG(LogTemp, Warning, TEXT("✅ GrenadesItem 아이템이 DropItemClasses에 정상 등록됨."));
+    }
+    if (ACWeapon_Pistol::StaticClass())
+    {
+        DropItemClasses.Add(EItemType::EIT_Pistol, ACWeapon_Pistol::StaticClass());
+        UE_LOG(LogTemp, Warning, TEXT("✅ Pistol 아이템이 DropItemClasses에 정상 등록됨."));
     }
 
     else
@@ -252,7 +258,14 @@ bool UCInventoryComponent::UseItem(EItemType ItemType, ACPlayer* Player)
         return false;
     }
 
-    // 아이템 인스턴스를 가져와 사용
+    // 🔹 무기인지 확인 (무기면 장착, 아이템이면 기존 방식 사용)
+    if (ItemType == EItemType::EIT_Pistol || ItemType == EItemType::EIT_Rifle || ItemType == EItemType::EIT_Shotgun)
+    {
+        EquipWeapon(ItemType, Player);  // 🔹 무기 장착 함수 호출
+        return true;  // ✅ 무기는 사용해도 개수 감소 X
+    }
+
+    // 🔹 일반 아이템 사용 로직
     ACBaseItem* ItemInstance = GetItemInstance(ItemType);
     if (!ItemInstance)
     {
@@ -260,7 +273,7 @@ bool UCInventoryComponent::UseItem(EItemType ItemType, ACPlayer* Player)
         return false;
     }
 
-    // 🔹 Player가 AActor에서 상속되었는지 확인 후 캐스팅
+    // 🔹 아이템 사용 (AActor로 캐스팅)
     if (AActor* ActorPlayer = Cast<AActor>(Player))
     {
         UE_LOG(LogTemp, Warning, TEXT("✅ UseItem 호출됨 - 아이템(%d) 사용 시작"), static_cast<int32>(ItemType));
@@ -272,15 +285,15 @@ bool UCInventoryComponent::UseItem(EItemType ItemType, ACPlayer* Player)
         return false;
     }
 
-    // 🔹 사용 후 수량 감소
-    //InventoryItems[ItemType]--;
-    UE_LOG(LogTemp, Warning, TEXT("🛑 아이템(%d) 사용됨 - 남은 개수: %d"), static_cast<int32>(ItemType), InventoryItems[ItemType]);
-
-    if (InventoryItems[ItemType] != 0)
+    // 🔹 사용 후 개수 감소 (무기는 여기서 제외)
+    if (InventoryItems.Contains(ItemType) && InventoryItems[ItemType] > 0)
     {
         RemoveItem(ItemType);
-        //InventoryItems.Remove(ItemType);
         UE_LOG(LogTemp, Warning, TEXT("🚨 아이템(%d) 제거됨 - 개수 0"), static_cast<int32>(ItemType));
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("❌ RemoveItem() 호출 전에 아이템이 이미 인벤토리에 없음: %d"), static_cast<int32>(ItemType));
     }
 
     // 🔹 UI 업데이트
@@ -337,79 +350,30 @@ int32 UCInventoryComponent::GetBulletCount() const
     return 0; // 🔹 인벤토리에 총알이 없으면 0 반환
 }
 
-bool UCInventoryComponent::AddWeaponToInventory(EItemType WeaponType)
+void UCInventoryComponent::EquipWeapon(EItemType WeaponType, ACPlayer* Player)
 {
-    if (!WeaponComponent)
+    if (!Player || !Player->GetWeaponComponent())
     {
-        UE_LOG(LogTemp, Error, TEXT("❌ WeaponComponent가 없음! 무기 추가 실패"));
-        return false;
+        UE_LOG(LogTemp, Error, TEXT("❌ EquipWeapon 실패 - Player 또는 WeaponComponent가 없음"));
+        return;
     }
 
-    // 같은 무기가 이미 있는지 확인
-    if (InventoryItems.Contains(WeaponType))
+    UCWeaponComponent* WeaponComp = Player->GetWeaponComponent();
+
+    // 🔹 EItemType을 WeaponClasses 배열의 인덱스로 변환
+    int32 WeaponIndex = WeaponComp->GetWeaponIndexFromItemType(WeaponType);
+
+    // 🔹 배열 범위 초과 방지
+    if (WeaponIndex < 0 || !WeaponComp->WeaponClasses.IsValidIndex(WeaponIndex))
     {
-        UE_LOG(LogTemp, Warning, TEXT("⚠️ 동일한 무기가 이미 있음. 기존 무기를 버려야 새 무기 획득 가능"));
-        return false;
+        UE_LOG(LogTemp, Error, TEXT("❌ EquipWeapon 실패 - 유효하지 않은 무기 인덱스! (%d)"), WeaponIndex);
+        return;
     }
 
-    // 인벤토리에 추가
-    InventoryItems.Add(WeaponType, 1);
-    UE_LOG(LogTemp, Warning, TEXT("✅ 무기 획득: %d"), static_cast<int32>(WeaponType));
+    // ✅ 변환된 인덱스를 이용해 무기 장착
+    WeaponComp->SetMode((EWeaponType)WeaponIndex);
 
-    // 무기 자동 장착
-    EquipWeaponFromInventory(WeaponType);
-
-    OnInventoryUpdated.Broadcast();
-    return true;
+    UE_LOG(LogTemp, Warning, TEXT("✅ 무기 장착 완료: %d (WeaponIndex: %d)"), static_cast<int32>(WeaponType), WeaponIndex);
 }
 
-bool UCInventoryComponent::EquipWeaponFromInventory(EItemType WeaponType)
-{
-    if (!WeaponComponent)
-    {
-        UE_LOG(LogTemp, Error, TEXT("❌ WeaponComponent가 없음! 무기 장착 실패"));
-        return false;
-    }
-
-    if (!InventoryItems.Contains(WeaponType))
-    {
-        UE_LOG(LogTemp, Warning, TEXT("❌ 장착 실패 - 인벤토리에 해당 무기가 없음: %d"), static_cast<int32>(WeaponType));
-        return false;
-    }
-
-    // 무기 장착
-    WeaponComponent->SetMode((EWeaponType)WeaponType);
-    UE_LOG(LogTemp, Warning, TEXT("✅ 무기 장착 완료: %d"), static_cast<int32>(WeaponType));
-
-    return true;
-}
-
-bool UCInventoryComponent::DropWeaponFromInventory()
-{
-    if (!WeaponComponent)
-    {
-        UE_LOG(LogTemp, Error, TEXT("❌ WeaponComponent가 없음! 무기 드랍 실패"));
-        return false;
-    }
-
-    // 현재 장착 중인 무기 가져오기
-    EWeaponType EquippedWeapon = WeaponComponent->GetCurrentWeaponType();
-    if (EquippedWeapon == EWeaponType::Max)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("❌ 드랍 실패 - 장착된 무기가 없음"));
-        return false;
-    }
-
-    // 무기 장착 해제
-    WeaponComponent->SetUnarmedMode();
-
-    // 인벤토리에서 삭제
-    RemoveItem((EItemType)EquippedWeapon);
-
-    // 무기를 바닥에 드랍
-    DropItem((EItemType)EquippedWeapon);
-
-    UE_LOG(LogTemp, Warning, TEXT("✅ 무기 드랍 완료: %d"), static_cast<int32>(EquippedWeapon));
-    return true;
-}
 

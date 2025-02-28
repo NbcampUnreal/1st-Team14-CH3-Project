@@ -21,9 +21,8 @@ public:
     UPROPERTY()
     UCWeaponComponent* WeaponComponent;  // 무기 관리 컴포넌트
 
-    bool AddWeaponToInventory(EItemType WeaponType);
-    bool EquipWeaponFromInventory(EItemType WeaponType);
-    bool DropWeaponFromInventory();
+    // 🔹 무기 장착
+    void EquipWeapon(EItemType WeaponType, ACPlayer* Player);
 
     UCInventoryComponent();
     void BeginPlay();
