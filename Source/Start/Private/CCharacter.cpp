@@ -122,10 +122,11 @@ void ACCharacter::ModifyHealth(float Amount)
 
 float ACCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
+    float damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
     if (StatusComponent->IsDead()) return 0.0f; // 사망한 경우 데미지 무효
 
     // 🔹 구조체에 데미지 정보 저장
-    HittedInfo.Power = DamageAmount;
+    HittedInfo.Power = damage;
     HittedInfo.Character = Cast<ACharacter>(DamageCauser);
     HittedInfo.Causer = DamageCauser;
 
