@@ -7,6 +7,7 @@
 #include "Weapon/CWeapon.h"
 #include "CWeapon_Knife.generated.h"
 
+
 USTRUCT(BlueprintType)
 struct FDoActionData
 {
@@ -33,9 +34,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Action")
 	TArray<FDoActionData> Data;
 	UPROPERTY(EditAnywhere, Category = "Collision")
-	UCapsuleComponent* Knife;
+	UCapsuleComponent* Collision1;
 	UPROPERTY(EditAnywhere, Category = "Collision")
-	USphereComponent* Fist;
+	UCapsuleComponent* Collision2;
 
 public:
 	ACWeapon_Knife();
@@ -50,8 +51,19 @@ public:
 	virtual void BeginAction() override;
 	virtual void EndAction() override;
 
+	void EnableCollision();
+	void DisableCollision();
+
+private:
+	UFUNCTION()
+	void OnComponentBeginOverlap (UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION()
+	void OnComponentEndOverlap (UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 private:
 	int32 Index;
 	bool bExist;
+	TArray<UCapsuleComponent*> Collisions;
+	TArray<ACharacter*> Hits;
 };
+
