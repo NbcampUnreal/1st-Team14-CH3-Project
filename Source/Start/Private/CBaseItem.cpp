@@ -12,33 +12,23 @@ ACBaseItem::ACBaseItem() :
 {
     PrimaryActorTick.bCanEverTick = false;
 
-    // ✅ StaticMesh 설정 (RootComponent로 설정)
-    StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
-    if (StaticMesh)
-    {
-        RootComponent = StaticMesh;
-        StaticMesh->SetCollisionProfileName(TEXT("BlockAllDynamic"));
-        StaticMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-        StaticMesh->SetCollisionResponseToAllChannels(ECR_Block);
-    }
-    else
-    {
-        UE_LOG(LogTemp, Error, TEXT("❌ StaticMesh 생성 실패! 아이템이 보이지 않을 수 있음."));
-    }
-
-    // ✅ InteractableCollision 중복 생성 방지
-    if (!InteractableCollision)
+    // ✅ RootComponent가 없으면 충돌 감지를 위한 UBoxComponent 생성
+    if (!RootComponent)
     {
         InteractableCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("InteractableCollision"));
-        InteractableCollision->SetupAttachment(StaticMesh);
-        InteractableCollision->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
-        InteractableCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-        InteractableCollision->SetCollisionResponseToAllChannels(ECR_Overlap);
-        InteractableCollision->SetGenerateOverlapEvents(true);
+        RootComponent = InteractableCollision;  // ✅ RootComponent로 설정
+        InteractableCollision->SetCollisionProfileName(TEXT("PhysicsActor"));
+        InteractableCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+        InteractableCollision->SetCollisionResponseToAllChannels(ECR_Block);
+        InteractableCollision->SetBoxExtent(FVector(20.0f, 20.0f, 20.0f));
     }
-    else
+
+    // ✅ StaticMeshComponent 생성 후 RootComponent에 부착
+    if (!StaticMesh)
     {
-        UE_LOG(LogTemp, Warning, TEXT("⚠️ InteractableCollision이 이미 존재함. 새로 생성하지 않음."));
+        StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
+        StaticMesh->SetupAttachment(RootComponent); // ✅ UBoxComponent에 부착
+        StaticMesh->SetCollisionProfileName(TEXT("NoCollision")); // 메쉬 자체는 충돌 X
     }
 
     // ✅ 아이템 속성 초기화
@@ -46,6 +36,7 @@ ACBaseItem::ACBaseItem() :
     UseSound = nullptr;
     ItemIcon = nullptr;
 }
+
 
 
 
