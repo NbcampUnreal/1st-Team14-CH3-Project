@@ -18,4 +18,5 @@ public:
     // ✅ 아이템 설명
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Info")
     FText Description;
+
 };

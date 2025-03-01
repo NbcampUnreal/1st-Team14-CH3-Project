@@ -1,0 +1,9 @@
+﻿,DataName,Name,Description,Mesh
+1,EIT_HealthPotion,HealthPotion,체력을 회복하는 포션입니다.,
+2,EIT_StaminaPotrion,StaminaPotrion,스태미너를 회복하는 포션입니다.,
+3,EIT_BulletBox,BulletBox,총알이 들어있는 박스입니다.,
+4,EIT_Bullet,Bullet,무기에 사용할 수 있는 총알입니다.,/Script/Engine.StaticMesh'/Game/Assets/Mesh/MilitaryWeapSilver/Pickups/GrenadeLauncher_Pickup.GrenadeLauncher_Pickup'
+5,EIT_Grenades,Grenades,적에게 던질 수 있는 수류탄입니다.,
+6,EIT_Pistol,Pistol,권총,
+7,EIT_Rifle,Rifle,단발/연발이 가능한 소총,
+8,EIT_Shotgun,Shotgun,근거리에서 강력한 산탄총,

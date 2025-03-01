@@ -253,4 +253,5 @@ protected:
 	uint8 CurrentMagazineCount;
 	bool bBeginAction;
 	bool bEnable;
+
 };

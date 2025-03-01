@@ -1,6 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 using UnrealBuildTool;
+using UnrealBuildTool.Rules;
 
 public class Start : ModuleRules
 {
@@ -20,8 +21,8 @@ public class Start : ModuleRules
 			"UMG", "AIModule", // *UI 위젯*
         });
 
-		PrivateDependencyModuleNames.AddRange(new string[] {  });
-
+		PrivateDependencyModuleNames.AddRange(new string[] { });
+		
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
 		
