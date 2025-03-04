@@ -43,7 +43,7 @@ FItemSpawnRow* UCSpawnComponent::GetRandomActor() const
 
 void UCSpawnComponent::SpawnRandomActorToPoint(FVector Location, FRotator Rotation)
 {
-	SpawnLocation = Location;
+	SpawnLocation = Location + FVector(0, 0, 10);
 	SpawnRotation = Rotation;
 	if (FItemSpawnRow* SelectedRow = GetRandomActor())
 	{

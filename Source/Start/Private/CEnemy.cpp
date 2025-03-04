@@ -3,6 +3,7 @@
 
 #include "CEnemy.h"
 #include "CEnemyAIController.h"
+#include "BrainComponent.h"
 #include "CSpawnComponent.h"
 #include "Components/CWeaponComponent.h"
 
@@ -36,10 +37,23 @@ ACEnemy::ACEnemy()
 
 	bCanAttack = false;
 	bIsGunUsed = false;
+	bIsDied = false;
 }
 
 void ACEnemy::UpdateOverheadHP()
 {
+	if (BossHPWidgetInstance)
+	{
+		if (UProgressBar* HPBar = Cast<UProgressBar>(BossHPWidgetInstance->GetWidgetFromName(TEXT("HPBar"))))
+		{
+			HPBar->SetPercent(StatusComponent->GetHealth() / StatusComponent->GetMaxHealth());
+		}
+		if (UTextBlock* BossName = Cast<UTextBlock>(BossHPWidgetInstance->GetWidgetFromName(TEXT("EnemyName"))))
+		{
+			BossName->SetText(EnemyName);
+		}
+	}
+
 	if (OverheadHPWidget)
 	{
 		UUserWidget* OverheadHPWidgetInstance = OverheadHPWidget->GetUserWidgetObject();
@@ -51,17 +65,7 @@ void ACEnemy::UpdateOverheadHP()
 		}
 	}
 
-	if (BossHPWidgetClass && BossHPWidgetInstance)
-	{
-		if (UProgressBar* HPBar = Cast<UProgressBar>(BossHPWidgetInstance->GetWidgetFromName(TEXT("HPBar"))))
-		{
-			HPBar->SetPercent(StatusComponent->GetHealth() / StatusComponent->GetMaxHealth());
-		}
-		if (UTextBlock* BossName = Cast<UTextBlock>(BossHPWidgetInstance->GetWidgetFromName(TEXT("EnemyName"))))
-		{
-			BossName->SetText(EnemyName);
-		}
-	}
+
 }
 
 float ACEnemy::GetEnemyHP() const
@@ -212,6 +216,28 @@ void ACEnemy::SpawnRandomItemAfterDie()
 	Destroy();
 }
 
+void ACEnemy::ToDoAfterDie()
+{
+	Destroy();
+	SpawnRandomItemAfterDie();
+}
+
+void ACEnemy::Die()
+{
+	Super::Die();
+
+	bIsDied = true;
+
+	ACEnemyAIController* AIController = Cast<ACEnemyAIController>(GetController());
+	if (AIController&& AIController->BrainComponent)
+	{
+		AIController->BrainComponent->StopLogic(TEXT("Character Died"));
+		//AIController->StopMovement();
+	}
+
+	GetWorldTimerManager().SetTimer(DieTimerHandle, this, &ACEnemy::ToDoAfterDie, 3.0f, false);
+}
+
 void ACEnemy::BeginPlay()
 {
 	Super::BeginPlay();
@@ -241,3 +267,4 @@ float ACEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, A
 	UpdateOverheadHP();
 	return TempDamageAmount;
 }
+

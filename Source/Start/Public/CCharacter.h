@@ -77,7 +77,7 @@ protected:
     UCMontagesComponent* MontagesComponent;
     UPROPERTY(VisibleAnywhere, Category = "Component")
     UCStatusComponent* StatusComponent;
-    void Die();  // 🔹 사망 처리 함수
+    virtual void Die();  // 🔹 사망 처리 함수
     void Hitted();
 
 

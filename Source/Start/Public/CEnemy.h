@@ -18,7 +18,7 @@ class START_API ACEnemy : public ACCharacter
 
 public:
 	ACEnemy();
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
 	UWidgetComponent* OverheadHPWidget;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
@@ -38,12 +38,16 @@ public:
 	bool bIsGunUsed;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsEqueped;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsDied;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	FText EnemyName;
 	
 	UFUNCTION(BlueprintCallable)
 	void UpdateOverheadHP();
 
+	UFUNCTION(BlueprintCallable)
+	bool GetIsEnemyDied() const { return bIsDied; }
 	UFUNCTION(BlueprintCallable)
 	float GetEnemyHP() const;
 	UFUNCTION(BlueprintCallable)
@@ -87,6 +91,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SpawnRandomItemAfterDie();
 
+	void ToDoAfterDie();
+
+	FTimerHandle DieTimerHandle;
+
+	virtual void Die() override;
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser) override;
