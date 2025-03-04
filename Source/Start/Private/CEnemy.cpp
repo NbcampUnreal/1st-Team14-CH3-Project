@@ -3,9 +3,10 @@
 
 #include "CEnemy.h"
 #include "CEnemyAIController.h"
+#include "CGameInstance.h"
+#include "BrainComponent.h"
 #include "CSpawnComponent.h"
 #include "Components/CWeaponComponent.h"
-
 #include "Blueprint/UserWidget.h"
 #include "Weapon/CWeapon.h"
 #include "CGameState.h"
@@ -36,10 +37,23 @@ ACEnemy::ACEnemy()
 
 	bCanAttack = false;
 	bIsGunUsed = false;
+	bIsDied = false;
 }
 
 void ACEnemy::UpdateOverheadHP()
 {
+	if (BossHPWidgetInstance)
+	{
+		if (UProgressBar* HPBar = Cast<UProgressBar>(BossHPWidgetInstance->GetWidgetFromName(TEXT("HPBar"))))
+		{
+			HPBar->SetPercent(StatusComponent->GetHealth() / StatusComponent->GetMaxHealth());
+		}
+		if (UTextBlock* BossName = Cast<UTextBlock>(BossHPWidgetInstance->GetWidgetFromName(TEXT("EnemyName"))))
+		{
+			BossName->SetText(EnemyName);
+		}
+	}
+
 	if (OverheadHPWidget)
 	{
 		UUserWidget* OverheadHPWidgetInstance = OverheadHPWidget->GetUserWidgetObject();
@@ -51,17 +65,7 @@ void ACEnemy::UpdateOverheadHP()
 		}
 	}
 
-	if (BossHPWidgetClass && BossHPWidgetInstance)
-	{
-		if (UProgressBar* HPBar = Cast<UProgressBar>(BossHPWidgetInstance->GetWidgetFromName(TEXT("HPBar"))))
-		{
-			HPBar->SetPercent(StatusComponent->GetHealth() / StatusComponent->GetMaxHealth());
-		}
-		if (UTextBlock* BossName = Cast<UTextBlock>(BossHPWidgetInstance->GetWidgetFromName(TEXT("EnemyName"))))
-		{
-			BossName->SetText(EnemyName);
-		}
-	}
+
 }
 
 float ACEnemy::GetEnemyHP() const
@@ -204,12 +208,38 @@ void ACEnemy::GunAttackEnd()
 void ACEnemy::SpawnRandomItemAfterDie()
 {
 	SpawnComp->SpawnRandomActorToPoint(GetMesh()->GetComponentLocation(), FRotator::ZeroRotator);
-	ACWeapon* Weapon = WeaponComponent->GetCurrentWeapon();
-	if (Weapon)
-	{
-		Weapon->FindComponentByClass<USkeletalMeshComponent>()->SetSimulatePhysics(true);
-	}
+
+}
+
+void ACEnemy::ToDoAfterDie()
+{
 	Destroy();
+	SpawnRandomItemAfterDie();
+}
+
+void ACEnemy::Die()
+{
+	Super::Die();
+
+	bIsDied = true;
+
+	ACEnemyAIController* AIController = Cast<ACEnemyAIController>(GetController());
+	if (AIController&& AIController->BrainComponent)
+	{
+		AIController->BrainComponent->StopLogic(TEXT("Character Died"));
+		//AIController->StopMovement();
+	}
+	if (UGameInstance* GameInstance = GetGameInstance())
+	{
+		UCGameInstance* CGameInstance = Cast<UCGameInstance>(GameInstance);
+		if (CGameInstance)
+		{
+			CGameInstance->AddScore(StatusComponent->GetMaxHealth()/2);
+		}
+	}
+
+
+	GetWorldTimerManager().SetTimer(DieTimerHandle, this, &ACEnemy::ToDoAfterDie, 3.0f, false);
 }
 
 void ACEnemy::BeginPlay()
@@ -241,3 +271,4 @@ float ACEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, A
 	UpdateOverheadHP();
 	return TempDamageAmount;
 }
+
