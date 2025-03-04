@@ -245,43 +245,40 @@ bool UCInventoryComponent::DropItem(EItemType ItemType)
     }
 
     FVector PlayerLocation = GetOwner()->GetActorLocation();
-    FVector DropLocation = PlayerLocation + FVector(50.0f, 0.0f, 10.0f);
+    FVector ForwardVector = GetOwner()->GetActorForwardVector();
+    FVector DropStart = PlayerLocation + ForwardVector * 50.0f + FVector(0.0f, 0.0f, 50.0f);  // 플레이어 앞쪽, 약간 위에서 시작
+
+    // ✅ Raycast(라인 트레이스)로 지면 위치 찾기
+    FVector DropEnd = DropStart - FVector(0.0f, 0.0f, 200.0f);  // 200 유닛 아래로 검사
+    FHitResult HitResult;
+    FCollisionQueryParams QueryParams;
+    QueryParams.AddIgnoredActor(GetOwner());  // 플레이어 충돌 무시
+
+    FVector FinalDropLocation = DropStart;
+    if (GetWorld()->LineTraceSingleByChannel(HitResult, DropStart, DropEnd, ECC_Visibility, QueryParams))
+    {
+        // ✅ 지면을 찾으면 그 위치에 스폰
+        FinalDropLocation = HitResult.ImpactPoint + FVector(0.0f, 0.0f, 5.0f);  // 지면 위 약간 띄움
+    }
 
     FActorSpawnParameters SpawnParams;
+
     SpawnParams.Owner = GetOwner();
     SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-
-    // ✅ 블루프린트에서 설정된 메쉬를 유지하기 위해 블루프린트 기반으로 스폰
-    ACBaseItem* SpawnedItem = GetWorld()->SpawnActor<ACBaseItem>(ItemClass, DropLocation, FRotator::ZeroRotator, SpawnParams);
+    //FVector DefaultScale = GetDefault<ACBaseItem>(ItemClass)->GetActorScale3D();
+    FVector DefaultScale = FVector(0.2f, 0.2f, 0.2f);
+    // ✅ 아이템 스폰
+    ACBaseItem* SpawnedItem = GetWorld()->SpawnActor<ACBaseItem>(ItemClass, FinalDropLocation, FRotator::ZeroRotator, SpawnParams);
     if (!SpawnedItem)
     {
         UE_LOG(LogTemp, Error, TEXT("❌ SpawnActor 실패!"));
         return false;
     }
 
-    // ✅ 블루프린트에서 설정된 StaticMesh를 가져옴
-    UStaticMeshComponent* BP_StaticMesh = SpawnedItem->FindComponentByClass<UStaticMeshComponent>();
-    if (BP_StaticMesh && BP_StaticMesh->GetStaticMesh())
-    {
-        UE_LOG(LogTemp, Warning, TEXT("✅ 블루프린트에서 설정된 메쉬 적용됨: %s"), *BP_StaticMesh->GetStaticMesh()->GetName());
-    }
-    else
-    {
-        UE_LOG(LogTemp, Error, TEXT("❌ 스폰된 아이템의 StaticMesh가 설정되지 않음! 블루프린트에서 확인하세요."));
-    }
+    // ✅ 블루프린트에서 설정된 크기로 유지
+    SpawnedItem->SetActorScale3D(DefaultScale);
 
-    // ✅ 아이템 정보 로그 출력
-    if (ItemDetails.Contains(ItemType))
-    {
-        FItemData ItemData = ItemDetails[ItemType];
-        UE_LOG(LogTemp, Warning, TEXT("📦 드롭된 아이템: %s | 설명: %s"), *ItemData.Name.ToString(), *ItemData.Description.ToString());
-    }
-
-    // ✅ 아이템을 보이도록 설정
-    SpawnedItem->SetActorHiddenInGame(false);
-    SpawnedItem->SetActorScale3D(FVector(1.0f, 1.0f, 1.0f));
-
-    // ✅ RootComponent가 UPrimitiveComponent인지 확인
+    // ✅ 충돌 설정 (콜리전 활성화)
     UPrimitiveComponent* RootPrimitive = Cast<UPrimitiveComponent>(SpawnedItem->GetRootComponent());
     if (RootPrimitive)
     {
@@ -293,14 +290,16 @@ bool UCInventoryComponent::DropItem(EItemType ItemType)
         UE_LOG(LogTemp, Error, TEXT("❌ SpawnedItem의 RootComponent가 UPrimitiveComponent가 아닙니다! (콜리전 설정 실패)"));
     }
 
-    UE_LOG(LogTemp, Warning, TEXT("✅ 아이템 드랍 성공: %d (위치: %s)"), static_cast<int32>(ItemType), *DropLocation.ToString());
+    UE_LOG(LogTemp, Warning, TEXT("✅ 아이템 드랍 성공: %d (위치: %s, 크기: %s)"),
+        static_cast<int32>(ItemType),
+        *FinalDropLocation.ToString(),
+        *DefaultScale.ToString());
 
     // 🔹 UI 업데이트 강제 실행
     OnInventoryUpdated.Broadcast();
 
     return true;
 }
-
 
 
 // 현재 인벤토리 상태 출력 (디버그용)
