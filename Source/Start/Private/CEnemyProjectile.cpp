@@ -37,12 +37,15 @@ void ACEnemyProjectile::OnComponentHit(UPrimitiveComponent* HitComponent, AActor
 {
 	if (OtherActor == nullptr)
 		return;
+	APawn* owner = Cast<APawn>(GetOwner());
+	if (owner == nullptr)
+		return;
 	ACPlayer* player = Cast<ACPlayer>(OtherActor);
 	if (player == nullptr)
 		return;
-
+	Destroy();
 	Hits.AddUnique(player);
-	HitData[0].SnedDamage(nullptr, this, player);
+	HitData[0].SnedDamage(owner, this, player);
 }
 
 void ACEnemyProjectile::DestroyProjectile()

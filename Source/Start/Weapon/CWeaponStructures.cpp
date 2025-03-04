@@ -1,7 +1,7 @@
 #include "Weapon/CWeaponStructures.h"
 #include "GameFramework/Character.h"
 
-void FHitData::SnedDamage(ACharacter* InAttacker, AActor* InAttackCauser, ACharacter* InOther)
+void FHitData::SnedDamage(APawn* InAttacker, AActor* InAttackCauser, APawn* InOther)
 {
 	FActionDamageEvent e;
 	e.HitData = this;
