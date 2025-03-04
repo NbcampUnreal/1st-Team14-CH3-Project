@@ -168,7 +168,7 @@ void UCWBP_CInventorySlot::OnSlotClicked()
     UE_LOG(LogTemp, Warning, TEXT("✅ OnSlotClicked 호출됨 - 아이템 사용 요청: %d"), static_cast<int32>(StoredItemType));
 
     // 🔹 무기인지 확인
-    if (StoredItemType == EItemType::EIT_Pistol || StoredItemType == EItemType::EIT_Rifle || StoredItemType == EItemType::EIT_Shotgun)
+    if (StoredItemType == EItemType::EIT_Pistol)
     {
         UE_LOG(LogTemp, Warning, TEXT("🔫 무기 장착 시도: %d"), static_cast<int32>(StoredItemType));
 

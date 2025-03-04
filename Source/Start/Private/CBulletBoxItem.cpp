@@ -8,6 +8,40 @@
 ACBulletBoxItem::ACBulletBoxItem()
 {
     ItemType = EItemType::EIT_BulletBox;
+    // ✅ BaseItem의 StaticMesh를 박스 본체(Object_4)로 설정
+    if (StaticMesh && !StaticMesh->GetStaticMesh())
+    {
+        static ConstructorHelpers::FObjectFinder<UStaticMesh> BoxMeshAsset(TEXT("/Game/Assets/Mesh/Item/box/Object_4.Object_4"));
+        if (BoxMeshAsset.Succeeded())
+        {
+            StaticMesh->SetStaticMesh(BoxMeshAsset.Object);
+            StaticMesh->SetCollisionProfileName(TEXT("PhysicsActor"));
+            UE_LOG(LogTemp, Warning, TEXT("✅ BaseItem의 StaticMesh를 이용하여 Bullet Box 생성"));
+        }
+        else
+        {
+            UE_LOG(LogTemp, Error, TEXT("❌ BaseItem의 StaticMesh에 사용할 Bullet Box 메쉬를 찾을 수 없음!"));
+        }
+    }
+
+    // ✅ 뚜껑 추가 (LidMesh)
+    LidMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("LidMesh"));
+    LidMesh->SetupAttachment(RootComponent);  // 📌 RootComponent에 직접 부착
+
+    static ConstructorHelpers::FObjectFinder<UStaticMesh> LidMeshAsset(TEXT("/Game/Assets/Mesh/Item/box/Object_6.Object_6"));
+    if (LidMeshAsset.Succeeded())
+    {
+        LidMesh->SetStaticMesh(LidMeshAsset.Object);
+        LidMesh->SetCollisionProfileName(TEXT("NoCollision"));
+
+        // ✅ 뚜껑의 위치를 올바르게 조정 (박스 위에 배치)
+        LidMesh->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f)); // 적절한 높이로 조정
+        UE_LOG(LogTemp, Warning, TEXT("✅ 뚜껑 스태틱 메쉬 설정 완료!"));
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("❌ 뚜껑 스태틱 메쉬를 찾을 수 없음!"));
+    }
 }
 
 void ACBulletBoxItem::KeyPressedActivate(AActor* Activator)

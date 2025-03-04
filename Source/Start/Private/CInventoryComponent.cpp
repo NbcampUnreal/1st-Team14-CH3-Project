@@ -136,15 +136,13 @@ bool UCInventoryComponent::AddToInventory(EItemType ItemType)
         {EItemType::EIT_StaminaPotion, 10},
         {EItemType::EIT_Grenades, 5},
         {EItemType::EIT_BulletBox, 5},
-        {EItemType::EIT_Pistol, 1},  // ✅ 무기는 중복되지 않도록 함
-        {EItemType::EIT_Rifle, 1},
-        {EItemType::EIT_Shotgun, 1}
+        {EItemType::EIT_Pistol, 1}  // ✅ 무기는 중복되지 않도록 함
     };
 
     int32 MaxStackSize = MaxStackLimits.Contains(ItemType) ? MaxStackLimits[ItemType] : 999; // 기본값 999
 
     // ✅ 총기류는 1개만 보유 가능하도록 제한
-    if (ItemType == EItemType::EIT_Pistol || ItemType == EItemType::EIT_Rifle || ItemType == EItemType::EIT_Shotgun)
+    if (ItemType == EItemType::EIT_Pistol)
     {
         if (InventoryItems.Contains(ItemType))
         {
@@ -253,6 +251,7 @@ bool UCInventoryComponent::DropItem(EItemType ItemType)
     SpawnParams.Owner = GetOwner();
     SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
+    // ✅ 블루프린트에서 설정된 메쉬를 유지하기 위해 블루프린트 기반으로 스폰
     ACBaseItem* SpawnedItem = GetWorld()->SpawnActor<ACBaseItem>(ItemClass, DropLocation, FRotator::ZeroRotator, SpawnParams);
     if (!SpawnedItem)
     {
@@ -260,29 +259,31 @@ bool UCInventoryComponent::DropItem(EItemType ItemType)
         return false;
     }
 
-    // ✅ 디버깅 코드 - StaticMeshComponent가 nullptr인지 확인
-    if (!SpawnedItem->StaticMesh)
+    // ✅ 블루프린트에서 설정된 StaticMesh를 가져옴
+    UStaticMeshComponent* BP_StaticMesh = SpawnedItem->FindComponentByClass<UStaticMeshComponent>();
+    if (BP_StaticMesh && BP_StaticMesh->GetStaticMesh())
     {
-        UE_LOG(LogTemp, Error, TEXT("❌ 스폰된 아이템에 StaticMeshComponent가 없음! 아이템이 보이지 않을 수 있음."));
+        UE_LOG(LogTemp, Warning, TEXT("✅ 블루프린트에서 설정된 메쉬 적용됨: %s"), *BP_StaticMesh->GetStaticMesh()->GetName());
     }
-    else if (!SpawnedItem->StaticMesh->GetStaticMesh())
+    else
     {
         UE_LOG(LogTemp, Error, TEXT("❌ 스폰된 아이템의 StaticMesh가 설정되지 않음! 블루프린트에서 확인하세요."));
     }
 
-    // ✅ 아이템 정보 설정 (ItemDetails에서 가져오기)
+    // ✅ 아이템 정보 로그 출력
     if (ItemDetails.Contains(ItemType))
     {
         FItemData ItemData = ItemDetails[ItemType];
         UE_LOG(LogTemp, Warning, TEXT("📦 드롭된 아이템: %s | 설명: %s"), *ItemData.Name.ToString(), *ItemData.Description.ToString());
     }
 
-    // ✅ 스폰된 아이템이 보이도록 설정
+    // ✅ 아이템을 보이도록 설정
     SpawnedItem->SetActorHiddenInGame(false);
     SpawnedItem->SetActorScale3D(FVector(1.0f, 1.0f, 1.0f));
 
-    // ✅ 콜리전 설정 (RootComponent가 UPrimitiveComponent인지 확인 후 설정)
-    if (UPrimitiveComponent* RootPrimitive = Cast<UPrimitiveComponent>(SpawnedItem->GetRootComponent()))
+    // ✅ RootComponent가 UPrimitiveComponent인지 확인
+    UPrimitiveComponent* RootPrimitive = Cast<UPrimitiveComponent>(SpawnedItem->GetRootComponent());
+    if (RootPrimitive)
     {
         RootPrimitive->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
         RootPrimitive->SetCollisionResponseToAllChannels(ECR_Block);
@@ -333,7 +334,7 @@ bool UCInventoryComponent::UseItem(EItemType ItemType, ACPlayer* Player)
     }
 
     // 🔹 무기인지 확인 (무기면 장착, 아이템이면 기존 방식 사용)
-    if (ItemType == EItemType::EIT_Pistol || ItemType == EItemType::EIT_Rifle || ItemType == EItemType::EIT_Shotgun)
+    if (ItemType == EItemType::EIT_Pistol)
     {
         EquipWeapon(ItemType, Player);  // 🔹 무기 장착 함수 호출
         return true;  // ✅ 무기는 사용해도 개수 감소 X
