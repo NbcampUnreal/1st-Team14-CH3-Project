@@ -10,6 +10,7 @@
 #include "Weapon/CBullet.h"
 #include "CGrenadesItem.h"
 #include "Weapon/CWeapon_Pistol.h"
+#include "Weapon/CWeapon_Rifle.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/Actor.h"
 
@@ -72,6 +73,16 @@ void UCInventoryComponent::BeginPlay()
         DropItemClasses.Add(EItemType::EIT_Pistol, ACWeapon_Pistol::StaticClass());
         UE_LOG(LogTemp, Warning, TEXT("✅ Pistol 아이템이 DropItemClasses에 정상 등록됨."));
     }
+    if (ACWeapon_Rifle::StaticClass())
+    {
+        DropItemClasses.Add(EItemType::EIT_Rifle, ACWeapon_Rifle::StaticClass());
+        UE_LOG(LogTemp, Warning, TEXT("✅ Pistol 아이템이 DropItemClasses에 정상 등록됨."));
+    }
+  /*  if (ACWeapon_Shotgun::StaticClass())
+    {
+        DropItemClasses.Add(EItemType::EIT_Shotgun, ACWeapon_Shotgun::StaticClass());
+        UE_LOG(LogTemp, Warning, TEXT("✅ Pistol 아이템이 DropItemClasses에 정상 등록됨."));
+    }*/
 
     else
     {

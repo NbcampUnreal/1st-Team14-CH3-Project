@@ -20,7 +20,7 @@ enum class EItemType : uint8
     EIT_Pistol = 5 UMETA(DisplayName = "Pistol"),
     EIT_Rifle = 6 UMETA(DisplayName = "Rifle"),
     EIT_Shotgun = 7 UMETA(DisplayName = "Shotgun"),
-    EIT_Knife UMETA(DisplayName = "Knife"),
+    EIT_Knife = 8 UMETA(DisplayName = "Knife"),
     EIT_None = 255 UMETA(DisplayName = "None")  // ✅ 빈 슬롯 추가
 };
 
@@ -68,6 +68,8 @@ public:
             return TEXT("Rifle");
         case EItemType::EIT_Shotgun:
             return TEXT("Shotgun");
+        case EItemType::EIT_Knife:
+            return TEXT("Knife");
         default:
             return TEXT("Unknown Item");
         }

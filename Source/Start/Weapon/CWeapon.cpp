@@ -22,6 +22,7 @@
 #include "Particles/ParticleSystem.h"
 #include "Camera/CameraShakeBase.h"
 #include "Engine/DamageEvents.h"
+#include "Components/BoxComponent.h"
 
 void FWeaponAimData::SetData(class ACCharacter* InOwner)
 {
@@ -119,6 +120,10 @@ void ACWeapon::BeginPlay()
 	}
 
 	CurrentMagazineCount = MaxMagazineCount;
+	if (OwnerCharacter)
+	{
+		InteractableCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
 }
 
 void ACWeapon::Tick(float DeltaTime)
