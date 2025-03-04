@@ -3,10 +3,10 @@
 
 #include "CEnemy.h"
 #include "CEnemyAIController.h"
+#include "CGameInstance.h"
 #include "BrainComponent.h"
 #include "CSpawnComponent.h"
 #include "Components/CWeaponComponent.h"
-
 #include "Blueprint/UserWidget.h"
 #include "Weapon/CWeapon.h"
 #include "CGameState.h"
@@ -229,15 +229,15 @@ void ACEnemy::Die()
 		AIController->BrainComponent->StopLogic(TEXT("Character Died"));
 		//AIController->StopMovement();
 	}
-
-	ACWeapon* Weapon = WeaponComponent->GetCurrentWeapon();
-	if (Weapon)
+	if (UGameInstance* GameInstance = GetGameInstance())
 	{
-		FVector DieLocation = GetActorLocation();
-		Weapon->SetActorRelativeLocation(FVector(0, 125, 0));
-		Weapon->SetActorRelativeRotation(FRotator(0, 0, 90));
-		GEngine->AddOnScreenDebugMessage(1, 2.0f, FColor::Green, FString::Printf(TEXT("Weapon Move")));
+		UCGameInstance* CGameInstance = Cast<UCGameInstance>(GameInstance);
+		if (CGameInstance)
+		{
+			CGameInstance->AddScore(StatusComponent->GetMaxHealth()/2);
+		}
 	}
+
 
 	GetWorldTimerManager().SetTimer(DieTimerHandle, this, &ACEnemy::ToDoAfterDie, 3.0f, false);
 }
