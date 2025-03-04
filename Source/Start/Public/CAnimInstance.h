@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
+#include "Components/CFeetComponent.h"
 #include "Components/CWeaponComponent.h"
 #include "CAnimInstance.generated.h"
 
@@ -44,6 +45,13 @@ protected:
 	FVector LeftHandLocation;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Weapon")
 	FVector LeftHandAimLocation;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InverseKinemetics")
+	UCFeetComponent* FeetComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InverseKinemetics")
+	bool bFeet;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InverseKinemetics")
+	FFeetData FeetData;
 
 public:
 	virtual void NativeBeginPlay() override;
