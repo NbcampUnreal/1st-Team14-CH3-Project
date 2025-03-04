@@ -16,7 +16,7 @@ ACBaseItem::ACBaseItem() :
     StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
     if (StaticMesh)
     {
-        RootComponent = StaticMesh;
+        StaticMesh->SetupAttachment(InteractableCollision);
         StaticMesh->SetCollisionProfileName(TEXT("BlockAllDynamic"));
         StaticMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
         StaticMesh->SetCollisionResponseToAllChannels(ECR_Block);
