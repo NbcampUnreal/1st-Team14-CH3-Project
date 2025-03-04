@@ -7,11 +7,10 @@ ACHealthPotionItem::ACHealthPotionItem()
 {
 	HealAmount = 20.f;
 	ItemType = EItemType::EIT_HealthPotion;
-  
     // ✅ StaticMeshComponent가 존재하는지 확인 후 메쉬 설정
     if (StaticMesh)
     {
-        static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Engine/BasicShapes/Cone.Cone"));
+        static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Game/Assets/Mesh/Item/Object_4.Object_4"));
         if (MeshAsset.Succeeded())
         {
             StaticMesh->SetStaticMesh(MeshAsset.Object);

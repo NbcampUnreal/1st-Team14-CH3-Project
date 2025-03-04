@@ -136,15 +136,13 @@ bool UCInventoryComponent::AddToInventory(EItemType ItemType)
         {EItemType::EIT_StaminaPotion, 10},
         {EItemType::EIT_Grenades, 5},
         {EItemType::EIT_BulletBox, 5},
-        {EItemType::EIT_Pistol, 1},  // ✅ 무기는 중복되지 않도록 함
-        {EItemType::EIT_Rifle, 1},
-        {EItemType::EIT_Shotgun, 1}
+        {EItemType::EIT_Pistol, 1}  // ✅ 무기는 중복되지 않도록 함
     };
 
     int32 MaxStackSize = MaxStackLimits.Contains(ItemType) ? MaxStackLimits[ItemType] : 999; // 기본값 999
 
     // ✅ 총기류는 1개만 보유 가능하도록 제한
-    if (ItemType == EItemType::EIT_Pistol || ItemType == EItemType::EIT_Rifle || ItemType == EItemType::EIT_Shotgun)
+    if (ItemType == EItemType::EIT_Pistol)
     {
         if (InventoryItems.Contains(ItemType))
         {
@@ -247,7 +245,7 @@ bool UCInventoryComponent::DropItem(EItemType ItemType)
     }
 
     FVector PlayerLocation = GetOwner()->GetActorLocation();
-    FVector DropLocation = PlayerLocation + FVector(50.0f, 0.0f, 50.0f);
+    FVector DropLocation = PlayerLocation + FVector(50.0f, 0.0f, 10.0f);
 
     FActorSpawnParameters SpawnParams;
     SpawnParams.Owner = GetOwner();
@@ -336,7 +334,7 @@ bool UCInventoryComponent::UseItem(EItemType ItemType, ACPlayer* Player)
     }
 
     // 🔹 무기인지 확인 (무기면 장착, 아이템이면 기존 방식 사용)
-    if (ItemType == EItemType::EIT_Pistol || ItemType == EItemType::EIT_Rifle || ItemType == EItemType::EIT_Shotgun)
+    if (ItemType == EItemType::EIT_Pistol)
     {
         EquipWeapon(ItemType, Player);  // 🔹 무기 장착 함수 호출
         return true;  // ✅ 무기는 사용해도 개수 감소 X

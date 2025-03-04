@@ -23,5 +23,7 @@ protected:
 
 	bool bIsActivated = false;
 
-
+	/** 두 번째 스태틱 메쉬 */
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	UStaticMeshComponent* LidMesh;
 };
