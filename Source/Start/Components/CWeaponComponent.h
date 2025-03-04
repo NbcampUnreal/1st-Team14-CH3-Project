@@ -11,7 +11,7 @@ class ACCharacter;
 UENUM(BlueprintType)
 enum class EWeaponType : uint8
 {
-	Rifle, Pistol, Knife, Max	
+	Rifle, Pistol, Knife, Grenade,  Max	
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FWeaponTypeChanged, EWeaponType, InPrevType, EWeaponType, InNewType);
@@ -34,6 +34,7 @@ public:
 	FORCEINLINE bool IsRifleMode(){return Type == EWeaponType::Rifle;}
 	FORCEINLINE bool IsPistolMode(){return Type == EWeaponType::Pistol;}
 	FORCEINLINE bool IsKnifeMode(){return Type == EWeaponType::Knife;}
+	FORCEINLINE bool IsGrenadeMode(){return Type == EWeaponType::Grenade;}
 	FORCEINLINE TArray<TSubclassOf<ACWeapon>> GetWeaponClasses() { return WeaponClasses; }
 public:
 	UCWeaponComponent();
@@ -51,6 +52,8 @@ public:
 	void SetPistolMode();
 	void SetRifleMode();
 	void SetKnifeMode();
+	UFUNCTION(BlueprintCallable)
+	void SetGrenadeMode();
 	void SetMode(EWeaponType InType);
 
 private:

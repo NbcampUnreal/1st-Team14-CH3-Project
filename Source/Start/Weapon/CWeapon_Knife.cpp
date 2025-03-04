@@ -2,6 +2,8 @@
 
 
 #include "Weapon/CWeapon_Knife.h"
+
+#include "CWeaponStructures.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/CStateComponent.h"
 #include "Components/SphereComponent.h"
@@ -9,6 +11,9 @@
 
 ACWeapon_Knife::ACWeapon_Knife()
 {
+	ItemType = EItemType::EIT_Knife;
+	GunType = EGunType::Knife;
+
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> mesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Assets/Mesh/MilitaryWeapSilver/Weapons/Knife_A.Knife_A'"));
 	if (mesh.Succeeded() == true)
 		Mesh->SetSkeletalMesh(mesh.Object);
@@ -24,11 +29,10 @@ void ACWeapon_Knife::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	TArray<UCapsuleComponent*> children;
 	
 	Collisions.Add(Collision1);
 	Collisions.Add(Collision2);
-	for (UCapsuleComponent* child: children)
+	for (UCapsuleComponent* child: Collisions)
 	{
 		child->OnComponentBeginOverlap.AddDynamic(this, &ACWeapon_Knife::OnComponentBeginOverlap);
 		child->OnComponentEndOverlap.AddDynamic(this, &ACWeapon_Knife::OnComponentEndOverlap);
@@ -36,25 +40,12 @@ void ACWeapon_Knife::BeginPlay()
 	}
 
 	Mesh->SetVisibility(false);
-	Hits.Empty();
-	UE_LOG(LogTemp, Warning, TEXT("Mesh Parent: %s"), *Mesh->GetAttachParent()->GetName());
-	UE_LOG(LogTemp, Warning, TEXT("Punch Parent: %s"), *Collision2->GetAttachParent()->GetName());
 
-	if (Collision2->GetAttachParent())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Punch Parent: %s"), *Collision2->GetAttachParent()->GetName());
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Punch has no parent!"));
-	}
 	if (RightHandSokcetName.IsValid() == true)
 		AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), RightHandSokcetName);
 	if (Collision2 != nullptr && FistHandSokcetName.IsValid() == true)
-	{
-		UE_LOG(LogTemp, Warning, L"000");
 		Collision2->AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, FistHandSokcetName);
-	}
+	
 }
 
 void ACWeapon_Knife::BeginEquip()
@@ -129,32 +120,21 @@ void ACWeapon_Knife::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComp
 		UE_LOG(LogTemp,Error,L"%s", *character->GetName())
 		UGameplayStatics::ApplyDamage(character, 10, OwnerCharacter->GetController(), this, UDamageType::StaticClass());
 	}*/
-	if (OtherActor == nullptr || OtherActor == OwnerCharacter)
+	if(OtherActor == nullptr)
 		return;
-
-	ACharacter* HitCharacter = Cast<ACharacter>(OtherActor);
-	if (HitCharacter == nullptr)
+	ACharacter* other = Cast<ACharacter>(OtherActor);
+	if(other == nullptr || other == OwnerCharacter)
 		return;
+	for (ACharacter* hitted : Hits)
+		if(hitted == other)
+			return;
 
-	// ? CapsuleComponent만 충돌 체크
-	if (OtherComp != HitCharacter->GetCapsuleComponent())
+	Hits.AddUnique(other);
+	if(Hits.Num() - 1 < Index)
 		return;
-
-	// ? 이미 있는 캐릭터인지 체크 (주소 비교)
-	if (Hits.ContainsByPredicate([HitCharacter](ACharacter* ExistingCharacter)
-		{
-			return ExistingCharacter == HitCharacter;
-		}))
-	{
-		return;  // 이미 공격한 대상이면 패스
-	}
-
-	// ? 중복이 아니면 추가
-	Hits.Add(HitCharacter);
-
-	// ? 데미지 적용
-	UE_LOG(LogTemp, Error, TEXT("%s"), *HitCharacter->GetName());
-	UGameplayStatics::ApplyDamage(HitCharacter, 10, OwnerCharacter->GetController(), this, UDamageType::StaticClass());
+	UE_LOG(LogTemp, Error, TEXT("%s"), *other->GetName());
+	HitDatas[Index].SnedDamage(OwnerCharacter, this, other);
+	//UGameplayStatics::ApplyDamage(other, Damage, OwnerCharacter->GetController(), this, UDamageType::StaticClass());
 
 }
 
@@ -166,10 +146,17 @@ void ACWeapon_Knife::OnComponentEndOverlap(UPrimitiveComponent* OverlappedCompon
 
 void ACWeapon_Knife::EnableCollision()
 {
-	Collisions[Index]->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	if (Index == 0)
+		Collision1->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	else
+		Collision2->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	//Collisions[Index]->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 }
 
 void ACWeapon_Knife::DisableCollision()
 {
-	Collisions[Index]->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	if (Index == 0)
+		Collision1->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	else
+		Collision2->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 }

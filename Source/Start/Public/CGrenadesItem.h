@@ -13,7 +13,8 @@ public:
 	ACGrenadesItem();
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item|Component")
 	USphereComponent* MineCollision;
-	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item|Component")
+	USkeletalMeshComponent* SkeletalMesh;
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Item)
 	int32 ExplosiveDelay;
@@ -28,4 +29,7 @@ protected:
 	virtual void Use(AActor* Target) override;
 	
 	void Explode();
+
+protected:
+	virtual void BeginPlay() override;
 };
