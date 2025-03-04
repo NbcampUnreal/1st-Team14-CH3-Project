@@ -29,7 +29,7 @@ void ACEnemyProjectile::BeginPlay()
 	Super::BeginPlay();
 	BoxComp->OnComponentHit.AddDynamic(this, &ACEnemyProjectile::OnComponentHit);
 	
-	//GetWorldTimerManager().SetTimer(DeleteTimerHandle, this, &ACEnemyProjectile::DestroyProjectile, 0.3f, false);
+	GetWorldTimerManager().SetTimer(DeleteTimerHandle, this, &ACEnemyProjectile::DestroyProjectile, 0.3f, false);
 
 }
 
