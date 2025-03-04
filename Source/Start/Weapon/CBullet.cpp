@@ -42,7 +42,6 @@ void ACBullet::BeginPlay()
 	Super::BeginPlay();
 	Projectile->SetActive(false);
 	Capsule->OnComponentHit.AddDynamic(this,&ACBullet::OnComponentHit);
-
 	Ignores.Add(GetOwner());
 }
 

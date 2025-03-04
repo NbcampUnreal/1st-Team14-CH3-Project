@@ -112,6 +112,7 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 			EnhancedInput->BindAction(PC->RunAction, ETriggerEvent::Started, MovementComponent, &UCMovementComponent::OnRun);
 			EnhancedInput->BindAction(PC->RunAction, ETriggerEvent::Completed, MovementComponent, &UCMovementComponent::OnWark);
 			EnhancedInput->BindAction(PC->ReloadAction, ETriggerEvent::Triggered, WeaponComponent, &UCWeaponComponent::Reload);
+			EnhancedInput->BindAction(PC->ToggleAutoFireAction, ETriggerEvent::Triggered, WeaponComponent, &UCWeaponComponent::ToggleAutoFire);
 			EnhancedInput->BindAction(PC->ToggleZoomAction, ETriggerEvent::Started, this, &ACPlayer::BeginAim);
 			EnhancedInput->BindAction(PC->ToggleZoomAction, ETriggerEvent::Completed, this, &ACPlayer::EndAim);
 
