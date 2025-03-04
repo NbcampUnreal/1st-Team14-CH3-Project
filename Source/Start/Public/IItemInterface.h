@@ -16,15 +16,11 @@ enum class EItemType : uint8
     EIT_BulletBox = 2 UMETA(DisplayName = "BulletBox"),
     EIT_Bullet = 3 UMETA(DisplayName = "Bullet"),
     EIT_Grenades = 4 UMETA(DisplayName = "Grenades"),
-    // 🔫 무기 추가 (더 세분화)
-    EIT_Pistol = 5 UMETA(DisplayName = "Pistol"),        // 일반 권총
-    EIT_DualPistol = 6 UMETA(DisplayName = "Dual Pistol"),  // 쌍권총
-    EIT_Magnum = 7 UMETA(DisplayName = "Magnum"),        // 매그넘 권총 (강력한 한 발)
-
-    EIT_AssaultRifle = 8 UMETA(DisplayName = "Assault Rifle"), // 돌격소총 (AR)
-    EIT_BattleRifle = 9 UMETA(DisplayName = "Battle Rifle"),   // 전투소총 (긴 사거리, 높은 데미지)
-    EIT_Rifle = 10 UMETA(DisplayName = "Rifle"), // 지정사수 소총 (DMR)
-    EIT_Knife = 11 UMETA(DisplayName = "Knife"), //칼
+    // 🔫 무기 추가
+    EIT_Pistol = 5 UMETA(DisplayName = "Pistol"),
+    EIT_Rifle = 6 UMETA(DisplayName = "Rifle"),
+    EIT_Shotgun = 7 UMETA(DisplayName = "Shotgun"),
+    EIT_Knife UMETA(DisplayName = "Knife"),
     EIT_None = 255 UMETA(DisplayName = "None")  // ✅ 빈 슬롯 추가
 };
 
@@ -68,18 +64,10 @@ public:
             // 🔫 무기 추가
         case EItemType::EIT_Pistol:
             return TEXT("Pistol");
-        case EItemType::EIT_DualPistol:
-            return TEXT("DualPistol");
-        case EItemType::EIT_Magnum:
-            return TEXT("Magnum");
-        case EItemType::EIT_AssaultRifle:
-            return TEXT("AssaultRifle");
-        case EItemType::EIT_BattleRifle:
-            return TEXT("BattleRifle");
         case EItemType::EIT_Rifle:
             return TEXT("Rifle");
-        case EItemType::EIT_Knife:
-            return TEXT("Knife");
+        case EItemType::EIT_Shotgun:
+            return TEXT("Shotgun");
         default:
             return TEXT("Unknown Item");
         }

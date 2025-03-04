@@ -119,6 +119,7 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 			EnhancedInput->BindAction(PC->EquipRifleAction, ETriggerEvent::Triggered, WeaponComponent, &UCWeaponComponent::SetRifleMode);
 			EnhancedInput->BindAction(PC->EquipPistolAction, ETriggerEvent::Triggered, WeaponComponent, &UCWeaponComponent::SetPistolMode);
 			EnhancedInput->BindAction(PC->EquipKnifeAction, ETriggerEvent::Triggered, WeaponComponent, &UCWeaponComponent::SetKnifeMode);
+			EnhancedInput->BindAction(PC->ThrowAction, ETriggerEvent::Triggered, WeaponComponent, &UCWeaponComponent::SetGrenadeMode);
 
 			EnhancedInput->BindAction(PC->FireAction, ETriggerEvent::Started, WeaponComponent, &UCWeaponComponent::DoAction);
 			EnhancedInput->BindAction(PC->FireAction, ETriggerEvent::Completed, WeaponComponent, &UCWeaponComponent::End_Fire);

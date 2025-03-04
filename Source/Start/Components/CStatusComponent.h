@@ -23,7 +23,7 @@ public:
 	FORCEINLINE float GetMaxHealth() { return MaxHealth; }
 	FORCEINLINE float GetStamina() { return Stamina; }
 	FORCEINLINE float GetMaxStamina() { return MaxStamina; }
-	FORCEINLINE bool IsDead() { return Health <= 0.0f; }
+
 public:	
 	UCStatusComponent();
 

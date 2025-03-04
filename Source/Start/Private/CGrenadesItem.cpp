@@ -5,6 +5,10 @@
 
 ACGrenadesItem::ACGrenadesItem()
 {
+	SkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> asset(TEXT("/Script/Engine.SkeletalMesh'/Game/Assets/Mesh/Weapons/Meshes/G67_Grenade/SK_G67.SK_G67'"));
+	if (asset.Succeeded() == true)
+		SkeletalMesh->SetSkeletalMesh(asset.Object);
 	ExplosiveDelay = 3;
 	ExplosiveRadius = 300;
 	ExplosiveDamage = 30;
@@ -52,5 +56,12 @@ void ACGrenadesItem::Explode()
 				UDamageType::StaticClass()); // 데미지 유형, 기본 데미지 유형으로 설정
 		}
 	}
+}
+
+void ACGrenadesItem::BeginPlay()
+{
+	Super::BeginPlay();
+	/*ACharacter* owner = Cast<ACharacter>(Owner);
+	AttachToComponent(owner->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), "Grenade");*/
 }
 

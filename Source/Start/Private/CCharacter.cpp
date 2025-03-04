@@ -8,6 +8,7 @@
 #include "Components/CWeaponComponent.h"
 #include "Components/CStateComponent.h"
 #include "GameFramework/Actor.h"
+#include "Weapon/CWeaponStructures.h"
 
 ACCharacter::ACCharacter()
 {
@@ -58,22 +59,13 @@ void ACCharacter::HandleStateChanged(EStateType PreviousType, EStateType NewType
 
 void ACCharacter::Hitted()
 {
-    if (StatusComponent)
+    StatusComponent->Damage(HittedInfo.Power);
+    if(StatusComponent->GetHealth() <= 0.0f)
+	    StateComponent->SetDeadMode();
+    else
     {
-        StatusComponent->Damage(HittedInfo.Power);
-
-        if (!StatusComponent->IsDead()) // 🔹 살아있으면 피격 애니메이션 실행
-        {
-            if (MontagesComponent)
-            {
-                MontagesComponent->PlayHitMode(); // 🔹 PlayHit() → PlayHitMode()로 변경
-            }
-            return;
-        }
+        HittedInfo.Event->HitData->PlayMontage(this);
     }
-
-    // 🔹 사망 상태로 전환
-    StateComponent->SetDeadMode();
 }
 
 
@@ -95,6 +87,17 @@ void ACCharacter::LoadHealthFromGameInstance()
         Health = GameInstance->GetPlayerHealth();
         UE_LOG(LogTemp, Warning, TEXT("체력 로드: %f"), Health);
     }
+}
+
+void ACCharacter::End_Hit()
+{
+	IICharacter::End_Hit();
+    StateComponent->SetIdleMode();
+}
+
+void ACCharacter::End_Dead()
+{
+    Destroy();
 }
 
 float ACCharacter::GetHealth() const
@@ -125,11 +128,13 @@ void ACCharacter::ModifyHealth(float Amount)
 float ACCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
     float damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-    if (StatusComponent->IsDead()) return 0.0f; // 사망한 경우 데미지 무효
+    if (StateComponent->IsDeadMode() == true)
+        return 0;
 
-    // 🔹 구조체에 데미지 정보 저장
+
+	HittedInfo.Event = (FActionDamageEvent*)&DamageEvent;
     HittedInfo.Power = damage;
-    HittedInfo.Character = Cast<ACharacter>(DamageCauser);
+    HittedInfo.Character = Cast<ACharacter>(EventInstigator->GetPawn());
     HittedInfo.Causer = DamageCauser;
 
     // 🔹 상태 변경 (SetHittedMode() 사용)

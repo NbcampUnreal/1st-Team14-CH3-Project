@@ -70,11 +70,42 @@ void UCWeaponComponent::SetRifleMode()
 
 void UCWeaponComponent::SetKnifeMode()
 {
+	int32 count{};
+	for (auto a : Weapons)
+	{
+		if (a->GetItemType() == EItemType::EIT_Knife)
+			count++;
+	}
+	if (count == 0)
+		return;
+
 	SetMode(EWeaponType::Knife);
+}
+
+void UCWeaponComponent::SetGrenadeMode()
+{
+	/*int32 count{};
+	for (auto a : Weapons)
+	{
+		if (a->GetItemType() == EItemType::EIT_Grenades)
+			count++;
+	}
+	if (count == 0)
+		return;*/
+
+	SetMode(EWeaponType::Grenade);
 }
 
 void UCWeaponComponent::SetPistolMode()
 {
+	int32 count{};
+	for (auto a : Weapons)
+	{
+		if (a->GetItemType() == EItemType::EIT_Pistol)
+			count++;
+	}
+	if (count == 0)
+		return;
 	SetMode(EWeaponType::Pistol);
 }
 
