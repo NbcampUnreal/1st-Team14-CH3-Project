@@ -12,32 +12,44 @@ ACBaseItem::ACBaseItem() :
 {
     PrimaryActorTick.bCanEverTick = false;
 
-    // ✅ RootComponent 설정 (필요한 경우만)
-    if (!RootComponent)
+    // ✅ StaticMesh 설정 (RootComponent로 설정)
+    StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
+    if (StaticMesh)
     {
-        RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
+        StaticMesh->SetupAttachment(Scene);
+        StaticMesh->SetCollisionProfileName(TEXT("BlockAllDynamic"));
+        StaticMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+        StaticMesh->SetCollisionResponseToAllChannels(ECR_Block);
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("❌ StaticMesh 생성 실패! 아이템이 보이지 않을 수 있음."));
     }
 
-    // 🚀 InteractableCollision을 중복 생성하지 않고, 부모 클래스의 것을 활용
-    if (InteractableCollision) // 부모 클래스에서 이미 존재함
+    // ✅ InteractableCollision 중복 생성 방지
+    if (!InteractableCollision)
     {
-        InteractableCollision->SetupAttachment(RootComponent);  // 부모 클래스와 충돌하지 않도록 다시 설정 가능
+        InteractableCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("InteractableCollision"));
+        InteractableCollision->SetupAttachment(StaticMesh);
+        InteractableCollision->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
         InteractableCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+        InteractableCollision->SetCollisionResponseToAllChannels(ECR_Overlap);
         InteractableCollision->SetGenerateOverlapEvents(true);
     }
-
-    // ✅ StaticMesh 생성 및 RootComponent에 부착
-    StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
-    StaticMesh->SetupAttachment(RootComponent);
-    StaticMesh->SetCollisionProfileName(TEXT("BlockAllDynamic"));
-    StaticMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-    StaticMesh->SetCollisionResponseToAllChannels(ECR_Block);
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("⚠️ InteractableCollision이 이미 존재함. 새로 생성하지 않음."));
+    }
 
     // ✅ 아이템 속성 초기화
     KeyPressedSound = nullptr;
     UseSound = nullptr;
     ItemIcon = nullptr;
 }
+
+
+
+
 
 // 🔹 인벤토리에 아이템 추가
 bool ACBaseItem::PutIntoInventory(AActor* PlayerHavingInventory)

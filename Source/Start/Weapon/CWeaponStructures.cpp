@@ -1,5 +1,6 @@
 #include "Weapon/CWeaponStructures.h"
 #include "GameFramework/Character.h"
+
 void FHitData::SnedDamage(ACharacter* InAttacker, AActor* InAttackCauser, ACharacter* InOther)
 {
 	FActionDamageEvent e;
@@ -29,5 +30,4 @@ ACWeaponStructures::ACWeaponStructures()
 void ACWeaponStructures::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
