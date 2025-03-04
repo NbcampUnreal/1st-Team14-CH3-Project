@@ -208,12 +208,7 @@ void ACEnemy::GunAttackEnd()
 void ACEnemy::SpawnRandomItemAfterDie()
 {
 	SpawnComp->SpawnRandomActorToPoint(GetMesh()->GetComponentLocation(), FRotator::ZeroRotator);
-	ACWeapon* Weapon = WeaponComponent->GetCurrentWeapon();
-	if (Weapon)
-	{
-		Weapon->FindComponentByClass<USkeletalMeshComponent>()->SetSimulatePhysics(true);
-	}
-	Destroy();
+
 }
 
 void ACEnemy::ToDoAfterDie()
@@ -233,6 +228,15 @@ void ACEnemy::Die()
 	{
 		AIController->BrainComponent->StopLogic(TEXT("Character Died"));
 		//AIController->StopMovement();
+	}
+
+	ACWeapon* Weapon = WeaponComponent->GetCurrentWeapon();
+	if (Weapon)
+	{
+		FVector DieLocation = GetActorLocation();
+		Weapon->SetActorRelativeLocation(FVector(0, 125, 0));
+		Weapon->SetActorRelativeRotation(FRotator(0, 0, 90));
+		GEngine->AddOnScreenDebugMessage(1, 2.0f, FColor::Green, FString::Printf(TEXT("Weapon Move")));
 	}
 
 	GetWorldTimerManager().SetTimer(DieTimerHandle, this, &ACEnemy::ToDoAfterDie, 3.0f, false);
