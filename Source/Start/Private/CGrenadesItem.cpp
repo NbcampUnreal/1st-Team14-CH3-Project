@@ -2,13 +2,18 @@
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "CEnemy.h"
+#include "CPlayer.h"
+#include "Components/BoxComponent.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 
 ACGrenadesItem::ACGrenadesItem()
 {
 	SkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
+	SkeletalMesh->SetupAttachment(InteractableCollision);
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> asset(TEXT("/Script/Engine.SkeletalMesh'/Game/Assets/Mesh/Weapons/Meshes/G67_Grenade/SK_G67.SK_G67'"));
 	if (asset.Succeeded() == true)
 		SkeletalMesh->SetSkeletalMesh(asset.Object);
+
 	ExplosiveDelay = 3;
 	ExplosiveRadius = 300;
 	ExplosiveDamage = 30;
@@ -17,7 +22,22 @@ ACGrenadesItem::ACGrenadesItem()
 	MineCollision = CreateDefaultSubobject<USphereComponent>(TEXT("MineCollision"));
 	MineCollision->InitSphereRadius(ExplosiveRadius);
 	MineCollision->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
-	MineCollision->SetupAttachment(Scene);
+	MineCollision->SetupAttachment(SkeletalMesh);
+}
+
+
+void ACGrenadesItem::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
+
+
+void ACGrenadesItem::Shoot(const FVector& InDirection)
+{
+	SetLifeSpan(LifeTime);
+	Projectile->Velocity = InDirection * Projectile->InitialSpeed;
+	Projectile->SetActive(true);
 }
 
 void ACGrenadesItem::KeyPressedActivate(AActor* Activator)
@@ -57,11 +77,3 @@ void ACGrenadesItem::Explode()
 		}
 	}
 }
-
-void ACGrenadesItem::BeginPlay()
-{
-	Super::BeginPlay();
-	/*ACharacter* owner = Cast<ACharacter>(Owner);
-	AttachToComponent(owner->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), "Grenade");*/
-}
-

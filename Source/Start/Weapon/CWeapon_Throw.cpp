@@ -21,7 +21,8 @@ void ACWeapon_Throw::BeginEquip()
 	FActorSpawnParameters param;
 	param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	ACGrenadesItem* Grenades = GetWorld()->SpawnActor<ACGrenadesItem>(GrenadesClass, locaton,locaton.Rotation(),param);
-
+	FName name = "Grenade";
+	Grenades->GetSkeletalMesh()->AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), "Grenade");
 	
 }
 

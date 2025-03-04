@@ -357,6 +357,7 @@ void ACWeapon::Reload()
 	// ������ �Ϸ� �� CurrentMagazineCount�� �ִ� ź������ �缳��
 	CurrentMagazineCount = MaxMagazineCount;
 	UGameplayStatics::PlaySoundAtLocation(OwnerCharacter->GetWorld(), ReloadSound, FVector::ZeroVector, FRotator::ZeroRotator);
+
 }
 
 void ACWeapon::Eject_Magazine()
