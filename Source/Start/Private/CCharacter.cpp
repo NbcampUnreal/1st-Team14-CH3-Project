@@ -1,6 +1,7 @@
 ﻿#include "CCharacter.h"
 #include "CGameInstance.h"
 #include "Components/CCameraComponent.h"
+#include "Components/CFeetComponent.h"
 #include "Components/CMontagesComponent.h"
 #include "Components/CMovementComponent.h"
 #include "Components/CStatusComponent.h"
@@ -16,6 +17,7 @@ ACCharacter::ACCharacter()
     WeaponComponent = CreateDefaultSubobject<UCWeaponComponent>(TEXT("WeaponComponent"));
     MontagesComponent = CreateDefaultSubobject<UCMontagesComponent>(TEXT("MontagesComponent"));
     StatusComponent = CreateDefaultSubobject<UCStatusComponent>(TEXT("StatusComponent"));
+    FeetComponent = CreateDefaultSubobject<UCFeetComponent>(TEXT("FeetComponent"));
     // 🔹 기본 체력 값 설정
     MaxHealth = 100.0f;
     Health = MaxHealth;

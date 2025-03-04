@@ -5,6 +5,7 @@
 #include "Interface/ICharacter.h"
 #include "CCharacter.generated.h"
 
+class UCFeetComponent;
 class UCStateComponent;
 class UCStatusComponent;
 class UCMontagesComponent;
@@ -77,6 +78,8 @@ protected:
     UCMontagesComponent* MontagesComponent;
     UPROPERTY(VisibleAnywhere, Category = "Component")
     UCStatusComponent* StatusComponent;
+    UPROPERTY(VisibleAnywhere, Category = "Component")
+    UCFeetComponent* FeetComponent;
     void Die();  // 🔹 사망 처리 함수
     void Hitted();
 
