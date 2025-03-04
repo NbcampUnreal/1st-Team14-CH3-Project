@@ -40,6 +40,7 @@ public:
 	void SetDataByNoneCurve(class ACCharacter* InOwner);
 };
 
+
 UCLASS(Abstract)
 class START_API ACWeapon : public ACBaseItem
 {
@@ -158,6 +159,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 	FText WeaponDisplayName;
 
+	UPROPERTY(EditAnywhere, Category = "Hit")
+	TArray<struct FHitData> HitDatas;
+
 public:
 	FORCEINLINE bool IsAutoFire() { return bAutoFire; }
 	FORCEINLINE FVector GetLeftHandLocation() { return LeftHandLocation; }
@@ -253,5 +257,5 @@ protected:
 	uint8 CurrentMagazineCount;
 	bool bBeginAction;
 	bool bEnable;
-
+	float Damage;
 };

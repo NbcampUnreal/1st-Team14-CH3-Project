@@ -3,6 +3,7 @@
 
 #include "Weapon/CWeapon.h"
 
+#include "CWeaponStructures.h"
 #include "CBullet.h"
 #include "CCharacter.h"
 #include "CMagazine.h"
@@ -448,6 +449,6 @@ void ACWeapon::OnAiming(float Output)
 
 void ACWeapon::OnBullet(AActor* InCauser, ACharacter* InOtherCharacter)
 {
-	FDamageEvent e;
-	UGameplayStatics::ApplyDamage(InOtherCharacter, 10, OwnerCharacter->GetController(), this,UDamageType::StaticClass());
+	HitDatas[0].SnedDamage(OwnerCharacter, InCauser, InOtherCharacter);
+	//UGameplayStatics::ApplyDamage(InOtherCharacter, Damage, OwnerCharacter->GetController(), this,UDamageType::StaticClass());
 }

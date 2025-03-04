@@ -31,7 +31,7 @@ ACPlayerController::ACPlayerController()
 	InventoryComponent = nullptr;
 	FireAction = nullptr;
 	ToggleAutoFireAction = nullptr;
-
+	ThrowAction = nullptr;
 	HUDWidgetClass = nullptr;
 	MainMenuWidgetClass = nullptr;
 	CurrentWidget = nullptr;
