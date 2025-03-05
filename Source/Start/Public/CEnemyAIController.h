@@ -19,6 +19,8 @@ protected:
 	class UAIPerceptionComponent* AIPerception;
 	UPROPERTY(VisibleAnywhere, Category="AI")
 	class UAISenseConfig_Sight* SightConfig;
+	UPROPERTY(VisibleAnywhere, Category="AI")
+	class UAISenseConfig_Damage* DamageConfig;
 
 	UFUNCTION()
 	void OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);

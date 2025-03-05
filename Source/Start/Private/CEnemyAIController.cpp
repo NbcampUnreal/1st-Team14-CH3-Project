@@ -8,6 +8,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
+#include "Perception/AISenseConfig_Damage.h"
 
 
 ACEnemyAIController::ACEnemyAIController()
@@ -22,9 +23,11 @@ ACEnemyAIController::ACEnemyAIController()
 	SightConfig->DetectionByAffiliation.bDetectEnemies = true;
 	SightConfig->DetectionByAffiliation.bDetectFriendlies = true;
 	SightConfig->DetectionByAffiliation.bDetectNeutrals = true;
-
+	
+	DamageConfig = CreateDefaultSubobject<UAISenseConfig_Damage>(TEXT("DamageConfig"));
 
 	AIPerception->ConfigureSense(*SightConfig);
+	AIPerception->ConfigureSense(*DamageConfig);
 	AIPerception->SetDominantSense(UAISense_Sight::StaticClass());
 
 	AIPerception->OnTargetPerceptionUpdated.AddDynamic(this, &ACEnemyAIController::OnPerceptionUpdated);
@@ -53,7 +56,7 @@ void ACEnemyAIController::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulu
 
 			ACPatrolPath* PatrolPath = Cast<ACPatrolPath>(GetBlackboardComponent()->GetValueAsObject("PatrolPath"));
 			int CurrentWaypointIndex = GetBlackboardComponent()->GetValueAsInt("CurrentWaypointIndex");
-  			GetBlackboardComponent()->SetValueAsObject("TargetActor", PatrolPath->GetWaypoint(CurrentWaypointIndex));
+			GetBlackboardComponent()->SetValueAsObject("TargetActor", PatrolPath->GetWaypoint(CurrentWaypointIndex));
 
 			ControllerEnemy->SetWalk();
 			ControllerEnemy->HiddenEnemyHPBar();

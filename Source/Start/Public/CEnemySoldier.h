@@ -38,6 +38,6 @@ protected:
 	void GunAttackEnd();
 
 	virtual void BeginPlay() override;
-	virtual void EnemyAttackStart() override;
+	virtual void EnemyAttackStart(bool bIsCloseRangeAttack) override;
 	virtual void EnemyAttackEnd() override;
 };
