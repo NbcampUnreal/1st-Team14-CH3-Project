@@ -90,9 +90,7 @@ void ACGrenadesItem::Explode()
 			Hits.AddUnique(pawn);
 	}
 
-	if (Hits.Num() <= 0)
-		return;
-
+	
 	for (APawn* hit : Hits)
 		HitData.SnedDamage((APawn*)GetOwner(), this, hit);
 
