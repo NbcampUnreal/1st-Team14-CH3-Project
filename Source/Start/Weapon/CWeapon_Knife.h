@@ -4,26 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "CCharacter.h"
+#include "CWeaponStructures.h"
 #include "Weapon/CWeapon.h"
 #include "CWeapon_Knife.generated.h"
 
 
-USTRUCT(BlueprintType)
-struct FDoActionData
-{
-	GENERATED_BODY()
-public:
-	UPROPERTY(EditAnywhere)
-	UAnimMontage* Montage;
-	UPROPERTY(EditAnywhere)
-	float PlayRate = 1;
-public:
-	void DoAction(class ACharacter* Owners)
-	{
-		if (Montage != nullptr)
-			Owners->PlayAnimMontage(Montage, PlayRate);
-	}
-};
+
 
 UCLASS()
 class START_API ACWeapon_Knife : public ACWeapon
