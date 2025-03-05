@@ -33,6 +33,8 @@ protected:
 public:
 	void Damage(float Amount);
 	void UseStamina(float Amount);
+	void HealHealth(float Amount);
+	void HealStamina(float Amount);
 
 private:
 	ACharacter* OwnerCharacter;

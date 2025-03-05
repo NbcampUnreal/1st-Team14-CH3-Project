@@ -34,13 +34,13 @@ private:
     bool bIsDead;  // 🔹 캐릭터가 사망했는지 여부
 
 public:
-    UFUNCTION(BlueprintCallable, Category = "Character Stats")
-    float GetHealth() const;
-    UFUNCTION(BlueprintCallable, Category = "Character Stats")
-    float GetMaxHealth() const;
+    //UFUNCTION(BlueprintCallable, Category = "Character Stats")
+    //float GetHealth() const;
+    //UFUNCTION(BlueprintCallable, Category = "Character Stats")
+    //float GetMaxHealth() const;
 
-    UFUNCTION(BlueprintCallable, Category = "Character Stats")
-    void ModifyHealth(float Amount);
+    //UFUNCTION(BlueprintCallable, Category = "Character Stats")
+    //void ModifyHealth(float Amount);
 
 
     UFUNCTION(BlueprintCallable, Category = "Character Stats")
@@ -69,9 +69,9 @@ protected:
     UFUNCTION()
     void HandleStateChanged(EStateType PreviousType, EStateType NewType);
 
-private:
-    void SaveHealthToGameInstance();
-    void LoadHealthFromGameInstance();
+//private:
+//    void SaveHealthToGameInstance();
+//    void LoadHealthFromGameInstance();
 public:
 	virtual void End_Hit() override;
 	virtual void End_Dead() override;

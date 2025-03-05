@@ -30,6 +30,8 @@ ACPlayer::ACPlayer()
 
 	// 추가된 SkeletalMesh (Camera에 Attach)
 	FirstPersonMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("FirstPersonMesh"));
+	FirstPersonMesh->SetRelativeLocation(FVector(-14.25f, -5.85f, -156.935f));
+	FirstPersonMesh->SetRelativeRotation(FRotator( - 0.5f, -11.85f, -1.2f));
 	FirstPersonMesh->SetupAttachment(Camera);
 	FirstPersonMesh->SetVisibility(false);  // 비활성화
 
@@ -62,7 +64,7 @@ void ACPlayer::BeginPlay()
 	}
 
 	CameraComponent->DisableControlRoation();
-	ToggleView(); // 초기 시점 설정
+	//ToggleView(); // 초기 시점 설정
 
 	// ✅ StateComponent 가져오기 (null 체크)
 	if (!StateComponent)

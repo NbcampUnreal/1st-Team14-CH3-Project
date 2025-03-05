@@ -29,7 +29,7 @@ ACWeapon_Rifle::ACWeapon_Rifle()
 		RightHandSokcetName = "Rifle_Hand";
 		RightHandAimSokcetName = "Rifle_hand_Aim";
 		LeftHandLocation = Mesh->GetSocketLocation("LeftHand");//FVector(-34.197836,12.642071,8.645998);
-		LeftHandAimLocation = FVector(-32.453343,-1.028387,14.791615);
+		LeftHandAimLocation = FVector(-29.665080, 5.216735, 8.753471);
 		WeapoLeftHandTransform = Mesh->GetSocketTransform("LeftHand");
 		static ConstructorHelpers::FObjectFinder<USoundWave> equipSound(TEXT("/Script/Engine.SoundWave'/Game/Sound/Gun_Equip.Gun_Equip'"));
 		if (equipSound.Succeeded() == true)
@@ -42,8 +42,8 @@ ACWeapon_Rifle::ACWeapon_Rifle()
 	//Aim
 	{
 		AimData.bEnableCameraLag = false;
-		AimData.TargetArmLength = 30;
-		AimData.SocketOffset = FVector(-55, 50, 10);
+		AimData.TargetArmLength = -50;
+		//AimData.SocketOffset = FVector(-55, 50, 10);
 		AimData.FieldOfView = 55;
 	}
 
@@ -98,7 +98,7 @@ void ACWeapon_Rifle::BeginPlay()
 	ACPlayer* player = Cast<ACPlayer>(OwnerCharacter);
 	if(player == nullptr)
 		return;
-	player->GetFirstPersonMesh()->SetRelativeTransform(ArmsMeshTransform);
+	//player->GetFirstPersonMesh()->SetRelativeTransform(ArmsMeshTransform);
 }
 
 void ACWeapon_Rifle::BeginAim()
@@ -106,9 +106,8 @@ void ACWeapon_Rifle::BeginAim()
 	Super::BeginAim();
 	if(SightMesh->GetStaticMesh() == nullptr)
 		return;
-	//if (CrossHair != nullptr)
-	//	CrossHair->SetVisibility(ESlateVisibility::Hidden);
-	/*ACPlayer* player = Cast<ACPlayer>(OwnerCharacter);
+	
+	ACPlayer* player = Cast<ACPlayer>(OwnerCharacter);
 	if(player == nullptr)
 		return;
 	player->GetMesh()->SetVisibility(false);
@@ -118,7 +117,7 @@ void ACWeapon_Rifle::BeginAim()
 
 	UCWeaponComponent* weapon = Cast<UCWeaponComponent>(player->GetComponentByClass(UCWeaponComponent::StaticClass()));
 	if(weapon->OnWeaponAim_Arms_Begin.IsBound() == true)
-		weapon->OnWeaponAim_Arms_Begin.Broadcast(this);*/
+		weapon->OnWeaponAim_Arms_Begin.Broadcast(this);
 }
 
 void ACWeapon_Rifle::EndAim()
@@ -126,16 +125,14 @@ void ACWeapon_Rifle::EndAim()
 	Super::EndAim();
 	if (SightMesh->GetStaticMesh() == nullptr)
 		return;
-	//if (CrossHair != nullptr)
-	//	CrossHair->SetVisibility(ESlateVisibility::Visible);
-	//ACPlayer* player = Cast<ACPlayer>(OwnerCharacter);
-	//if (player == nullptr)
-	//	return;
-	////player->GetFirstPersonMesh()->SetVisibility(false);
-	//player->GetMesh()->SetVisibility(true);
-	//AttachToComponent(player->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), RightHandSokcetName);
+	ACPlayer* player = Cast<ACPlayer>(OwnerCharacter);
+	if (player == nullptr)
+		return;
+	player->GetFirstPersonMesh()->SetVisibility(false);
+	player->GetMesh()->SetVisibility(true);
+	AttachToComponent(player->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), RightHandSokcetName);
 
-	//UCWeaponComponent* weapon = Cast<UCWeaponComponent>(player->GetComponentByClass(UCWeaponComponent::StaticClass()));
-	//if (weapon->OnWeaponAim_Arms_End.IsBound() == true)
-	//	weapon->OnWeaponAim_Arms_End.Broadcast();
+	UCWeaponComponent* weapon = Cast<UCWeaponComponent>(player->GetComponentByClass(UCWeaponComponent::StaticClass()));
+	if (weapon->OnWeaponAim_Arms_End.IsBound() == true)
+		weapon->OnWeaponAim_Arms_End.Broadcast();
 }

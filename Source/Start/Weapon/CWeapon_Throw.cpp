@@ -54,7 +54,8 @@ void ACWeapon_Throw::BeginAction()
 		greade->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 		UCameraComponent* camera = Cast<UCameraComponent>(OwnerCharacter->GetComponentByClass(UCameraComponent::StaticClass()));
 		greade->Shoot(OwnerCharacter, camera->GetForwardVector());
-		Grenades.Remove(greade);
+		if(greade != nullptr)
+			Grenades.Remove(greade);
 	}
 }
 

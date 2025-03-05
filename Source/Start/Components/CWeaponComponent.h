@@ -30,7 +30,7 @@ private:
 	FTimerHandle AmmoUpdateTimerHandle;
 
 public:
-	FORCEINLINE bool IsUnarmedModeMode(){return Type == EWeaponType::Max;}
+	FORCEINLINE bool IsUnarmedMode(){return Type == EWeaponType::Max;}
 	FORCEINLINE bool IsRifleMode(){return Type == EWeaponType::Rifle;}
 	FORCEINLINE bool IsPistolMode(){return Type == EWeaponType::Pistol;}
 	FORCEINLINE bool IsKnifeMode(){return Type == EWeaponType::Knife;}

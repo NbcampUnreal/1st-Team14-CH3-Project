@@ -17,6 +17,8 @@ class START_API UCAnimInstance_Arms : public UAnimInstance
 protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Weapone")
 	EWeaponType WeaponType = EWeaponType::Max;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Weapons")
+	FTransform LeftHandTransform;
 
 public:
 	virtual void NativeBeginPlay() override;

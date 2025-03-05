@@ -31,7 +31,7 @@ void ACCharacter::BeginPlay()
 {
     Super::BeginPlay();
 
-	LoadHealthFromGameInstance();
+	//LoadHealthFromGameInstance();
 
     if (StateComponent)
     {
@@ -71,25 +71,25 @@ void ACCharacter::Hitted()
 }
 
 
-void ACCharacter::SaveHealthToGameInstance()
-{
-    UCGameInstance* GameInstance = Cast<UCGameInstance>(GetGameInstance());
-    if (GameInstance)
-    {
-        GameInstance->SetPlayerHealth(Health);
-        UE_LOG(LogTemp, Warning, TEXT("체력 저장: %f"), Health);
-    }
-}
-
-void ACCharacter::LoadHealthFromGameInstance()
-{
-    UCGameInstance* GameInstance = Cast<UCGameInstance>(GetGameInstance());
-    if (GameInstance)
-    {
-        Health = GameInstance->GetPlayerHealth();
-        UE_LOG(LogTemp, Warning, TEXT("체력 로드: %f"), Health);
-    }
-}
+//void ACCharacter::SaveHealthToGameInstance()
+//{
+//    UCGameInstance* GameInstance = Cast<UCGameInstance>(GetGameInstance());
+//    if (GameInstance)
+//    {
+//        GameInstance->SetPlayerHealth(Health);
+//        UE_LOG(LogTemp, Warning, TEXT("체력 저장: %f"), Health);
+//    }
+//}
+//
+//void ACCharacter::LoadHealthFromGameInstance()
+//{
+//    UCGameInstance* GameInstance = Cast<UCGameInstance>(GetGameInstance());
+//    if (GameInstance)
+//    {
+//        Health = GameInstance->GetPlayerHealth();
+//        UE_LOG(LogTemp, Warning, TEXT("체력 로드: %f"), Health);
+//    }
+//}
 
 void ACCharacter::End_Hit()
 {
@@ -102,30 +102,30 @@ void ACCharacter::End_Dead()
     Destroy();
 }
 
-float ACCharacter::GetHealth() const
-{
-    return Health;
-}
+//float ACCharacter::GetHealth() const
+//{
+//    return Health;
+//}
+//
+//float ACCharacter::GetMaxHealth() const
+//{
+//    return MaxHealth;
+//}
 
-float ACCharacter::GetMaxHealth() const
-{
-    return MaxHealth;
-}
-
-void ACCharacter::ModifyHealth(float Amount)
-{
-    if (bIsDead) return;
-
-    Health = FMath::Clamp(Health + Amount, 0.0f, MaxHealth);
-
-    if (Health <= 0.0f)
-    {
-        StateComponent->SetDeadMode();
-        Die();
-    }
-
-    UE_LOG(LogTemp, Warning, TEXT("체력 변경: %f"), Health);
-}
+//void ACCharacter::ModifyHealth(float Amount)
+//{
+//    if (bIsDead) return;
+//
+//    Health = FMath::Clamp(Health + Amount, 0.0f, MaxHealth);
+//
+//    if (Health <= 0.0f)
+//    {
+//        StateComponent->SetDeadMode();
+//        Die();
+//    }
+//
+//    UE_LOG(LogTemp, Warning, TEXT("체력 변경: %f"), Health);
+//}
 
 float ACCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
@@ -149,7 +149,8 @@ void ACCharacter::Heal(float HealAmount)
 {
     if (bIsDead) return;
 
-    ModifyHealth(HealAmount);
+	StatusComponent->HealHealth(HealAmount);
+    //ModifyHealth(HealAmount);
 
     UE_LOG(LogTemp, Warning, TEXT("캐릭터가 %f 체력을 회복함"), HealAmount);
 }
