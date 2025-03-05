@@ -4,15 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "PatrolPath.generated.h"
+#include "CPatrolPath.generated.h"
 
 UCLASS()
-class START_API APatrolPath : public AActor
+class START_API ACPatrolPath : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
-	APatrolPath();
+	ACPatrolPath();
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category="Patrol")
 	TArray<AActor*> Waypoints;

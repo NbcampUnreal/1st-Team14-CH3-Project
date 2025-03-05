@@ -1,13 +1,13 @@
 
-#include "PatrolPath.h"
+#include "CPatrolPath.h"
 
-APatrolPath::APatrolPath()
+ACPatrolPath::ACPatrolPath()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
 }
 
-AActor* APatrolPath::GetWaypoint(int32 index) const
+AActor* ACPatrolPath::GetWaypoint(int32 index) const
 {
 	if (Waypoints.IsValidIndex(index))
 	{
@@ -17,7 +17,7 @@ AActor* APatrolPath::GetWaypoint(int32 index) const
 	return nullptr;
 }
 
-int32 APatrolPath::Num() const
+int32 ACPatrolPath::Num() const
 {
 	return Waypoints.Num();
 }

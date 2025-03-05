@@ -9,6 +9,7 @@
 class UWidgetComponent;
 class ACPlayer;
 
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyAttack);
 
 UCLASS()
@@ -18,7 +19,22 @@ class START_API ACEnemy : public ACCharacter
 
 public:
 	ACEnemy();
+	UFUNCTION(BlueprintCallable)
+	void SetRun();
+	UFUNCTION(BlueprintCallable)
+	void SetWalk();
+
+	UFUNCTION(BlueprintCallable)
+	void VisibleEnemyHPBar();
+	UFUNCTION(BlueprintCallable)
+	void HiddenEnemyHPBar();
+
+	UFUNCTION(BlueprintCallable)
+	void SetbCanAttack(bool CanAttack) { bCanAttack = CanAttack; }
+	UFUNCTION(BlueprintCallable)
+	bool GetbCanAttack() const { return bCanAttack; }
 	
+protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
 	UWidgetComponent* OverheadHPWidget;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
@@ -36,26 +52,25 @@ public:
 	bool bCanAttack;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsGunUsed;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool bIsEqueped;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsDied;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	FText EnemyName;
-	
+
 	UFUNCTION(BlueprintCallable)
 	void UpdateOverheadHP();
+
 
 	UFUNCTION(BlueprintCallable)
 	bool GetIsEnemyDied() const { return bIsDied; }
 	UFUNCTION(BlueprintCallable)
 	float GetEnemyHP() const;
+
+
 	UFUNCTION(BlueprintCallable)
-	void VisibleEnemyHPBar();
+	virtual void EnemyAttackStart();
 	UFUNCTION(BlueprintCallable)
-	void HiddenEnemyHPBar();
-	UFUNCTION(BlueprintCallable)
-	void EnemyAttack();
+	virtual void EnemyAttackEnd();
+
 	UFUNCTION(BlueprintCallable)
 	void SetIdleMode();
 	UFUNCTION(BlueprintCallable)
@@ -65,28 +80,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool IsEnemyActionMode();
 
-	UFUNCTION(BlueprintCallable)
-	void SetRun();
-	UFUNCTION(BlueprintCallable)
-	void SetWalk();
+
 
 	UFUNCTION(BlueprintCallable)
 	void SetStun(ACPlayer* Player);
 
-	UFUNCTION(BlueprintCallable)
-	void Equip();
 
-	UFUNCTION(BlueprintCallable)
-	void UnEquip();
-
-	UFUNCTION(BlueprintCallable)
-	void ToggleAutoFire();
-
-	UFUNCTION(BlueprintCallable)
-	void GunAttackStart();
-
-	UFUNCTION(BlueprintCallable)
-	void GunAttackEnd();
 
 	UFUNCTION(BlueprintCallable)
 	void SpawnRandomItemAfterDie();
