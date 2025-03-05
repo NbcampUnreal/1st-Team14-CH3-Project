@@ -29,13 +29,15 @@ ACEnemyProjectile::ACEnemyProjectile()
 void ACEnemyProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	BoxComp->OnComponentHit.AddDynamic(this, &ACEnemyProjectile::OnComponentHit);
+	BoxComp->OnComponentBeginOverlap.AddDynamic(this, &ACEnemyProjectile::OnComponentBeginOverlap);
 	
 	GetWorldTimerManager().SetTimer(DeleteTimerHandle, this, &ACEnemyProjectile::DestroyProjectile, 0.3f, false);
 
 }
 
-void ACEnemyProjectile::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+void ACEnemyProjectile::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
+	bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (OtherActor == nullptr)
 		return;

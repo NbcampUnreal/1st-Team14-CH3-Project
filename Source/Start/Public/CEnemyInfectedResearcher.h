@@ -19,8 +19,10 @@ public:
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category= "Animations")
 	TArray<UAnimMontage*> CloseRangeAttackMontages;
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category= "Animations")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category= "Animations")
 	TArray<UAnimMontage*> LongRangeAttackMontages;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category= "Animations")
+	TArray<UAnimMontage*> ChangePhaseMontages;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Component")
 	class USphereComponent* SwingAttackCollision;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Attack")
@@ -39,9 +41,10 @@ protected:
 
 
 private:
+	void ChangePhase();
 	UFUNCTION()
 	virtual void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
 		bool bFromSweep, const FHitResult& SweepResult);
-
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser) override;
 };
