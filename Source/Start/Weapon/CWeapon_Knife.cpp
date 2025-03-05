@@ -98,28 +98,6 @@ void ACWeapon_Knife::EndAction()
 void ACWeapon_Knife::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	/*if(OtherActor == nullptr)
-		return;
-	ACharacter* hit = Cast<ACharacter>(OtherActor);
-	if(hit == OwnerCharacter)
-		return;
-	if(hit == nullptr)
-		return;
-	
-	for (ACharacter* character : Hits)
-	{
-		if(character == hit)
-			return;
-	}
-
-	Hits.AddUnique(hit);
-	
-
-	for (ACharacter* character : Hits)
-	{
-		UE_LOG(LogTemp,Error,L"%s", *character->GetName())
-		UGameplayStatics::ApplyDamage(character, 10, OwnerCharacter->GetController(), this, UDamageType::StaticClass());
-	}*/
 	if(OtherActor == nullptr)
 		return;
 	ACharacter* other = Cast<ACharacter>(OtherActor);
@@ -130,12 +108,9 @@ void ACWeapon_Knife::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComp
 			return;
 
 	Hits.AddUnique(other);
-	if(Hits.Num() - 1 < Index)
+	if(Hits.Num() <= 0)
 		return;
-	UE_LOG(LogTemp, Error, TEXT("%s"), *other->GetName());
 	HitDatas[Index].SnedDamage(OwnerCharacter, this, other);
-	//UGameplayStatics::ApplyDamage(other, Damage, OwnerCharacter->GetController(), this, UDamageType::StaticClass());
-
 }
 
 void ACWeapon_Knife::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -146,17 +121,11 @@ void ACWeapon_Knife::OnComponentEndOverlap(UPrimitiveComponent* OverlappedCompon
 
 void ACWeapon_Knife::EnableCollision()
 {
-	if (Index == 0)
-		Collision1->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	else
-		Collision2->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	//Collisions[Index]->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	Collisions[Index]->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 }
 
 void ACWeapon_Knife::DisableCollision()
 {
-	if (Index == 0)
-		Collision1->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	else
-		Collision2->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	for (UShapeComponent* shape : Collisions)
+		shape->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }

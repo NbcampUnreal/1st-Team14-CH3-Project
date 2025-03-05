@@ -129,7 +129,7 @@ void ACWeapon::BeginPlay()
 void ACWeapon::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	UE_LOG(LogTemp, Warning, TEXT("%d"), CurrentMagazineCount);
+	//UE_LOG(LogTemp, Warning, TEXT("%d"), CurrentMagazineCount);
 
 }
 
