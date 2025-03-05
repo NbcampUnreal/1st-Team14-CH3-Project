@@ -32,7 +32,7 @@ void ACEnemyInfectedResearcher::EnemyAttackStart(bool bIsCloseRangeAttack)
 	}
 	else
 	{
-		if (LongRangeAttackMontages.IsValidIndex(1))
+		if (LongRangeAttackMontages.Num() > 0)
 		{
 			int32 Index = FMath::RandRange(0, LongRangeAttackMontages.Num() - 1);
 			UAnimMontage* SelectedMontage = LongRangeAttackMontages[Index];
@@ -62,14 +62,9 @@ void ACEnemyInfectedResearcher::OnComponentBeginOverlap(UPrimitiveComponent* Ove
 {
 	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, FString::Printf(TEXT("Attack")));
 
-	if (OtherActor == nullptr)
-		return;
-	APawn* owner = Cast<APawn>(GetOwner());
-	if (owner == nullptr)
-		return;
 	ACPlayer* player = Cast<ACPlayer>(OtherActor);
 	if (player == nullptr)
 		return;
 	//Hits.AddUnique(player);
-	HitData[0].SnedDamage(owner, this, player);
+	HitData[0].SnedDamage(this, this, player);
 }
