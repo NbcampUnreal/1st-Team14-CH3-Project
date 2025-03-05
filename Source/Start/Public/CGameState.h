@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameState.h"
+#include "CGameInstance.h"
 #include "CGameState.generated.h"
 
 UENUM(BlueprintType)
@@ -37,6 +38,11 @@ public:
 
     EGameState GetGameState() const { return CurrentState; }
 
+    void CheckScoreForRedDoor();
+    void CheckMidBossDefeated();
+
+    FTimerHandle ScoreCheckTimer;
+    FTimerHandle MidBossCheckTimer;
 private:
     EGameState CurrentState;
 };

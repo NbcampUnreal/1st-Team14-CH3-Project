@@ -4,10 +4,23 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DamageEvents.h"
-#include "GameFramework/Actor.h"
+#include "GameFramework/Character.h"
 #include "CWeaponStructures.generated.h"
 
-USTRUCT(BlueprintType)
+USTRUCT()
+struct FDoActionData
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* Montage;
+	UPROPERTY(EditAnywhere)
+	float PlayRate = 1;
+public:
+	void DoAction(class ACharacter* Owners);
+};
+
+USTRUCT()
 struct FHitData
 {
 	GENERATED_BODY()
@@ -27,7 +40,7 @@ public:
 	void PlaySound(ACharacter* InOwner);
 };
 
-USTRUCT(BlueprintType)
+USTRUCT()
 struct FActionDamageEvent : public FDamageEvent
 {
 	GENERATED_BODY()
@@ -36,13 +49,8 @@ public:
 };
 
 UCLASS()
-class START_API ACWeaponStructures : public AActor
+class START_API UCWeaponStructures : public UObject
 {
 	GENERATED_BODY()
-	
-public:	
-	ACWeaponStructures();
 
-protected:
-	virtual void BeginPlay() override;
 };

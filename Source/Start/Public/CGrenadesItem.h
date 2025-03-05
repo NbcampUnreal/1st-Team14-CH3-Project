@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "CBaseItem.h"
+#include "Weapon/CWeaponStructures.h"
 #include "CGrenadesItem.generated.h"
 
 struct FDoActionData;
@@ -11,8 +12,6 @@ class START_API ACGrenadesItem : public ACBaseItem
 {
 	GENERATED_BODY()
 private:
-	//UPROPERTY(EditAnywhere, Category = "Action")
-	//TArray<FDoActionData> Data;
 	UPROPERTY(EditAnywhere, Category = "Item|Component")
 	USphereComponent* MineCollision;
 	UPROPERTY(EditAnywhere, Category = "Item|Component")
@@ -21,19 +20,18 @@ private:
 	UProjectileMovementComponent* Projectile;
 	UPROPERTY(EditDefaultsOnly)
 	float LifeTime;
+	UPROPERTY(EditDefaultsOnly)
+	FHitData HitData;
 
 public:
 	FORCEINLINE USkeletalMeshComponent* GetSkeletalMesh() { return SkeletalMesh; }
 
 public:
 	ACGrenadesItem();
-	void Shoot(const FVector& InDirection);
-
+	void Shoot(const ACharacter* OwnerCharacter,const FVector& InDirection);
 protected:
 	virtual void BeginPlay() override;
-	virtual void KeyPressedActivate(AActor* Activator) override;
-	virtual void Use(AActor* Target) override;
-	
+private:
 	void Explode();
 
 protected:
@@ -46,4 +44,6 @@ protected:
 
 	FTimerHandle ExplosiveTimerHandle;
 
+private:
+	TArray<APawn*> Hits;
 };

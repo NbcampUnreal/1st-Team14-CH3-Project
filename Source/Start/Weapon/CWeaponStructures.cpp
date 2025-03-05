@@ -1,6 +1,14 @@
 #include "Weapon/CWeaponStructures.h"
 #include "GameFramework/Character.h"
 
+void FDoActionData::DoAction(ACharacter* Owners)
+{
+	if (Montage != nullptr)
+		Owners->PlayAnimMontage(Montage, PlayRate);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+
 void FHitData::SnedDamage(APawn* InAttacker, AActor* InAttackCauser, APawn* InOther)
 {
 	FActionDamageEvent e;
@@ -20,14 +28,3 @@ void FHitData::PlaySound(ACharacter* InOwner)
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-
-ACWeaponStructures::ACWeaponStructures()
-{
-	PrimaryActorTick.bCanEverTick = true;
-
-}
-
-void ACWeaponStructures::BeginPlay()
-{
-	Super::BeginPlay();
-}

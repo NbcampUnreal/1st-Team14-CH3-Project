@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "CWeaponStructures.h"
 #include "Weapon/CWeapon.h"
 #include "CWeapon_Throw.generated.h"
 
@@ -16,6 +17,9 @@ class START_API ACWeapon_Throw : public ACWeapon
 	GENERATED_BODY()
 
 private:
+	UPROPERTY(EditAnywhere, Category = "Action")
+	FDoActionData Data;
+
 	UPROPERTY(EditAnywhere, Category = "Mesh")
 	TSubclassOf<ACGrenadesItem> GrenadesClass;
 public:
@@ -30,5 +34,10 @@ public:
 	virtual void DonAction() override;
 	virtual void BeginAction() override;
 	virtual void EndAction() override;
-	
+
+private:
+	void Create();
+	ACGrenadesItem* GetAttached();
+private:
+	TArray<ACGrenadesItem*> Grenades;
 };
