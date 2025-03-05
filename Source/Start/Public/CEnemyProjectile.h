@@ -3,9 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Weapon/CWeaponStructures.h"
 #include "GameFramework/Actor.h"
 #include "CEnemyProjectile.generated.h"
+
+struct FHitData;
 
 UCLASS(Blueprintable)
 class START_API ACEnemyProjectile : public AActor

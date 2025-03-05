@@ -11,7 +11,7 @@ void UCAnimNotifyState_ApplyDamage::NotifyBegin(USkeletalMeshComponent* MeshComp
 	AActor* Owner = MeshComp->GetOwner();
 	if (!Owner) return;
 
-	USphereComponent* CollisionSphere = Cast<USphereComponent>(Owner->FindComponentByClass<USphereComponent>());
+	USphereComponent* CollisionSphere = Cast<USphereComponent>(Owner->FindComponentByTag(USphereComponent::StaticClass(), FName("Attack")));
 	if (CollisionSphere)
 	{
 		CollisionSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
@@ -25,7 +25,7 @@ void UCAnimNotifyState_ApplyDamage::NotifyEnd(USkeletalMeshComponent* MeshComp, 
 	AActor* Owner = MeshComp->GetOwner();
 	if (!Owner) return;
 
-	USphereComponent* CollisionSphere = Cast<USphereComponent>(Owner->FindComponentByClass<USphereComponent>());
+	USphereComponent* CollisionSphere = Cast<USphereComponent>(Owner->FindComponentByTag(USphereComponent::StaticClass(), FName("Attack")));
 	if (CollisionSphere)
 	{
 		CollisionSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);

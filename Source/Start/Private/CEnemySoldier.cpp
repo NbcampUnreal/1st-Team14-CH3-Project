@@ -15,7 +15,7 @@ void ACEnemySoldier::BeginPlay()
 	Super::BeginPlay();
 }
 
-void ACEnemySoldier::EnemyAttackStart()
+void ACEnemySoldier::EnemyAttackStart(bool bIsCloseRangeAttack)
 {
 	if (bIsEqueped)
 	{

@@ -6,6 +6,8 @@
 #include "CEnemy.h"
 #include "CEnemyInfectedResearcher.generated.h"
 
+struct FHitData;
+
 UCLASS()
 class START_API ACEnemyInfectedResearcher : public ACEnemy
 {
@@ -13,6 +15,18 @@ class START_API ACEnemyInfectedResearcher : public ACEnemy
 public:
 	ACEnemyInfectedResearcher();
 protected:
-	virtual void EnemyAttackStart() override;
-	virtual void EnemyAttackEnd() override;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category= "Animations")
+	TArray<UAnimMontage*> AttackMontages;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Component")
+	class USphereComponent* SwingAttackCollision;
+
+	UPROPERTY(EditAnywhere, Category = "Hit")
+	TArray<FHitData> HitData;
+	TArray<class ACharacter*> Hits;
+	virtual void EnemyAttackStart(bool bIsCloseRangeAttack) override;
+	virtual void BeginPlay() override;
+private:
+	UFUNCTION()
+	void OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
 };

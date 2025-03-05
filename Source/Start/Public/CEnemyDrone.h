@@ -15,7 +15,7 @@ class START_API ACEnemyDrone : public ACEnemy
 public:
 	ACEnemyDrone();
 protected:
-	virtual void EnemyAttackStart() override;
+	virtual void EnemyAttackStart(bool bIsCloseRangeAttack) override;
 	virtual void EnemyAttackEnd() override;
 	virtual void Die() override;
 };
