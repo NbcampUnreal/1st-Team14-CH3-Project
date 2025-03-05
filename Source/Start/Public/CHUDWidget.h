@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/CWeaponComponent.h" // EWeaponType 사용을 위해 포함
+#include "Components/BackgroundBlur.h"
 #include "CHUDWidget.generated.h"
 
 /**
@@ -112,4 +113,9 @@ protected:
 	// 아이템 획득 알림을 표시할 TextBlock
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* ItemPickupText;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* GameoverImage;
+	UPROPERTY(meta = (BindWidget))
+	UBackgroundBlur* GameoverBlur;
 };

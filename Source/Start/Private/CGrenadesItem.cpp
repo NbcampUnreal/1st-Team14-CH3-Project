@@ -33,7 +33,7 @@ ACGrenadesItem::ACGrenadesItem()
 
 	SkeletalMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-	static ConstructorHelpers::FObjectFinder<UParticleSystem> asset(L"/Script/Engine.ParticleSystem'/Game/StarterContent/Particles/P_Explosion.P_Explosion'");
+	//static ConstructorHelpers::FObjectFinder<UParticleSystem> asset(L"/Script/Engine.ParticleSystem'/Game/StarterContent/Particles/P_Explosion.P_Explosion'");
 
 }
 

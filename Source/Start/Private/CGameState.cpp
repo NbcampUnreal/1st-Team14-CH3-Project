@@ -19,17 +19,6 @@ void ACGameState::BeginPlay()
     GetWorldTimerManager().SetTimer(ScoreCheckTimer, this, &ACGameState::CheckScoreForRedDoor, 1.0f, true);
     // 🔹 1초마다 중간 보스 사망 여부를 체크하는 타이머 설정
     GetWorldTimerManager().SetTimer(MidBossCheckTimer, this, &ACGameState::CheckMidBossDefeated, 1.0f, true);
-
-    // ✅ 게임 시작 시 HUD 위젯 생성 (메인 메뉴 방식과 동일)
-    APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-    if (PC && HUDWidgetClass)
-    {
-        HUDWidgetInstance = CreateWidget<UCHUDWidget>(PC, HUDWidgetClass);
-        if (HUDWidgetInstance)
-        {
-            HUDWidgetInstance->AddToViewport();
-        }
-    }
 }
 
 // ✅ 게임 오버 UI 표시 (플레이어 사망 시 호출)
@@ -43,7 +32,7 @@ void ACGameState::ShowGameOverUI()
         UCHUDWidget* HUDWidget = CreateWidget<UCHUDWidget>(PC, HUDWidgetClass);
         if (HUDWidget)
         {
-            HUDWidget->AddToViewport(100);
+            HUDWidget->AddToViewport();
             HUDWidget->ShowGameOverUI();
 
             FInputModeUIOnly InputMode;

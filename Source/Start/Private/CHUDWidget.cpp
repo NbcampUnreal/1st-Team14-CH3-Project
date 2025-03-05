@@ -26,6 +26,14 @@ void UCHUDWidget::NativeConstruct()
 	// 초기 상태에서 AmmoIcon도 숨김 처리
 	if (AmmoIcon) { AmmoIcon->SetVisibility(ESlateVisibility::Hidden); }
 
+	if (GameoverBlur)
+	{
+		GameoverBlur->SetVisibility(ESlateVisibility::Hidden); // 게임 시작 시 숨김
+	}
+	if (GameoverImage)
+	{
+		GameoverImage->SetVisibility(ESlateVisibility::Hidden); // 게임 시작 시 숨기기
+	}
 	// 버튼 클릭 이벤트 바인딩 (메인 메뉴 버튼 방식과 동일)
 	if (ReplayButton)
 	{
@@ -45,6 +53,14 @@ void UCHUDWidget::NativeConstruct()
 // 게임 오버 UI 표시
 void UCHUDWidget::ShowGameOverUI()
 {
+	if (GameoverBlur)
+	{
+		GameoverBlur->SetVisibility(ESlateVisibility::Visible); // ✅ 블러 효과 표시
+	}
+	if (GameoverImage)
+	{
+		GameoverImage->SetVisibility(ESlateVisibility::Visible); // ✅ 게임 오버 시 보이도록 설정
+	}
 	if (ReplayButton)
 	{
 		ReplayButton->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
@@ -56,14 +72,18 @@ void UCHUDWidget::ShowGameOverUI()
 		ExitButton->SetIsEnabled(true);  // ✅ 버튼이 비활성화되지 않도록 강제 설정
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("게임 오버 UI 버튼 활성화됨"));
+	UE_LOG(LogTemp, Warning, TEXT("게임 오버 UI 버튼, 배경, 블러 활성화됨"));
 }
 
 // 게임 재시작 버튼 클릭 시
 void UCHUDWidget::OnReplayClicked()
 {
 	UE_LOG(LogTemp, Warning, TEXT("게임 재시작!"));
-
+	// ✅ 게임오버 배경 다시 숨기기
+	if (GameoverImage)
+	{
+		GameoverImage->SetVisibility(ESlateVisibility::Hidden);
+	}
 	// 현재 맵 다시 로드
 	UGameplayStatics::OpenLevel(GetWorld(), FName(*GetWorld()->GetMapName()));
 }
