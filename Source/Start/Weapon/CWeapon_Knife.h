@@ -50,6 +50,6 @@ private:
 	int32 Index;
 	bool bExist;
 	TArray<UCapsuleComponent*> Collisions;
-	TArray<ACharacter*> Hits;
+	TArray<APawn*> Hits;
 };
 

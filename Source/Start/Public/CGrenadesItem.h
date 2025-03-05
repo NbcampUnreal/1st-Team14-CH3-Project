@@ -22,6 +22,12 @@ private:
 	float LifeTime;
 	UPROPERTY(EditDefaultsOnly)
 	FHitData HitData;
+	UPROPERTY(EditDefaultsOnly)
+	UParticleSystem* Particle;
+	UPROPERTY(EditDefaultsOnly)
+	FVector ParticleScale;
+	UPROPERTY(EditDefaultsOnly)
+	USoundWave* Sound;
 
 public:
 	FORCEINLINE USkeletalMeshComponent* GetSkeletalMesh() { return SkeletalMesh; }

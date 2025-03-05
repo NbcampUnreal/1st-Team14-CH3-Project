@@ -32,6 +32,9 @@ ACGrenadesItem::ACGrenadesItem()
 	MineCollision->SetupAttachment(SkeletalMesh);
 
 	SkeletalMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> asset(L"/Script/Engine.ParticleSystem'/Game/StarterContent/Particles/P_Explosion.P_Explosion'");
+
 }
 
 
@@ -80,6 +83,16 @@ void ACGrenadesItem::Shoot(const ACharacter* OwnerCharacter, const FVector& InDi
 
 void ACGrenadesItem::Explode()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Spawn Location: %s"), *GetActorLocation().ToString());
+	UE_LOG(LogTemp, Warning, TEXT("Particle Scale: %s"), *ParticleScale.ToString());
+
+	UGameplayStatics::SpawnEmitterAtLocation(
+		GetWorld(),
+		Particle,
+		GetActorLocation(),
+		GetActorRotation(),
+		FVector(1, 1, 1)  // 기본 스케일로 시도
+	);
 	TArray<AActor*> overlappingActors;
 	MineCollision->GetOverlappingActors(overlappingActors);
 
@@ -94,5 +107,5 @@ void ACGrenadesItem::Explode()
 	for (APawn* hit : Hits)
 		HitData.SnedDamage((APawn*)GetOwner(), this, hit);
 
-	Destroy();
+	//Destroy();
 }
