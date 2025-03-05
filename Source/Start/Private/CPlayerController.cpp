@@ -334,7 +334,7 @@ void ACPlayerController::PickupItem()
 	);
 
 	// 디버그용 구체 그리기
-	DrawDebugSphere(GetWorld(), PawnLocation, PickupRadius, 32, FColor::Green, false, 2.0f);
+	//DrawDebugSphere(GetWorld(), PawnLocation, PickupRadius, 32, FColor::Green, false, 2.0f);
 
 	if (OverlappedActors.Num() > 0)
 	{
