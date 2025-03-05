@@ -47,19 +47,21 @@ void ACWeapon_Throw::DonAction()
 void ACWeapon_Throw::BeginAction()
 {
 	Super::BeginAction();
+	GEngine->AddOnScreenDebugMessage(1, 2.0f, FColor::Green, FString::Printf(TEXT("Shoot")));
 	ACGrenadesItem* greade = GetAttached();
-	if (greade == nullptr)
-		return;
-	greade->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-	UCameraComponent* camera = Cast<UCameraComponent>(OwnerCharacter->GetComponentByClass(UCameraComponent::StaticClass()));
-	greade->Shoot(OwnerCharacter,camera->GetForwardVector());
-	Grenades.Remove(greade);
+	if (greade)
+	{
+		greade->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+		UCameraComponent* camera = Cast<UCameraComponent>(OwnerCharacter->GetComponentByClass(UCameraComponent::StaticClass()));
+		greade->Shoot(OwnerCharacter, camera->GetForwardVector());
+		Grenades.Remove(greade);
+	}
 }
 
 void ACWeapon_Throw::EndAction()
 {
 	Super::EndAction();
-
+	GEngine->AddOnScreenDebugMessage(1, 2.0f, FColor::Green, FString::Printf(TEXT("Create")));
 	Create();
 }
 
@@ -68,10 +70,14 @@ void ACWeapon_Throw::Create()
 	FVector location = OwnerCharacter->GetMesh()->GetSocketLocation("Grenade_Hand");
 	FRotator rotation = OwnerCharacter->GetMesh()->GetSocketRotation("Greade_Hand");
 	FActorSpawnParameters params;
+	params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	params.Owner = OwnerCharacter;
 	ACGrenadesItem* grenade = GetWorld()->SpawnActor<ACGrenadesItem>(GrenadesClass, location, rotation, params);
-	grenade->AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "Grenade_Hand");
-	Grenades.Add(grenade);
+	if (grenade)
+	{
+		grenade->AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "Grenade_Hand");
+		Grenades.Add(grenade);
+	}
 
 }
 

@@ -1,6 +1,8 @@
 #include "CGrenadesItem.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Sound/SoundWave.h"
+#include "Particles/ParticleSystem.h"
 #include "CEnemy.h"
 #include "CPlayer.h"
 #include "Components/BoxComponent.h"
@@ -33,16 +35,16 @@ ACGrenadesItem::ACGrenadesItem()
 
 	SkeletalMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-	//static ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleAsset(L"/Script/Engine.ParticleSystem'/Game/StarterContent/Particles/P_Explosion.P_Explosion'");
+	//static ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleAsset(TEXT("/Game/StarterContent/Particles/P_Explosion.P_Explosion"));
 	//if (ParticleAsset.Succeeded())
 	//{
 	//	Particle = ParticleAsset.Object;
 	//}
-	//static ConstructorHelpers::FObjectFinder<USoundWave> SoundAsset(L"/ Script / Engine.SoundWave'/Game/StarterContent/Audio/Explosion01.Explosion01'");
-	//if (SoundAsset.Succeeded())
-	//{
-	//	Sound = SoundAsset.Object;
-	//}
+	static ConstructorHelpers::FObjectFinder<USoundWave> SoundAsset(TEXT("/Game/StarterContent/Audio/Explosion01.Explosion01"));
+	if (SoundAsset.Succeeded())
+	{
+		Sound = SoundAsset.Object;
+	}
 }
 
 
@@ -54,6 +56,7 @@ void ACGrenadesItem::BeginPlay()
 
 void ACGrenadesItem::Shoot(const ACharacter* OwnerCharacter, const FVector& InDirection)
 {
+
 	// 충돌 설정
 	SkeletalMesh->SetCollisionProfileName("PhysicsActor");
 
@@ -101,7 +104,7 @@ void ACGrenadesItem::Explode()
 			Particle,
 			GetActorLocation(),
 			GetActorRotation(),
-			FVector(1, 1, 1)  // 기본 스케일로 시도
+			false	  // 기본 스케일로 시도
 		);
 	}
 	if (Sound)
