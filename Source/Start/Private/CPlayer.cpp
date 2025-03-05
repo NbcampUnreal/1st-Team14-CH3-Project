@@ -8,6 +8,8 @@
 #include "Components/CWeaponComponent.h"
 #include "InputActionValue.h"
 #include "Weapon/CWeapon.h"
+#include "CHUDWidget.h"
+#include "GameFramework/HUD.h"
 #include "Components/CCameraComponent.h"
 
 ACPlayer::ACPlayer()
@@ -39,6 +41,25 @@ ACPlayer::ACPlayer()
 void ACPlayer::BeginPlay()
 {
 	Super::BeginPlay();
+	APlayerController* PC = Cast<APlayerController>(GetController());
+	if (PC)
+	{
+		// ✅ 기존 HUD가 있다면 새로 생성하지 않음
+		if (!PC->GetHUD())
+		{
+			UCHUDWidget* HUDWidget = CreateWidget<UCHUDWidget>(PC, UCHUDWidget::StaticClass());
+			if (HUDWidget)
+			{
+				HUDWidget->AddToViewport();
+				HUDWidget->BindToPlayer(this);
+				UE_LOG(LogTemp, Warning, TEXT("✅ ACPlayer: HUD 위젯 생성 및 바인딩 성공!"));
+			}
+			else
+			{
+				UE_LOG(LogTemp, Error, TEXT("❌ ACPlayer: HUD 위젯 생성 실패!"));
+			}
+		}
+	}
 
 	CameraComponent->DisableControlRoation();
 	ToggleView(); // 초기 시점 설정
@@ -86,7 +107,6 @@ void ACPlayer::BeginPlay()
 	}
 
 	// ✅ 카메라 설정
-	APlayerController* PC = GetController<APlayerController>();
 	if (PC)
 	{
 		PC->PlayerCameraManager->ViewPitchMin = PitchRange.X;
