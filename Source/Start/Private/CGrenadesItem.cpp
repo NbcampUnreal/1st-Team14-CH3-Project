@@ -33,8 +33,16 @@ ACGrenadesItem::ACGrenadesItem()
 
 	SkeletalMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-	//static ConstructorHelpers::FObjectFinder<UParticleSystem> asset(L"/Script/Engine.ParticleSystem'/Game/StarterContent/Particles/P_Explosion.P_Explosion'");
-
+	//static ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleAsset(L"/Script/Engine.ParticleSystem'/Game/StarterContent/Particles/P_Explosion.P_Explosion'");
+	//if (ParticleAsset.Succeeded())
+	//{
+	//	Particle = ParticleAsset.Object;
+	//}
+	//static ConstructorHelpers::FObjectFinder<USoundWave> SoundAsset(L"/ Script / Engine.SoundWave'/Game/StarterContent/Audio/Explosion01.Explosion01'");
+	//if (SoundAsset.Succeeded())
+	//{
+	//	Sound = SoundAsset.Object;
+	//}
 }
 
 
@@ -86,13 +94,20 @@ void ACGrenadesItem::Explode()
 	UE_LOG(LogTemp, Warning, TEXT("Spawn Location: %s"), *GetActorLocation().ToString());
 	UE_LOG(LogTemp, Warning, TEXT("Particle Scale: %s"), *ParticleScale.ToString());
 
-	UGameplayStatics::SpawnEmitterAtLocation(
-		GetWorld(),
-		Particle,
-		GetActorLocation(),
-		GetActorRotation(),
-		FVector(1, 1, 1)  // 기본 스케일로 시도
-	);
+	if (Particle)
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(
+			GetWorld(),
+			Particle,
+			GetActorLocation(),
+			GetActorRotation(),
+			FVector(1, 1, 1)  // 기본 스케일로 시도
+		);
+	}
+	if (Sound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), Sound, GetActorLocation());
+	}
 	TArray<AActor*> overlappingActors;
 	MineCollision->GetOverlappingActors(overlappingActors);
 
