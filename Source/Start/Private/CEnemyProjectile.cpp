@@ -5,6 +5,8 @@
 #include "CPlayer.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/Character.h"
+
+#include "Weapon/CWeaponStructures.h"
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 

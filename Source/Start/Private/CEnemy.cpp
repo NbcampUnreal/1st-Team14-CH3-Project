@@ -3,7 +3,7 @@
 
 #include "CEnemy.h"
 #include "CEnemyAIController.h"
-#include "Perception/AISense_Damage.h"
+
 #include "CGameInstance.h"
 #include "BrainComponent.h"
 #include "CSpawnComponent.h"
@@ -114,7 +114,7 @@ void ACEnemy::HiddenEnemyHPBar()
 	}
 }
 
-void ACEnemy::EnemyAttackStart()
+void ACEnemy::EnemyAttackStart(bool bIsCloseRangeAttack)
 {
 
 }
@@ -194,6 +194,7 @@ void ACEnemy::Die()
 {
 	Super::Die();
 
+	bCanAttack = false;
 	bIsDied = true;
 
 	ACEnemyAIController* AIController = Cast<ACEnemyAIController>(GetController());
@@ -239,15 +240,6 @@ void ACEnemy::Tick(float DeltaTime)
 float ACEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	float TempDamageAmount = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-
-	UAISense_Damage::ReportDamageEvent(
-		GetWorld(),
-		this,
-		DamageCauser,
-		DamageAmount,
-		GetActorLocation(),
-		GetActorLocation()
-	);
 
 	UpdateOverheadHP();
 	return TempDamageAmount;

@@ -67,7 +67,7 @@ protected:
 
 
 	UFUNCTION(BlueprintCallable)
-	virtual void EnemyAttackStart();
+	virtual void EnemyAttackStart(bool bIsCloseRangeAttack);
 	UFUNCTION(BlueprintCallable)
 	virtual void EnemyAttackEnd();
 
@@ -80,12 +80,8 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	bool IsEnemyActionMode();
 
-
-
 	UFUNCTION(BlueprintCallable)
 	void SetStun(ACPlayer* Player);
-
-
 
 	UFUNCTION(BlueprintCallable)
 	void SpawnRandomItemAfterDie();

@@ -100,10 +100,10 @@ void ACWeapon_Knife::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComp
 {
 	if(OtherActor == nullptr)
 		return;
-	ACharacter* other = Cast<ACharacter>(OtherActor);
+	APawn* other = Cast<APawn>(OtherActor);
 	if(other == nullptr || other == OwnerCharacter)
 		return;
-	for (ACharacter* hitted : Hits)
+	for (APawn* hitted : Hits)
 		if(hitted == other)
 			return;
 

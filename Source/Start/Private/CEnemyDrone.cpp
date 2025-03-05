@@ -9,7 +9,7 @@ ACEnemyDrone::ACEnemyDrone() : Super()
     bIsGunUsed = true;
 }
 
-void ACEnemyDrone::EnemyAttackStart()
+void ACEnemyDrone::EnemyAttackStart(bool bIsCloseRangeAttack)
 {
     SetbCanAttack(true);
 }
