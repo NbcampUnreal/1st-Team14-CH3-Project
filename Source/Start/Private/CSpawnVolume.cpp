@@ -4,7 +4,8 @@
 #include "Components/BoxComponent.h"
 
 ASpawnVolume::ASpawnVolume() :
-	SpawnDelayTime(0),
+	SpawnTime(0),
+	DelaySpawnTime(0),
 	NumToSpawn(10),
 	bShouldSpawnOnce(true)
 {
@@ -98,7 +99,7 @@ void ASpawnVolume::SpawnActorToRandomPosition()
 
 void ASpawnVolume::SpawnActorContinuously()
 {
-	GetWorldTimerManager().SetTimer(SpawnTimerHandle, this, &ASpawnVolume::SpawnActorToRandomPosition, SpawnDelayTime, true);
+	GetWorldTimerManager().SetTimer(SpawnTimerHandle, this, &ASpawnVolume::SpawnActorToRandomPosition, SpawnTime, true, DelaySpawnTime);
 }
 
 void ASpawnVolume::SpawnActorOnce(int SpawnNum)

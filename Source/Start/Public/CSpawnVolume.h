@@ -24,11 +24,11 @@ protected:
 	UBoxComponent* SpawningBox;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spawn")
 	class UCSpawnComponent* SpawnComp;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawn") 
-	UDataTable* ActorDataTable;
 
 	UPROPERTY(EditAnywhere, Category = "Spawn")
-	float SpawnDelayTime;
+	float SpawnTime;
+	UPROPERTY(EditAnywhere, Category = "Spawn")
+	float DelaySpawnTime;
 
 	UPROPERTY(EditAnywhere, Category = "Spawn")
 	int NumToSpawn;
