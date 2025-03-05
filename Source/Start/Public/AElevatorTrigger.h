@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "CGameState.h" // EGameState 헤더
+#include "CPlayer.h"
 #include "AElevatorTrigger.generated.h"
 
 class UBoxComponent;
@@ -31,6 +32,7 @@ private:
 	USoundBase* ElevatorSound;
 
 	void LoadNextLevel(EGameState NewState); // 🔹 다음 레벨 로드
+    void MovePlayerToSpawn(ACPlayer* PlayerCharacter);
 
     UFUNCTION()
     void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,

@@ -1,7 +1,6 @@
 ﻿#include "AElevatorTrigger.h"
 #include "Components/BoxComponent.h"
 #include "CGameState.h"
-#include "CPlayer.h"
 #include "Kismet/GameplayStatics.h"
 
 AAElevatorTrigger::AAElevatorTrigger()
@@ -69,5 +68,32 @@ void AAElevatorTrigger::LoadNextLevel(EGameState NewState)
             UE_LOG(LogTemp, Warning, TEXT("R엘리베이터 선택 → 보스 연구소 이동"));
             GameState->SetGameState(EGameState::BossArea);
         }
+    }
+}
+
+void AAElevatorTrigger::MovePlayerToSpawn(ACPlayer* PlayerCharacter)
+{
+    if (!PlayerCharacter) return;
+
+    // 🔹 플레이어가 이동할 "PlayerStart" 찾기
+    FName SpawnTag = bIsN_Elevator ? FName("LabyrinthSpawn") : FName("BossAreaSpawn");
+
+    TArray<AActor*> FoundSpawnPoints;
+    UGameplayStatics::GetAllActorsWithTag(GetWorld(), SpawnTag, FoundSpawnPoints);
+
+    if (FoundSpawnPoints.Num() > 0)
+    {
+        // 첫 번째 태그가 맞는 PlayerStart 위치로 이동
+        AActor* SpawnPoint = FoundSpawnPoints[0];
+        PlayerCharacter->SetActorLocation(SpawnPoint->GetActorLocation());
+        PlayerCharacter->SetActorRotation(SpawnPoint->GetActorRotation());
+
+        PlayerCharacter->EnableInput(Cast<APlayerController>(PlayerCharacter->GetController()));
+
+        UE_LOG(LogTemp, Warning, TEXT("플레이어가 새로운 스폰 위치 (%s)로 이동: %s"), *SpawnTag.ToString(), *SpawnPoint->GetActorLocation().ToString());
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("스폰 태그(%s)에 해당하는 위치를 찾을 수 없습니다!"), *SpawnTag.ToString());
     }
 }
