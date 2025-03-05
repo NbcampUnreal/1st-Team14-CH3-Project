@@ -48,6 +48,95 @@ void UCHUDWidget::NativeConstruct()
 		ExitButton->OnClicked.AddDynamic(this, &UCHUDWidget::OnExitClicked);
 		ExitButton->SetVisibility(ESlateVisibility::Hidden); // 기본적으로 숨김
 	}
+
+	// 🔹 UI가 완전히 로드될 때까지 기다리도록 타이머 추가
+	GetWorld()->GetTimerManager().SetTimerForNextTick(this, &UCHUDWidget::InitializeHealthBar);
+}
+void UCHUDWidget::InitializeHealthBar()
+{
+    // 정확한 이름을 사용해야 함 (블루프린트에서 이름 확인 후 수정)
+    HealthBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("HealthBar")));
+
+    if (HealthBar)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("✅ HealthBar 위젯 찾기 성공!"));
+        HealthBar->SetPercent(1.0f); // 초기 체력 100%
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("❌ HealthBar 위젯 찾기 실패!"));
+    }
+
+    UpdateHealthBar();
+}
+void UCHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+
+	// 매 프레임 체력 업데이트
+	UpdateHealthBar();
+}
+void UCHUDWidget::UpdateHealthBar()
+{
+	// ✅ HealthBar가 nullptr이면 다시 가져오기 시도
+	if (!HealthBar)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("🔄 HealthBar가 NULL입니다. 다시 가져오겠습니다."));
+		HealthBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("HealthBar")));
+
+		if (HealthBar)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("✅ HealthBar 위젯 다시 찾기 성공!"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("❌ HealthBar 위젯을 다시 찾을 수 없습니다!"));
+			return;
+		}
+	}
+
+	// ✅ StatusComponent도 다시 확인
+	if (!StatusComponent)
+	{
+		APlayerController* PC = Cast<APlayerController>(GetOwningPlayer());
+		if (PC)
+		{
+			ACPlayer* Player = Cast<ACPlayer>(PC->GetPawn());
+			if (Player)
+			{
+				BindToPlayer(Player);
+			}
+		}
+	}
+
+	if (StatusComponent && HealthBar)
+	{
+		float HealthPercent = StatusComponent->GetHealth() / StatusComponent->GetMaxHealth();
+		HealthBar->SetPercent(HealthPercent);		
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("❌ UCHUDWidget: UpdateHealthBar() 실행 실패 - StatusComponent 또는 HealthBar가 없음"));
+	}
+}
+
+void UCHUDWidget::BindToPlayer(ACPlayer* Player)
+{
+	if (Player)
+	{
+		// ✅ Player에 직접 접근하여 StatusComponent 가져오기
+		StatusComponent = Player->GetStatusComponent();
+
+		if (StatusComponent)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("✅ UCHUDWidget: StatusComponent 바인딩 성공!"));
+			UpdateHealthBar(); // 초기 체력 UI 업데이트
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("❌ UCHUDWidget: StatusComponent 찾기 실패!"));
+		}
+	}
 }
 
 // 게임 오버 UI 표시

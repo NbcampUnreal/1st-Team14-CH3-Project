@@ -26,7 +26,7 @@ public:
 public:
 	ACPlayer();
 	FORCEINLINE UCameraComponent* GetCamera() const { return Camera; }
-
+	UCStatusComponent* GetStatusComponent() const { return StatusComponent; }
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -47,7 +47,6 @@ protected:
 	USpringArmComponent* SpringArm;
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 	UCCameraComponent* CameraComponent;
-
 	UPROPERTY()
 	UCInventoryComponent* InventoryComponent;
 

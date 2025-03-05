@@ -8,18 +8,23 @@
 #include "Weapon/CWeaponStructures.h"
 #include "CPlayer.h"
 
-ACEnemyInfectedResearcher::ACEnemyInfectedResearcher()
+ACEnemyInfectedResearcher::ACEnemyInfectedResearcher() :
+	bIsCloseRangeAttack(false),
+	bIsBoss(false),
+	Phase(0)
 {
 	SwingAttackCollision = CreateDefaultSubobject<USphereComponent>(TEXT("AttackCollision"));
 	SwingAttackCollision->SetCollisionProfileName("NoCollision");
 	SwingAttackCollision->SetupAttachment(GetMesh());
+
 }
 
-void ACEnemyInfectedResearcher::EnemyAttackStart(bool bIsCloseRangeAttack)
+void ACEnemyInfectedResearcher::EnemyAttackStart(bool bIsCloseAttack)
 {
-	if (bIsCloseRangeAttack)
+	//GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, FString::Printf(TEXT("%d"), bIsCloseRangeAttack));
+	if (bIsCloseAttack)
 	{
-
+		bIsCloseRangeAttack = true;
 		if (CloseRangeAttackMontages.Num() > 0)
 		{
 			int32 Index = FMath::RandRange(0, CloseRangeAttackMontages.Num() - 1);
@@ -32,6 +37,7 @@ void ACEnemyInfectedResearcher::EnemyAttackStart(bool bIsCloseRangeAttack)
 	}
 	else
 	{
+		bIsCloseRangeAttack = false;
 		if (LongRangeAttackMontages.Num() > 0)
 		{
 			int32 Index = FMath::RandRange(0, LongRangeAttackMontages.Num() - 1);
@@ -48,24 +54,29 @@ void ACEnemyInfectedResearcher::BeginPlay()
 {
 	Super::BeginPlay();
 	SwingAttackCollision->OnComponentBeginOverlap.AddDynamic(this, &ACEnemyInfectedResearcher::OnComponentBeginOverlap);
-	SwingAttackCollision->SetCollisionProfileName("NoCollision");
-	//if (SwingAttackCollision && GetMesh())
-	//{
-	//	FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, true);
-	//	SwingAttackCollision->AttachToComponent(GetMesh(), AttachmentRules, FName("SwipingCollision"));
-	//}
+	SwingAttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void ACEnemyInfectedResearcher::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
 	bool bFromSweep, const FHitResult& SweepResult)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, FString::Printf(TEXT("Attack")));
+	
 	if (OtherActor == nullptr)
 		return;
 	ACPlayer* player = Cast<ACPlayer>(OtherActor);
 	if (player == nullptr)
 		return;
-	//Hits.AddUnique(player);
-	HitData[0].SnedDamage((APawn*)GetOwner(), this, player);
+	Hits.AddUnique(player);
+	if (bIsCloseRangeAttack)
+	{
+		HitData[0].SnedDamage(this, this, player);
+		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, FString::Printf(TEXT("CloseAttack")));
+	}
+	else
+	{
+		HitData[1].SnedDamage(this, this, player);
+		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, FString::Printf(TEXT("LongAttack")));
+	}
+	
 }

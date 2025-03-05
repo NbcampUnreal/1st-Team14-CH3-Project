@@ -14,6 +14,8 @@ class START_API ACEnemyInfectedResearcher : public ACEnemy
 	GENERATED_BODY()
 public:
 	ACEnemyInfectedResearcher();
+	UFUNCTION(BlueprintCallable)
+	void SetCloseRangeAttack(bool IsClose) { bIsCloseRangeAttack = IsClose; }
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category= "Animations")
 	TArray<UAnimMontage*> CloseRangeAttackMontages;
@@ -21,12 +23,21 @@ protected:
 	TArray<UAnimMontage*> LongRangeAttackMontages;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Component")
 	class USphereComponent* SwingAttackCollision;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Attack")
+	bool bIsCloseRangeAttack;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsBoss;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Hit")
+	int Phase;
 
 	UPROPERTY(EditAnywhere, Category = "Hit")
 	TArray<FHitData> HitData;
 	TArray<class ACharacter*> Hits;
-	virtual void EnemyAttackStart(bool bIsCloseRangeAttack) override;
+	virtual void EnemyAttackStart(bool bIsCloseAttack) override;
 	virtual void BeginPlay() override;
+
+
 private:
 	UFUNCTION()
 	virtual void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,

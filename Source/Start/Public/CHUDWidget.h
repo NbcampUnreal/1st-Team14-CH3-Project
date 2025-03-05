@@ -6,6 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/CWeaponComponent.h" // EWeaponType 사용을 위해 포함
 #include "Components/BackgroundBlur.h"
+#include "Components/CStatusComponent.h"
+#include "CPlayer.h"
 #include "CHUDWidget.generated.h"
 
 /**
@@ -17,6 +19,7 @@ class START_API UCHUDWidget : public UUserWidget
 	GENERATED_BODY()
 	
 public:
+	void InitializeHealthBar();
 	// 게임 오버 UI 표시
 	UFUNCTION(BlueprintCallable)
 	void ShowGameOverUI();
@@ -68,9 +71,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "HUD")
 	void SetCrosshairVisibility(bool bVisible);
 
+	void BindToPlayer(ACPlayer* Player);
 protected:
 	virtual void NativeConstruct() override;
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
+	UPROPERTY()
+	UCStatusComponent* StatusComponent; // 체력 관리 컴포넌트 참조
+	void UpdateHealthBar();
 	// UI 요소 바인딩
 	UPROPERTY(meta = (BindWidget))
 	class UButton* ReplayButton;

@@ -15,6 +15,8 @@ void UCAnimNotifyState_ApplyDamage::NotifyBegin(USkeletalMeshComponent* MeshComp
 	if (CollisionSphere)
 	{
 		CollisionSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		CollisionSphere->SetGenerateOverlapEvents(true);
+		CollisionSphere->RecreatePhysicsState();
 	}
 }
 
@@ -29,5 +31,7 @@ void UCAnimNotifyState_ApplyDamage::NotifyEnd(USkeletalMeshComponent* MeshComp, 
 	if (CollisionSphere)
 	{
 		CollisionSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		CollisionSphere->SetGenerateOverlapEvents(false);
+		CollisionSphere->RecreatePhysicsState();
 	}
 }
