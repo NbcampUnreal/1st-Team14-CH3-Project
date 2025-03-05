@@ -22,7 +22,7 @@ private:
 	float LifeTime;
 	UPROPERTY(EditDefaultsOnly)
 	FHitData HitData;
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditAnywhere)
 	UParticleSystem* Particle;
 	UPROPERTY(EditDefaultsOnly)
 	FVector ParticleScale;

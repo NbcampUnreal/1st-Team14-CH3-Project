@@ -48,7 +48,7 @@ void ACEnemyInfectedResearcher::BeginPlay()
 {
 	Super::BeginPlay();
 	SwingAttackCollision->OnComponentBeginOverlap.AddDynamic(this, &ACEnemyInfectedResearcher::OnComponentBeginOverlap);
-	SwingAttackCollision->SetCollisionProfileName("NoCollision");
+	SwingAttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	//if (SwingAttackCollision && GetMesh())
 	//{
 	//	FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, true);
@@ -66,6 +66,6 @@ void ACEnemyInfectedResearcher::OnComponentBeginOverlap(UPrimitiveComponent* Ove
 	ACPlayer* player = Cast<ACPlayer>(OtherActor);
 	if (player == nullptr)
 		return;
-	//Hits.AddUnique(player);
-	HitData[0].SnedDamage((APawn*)GetOwner(), this, player);
+	Hits.AddUnique(player);
+	HitData[0].SnedDamage(this, this, player);
 }
