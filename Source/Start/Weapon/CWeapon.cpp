@@ -411,6 +411,7 @@ bool ACWeapon::CanAim()
 	b |= bReload;
 	b |= bFiring;
 	b |= Weapon->IsKnifeMode() == true;
+	b |= Weapon->IsGrenadeMode() == true;
 	//b |= State->IsInventoryMode() == true;
 	return !b;
 }
