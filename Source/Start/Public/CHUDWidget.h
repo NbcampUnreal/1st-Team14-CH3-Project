@@ -16,6 +16,17 @@ class START_API UCHUDWidget : public UUserWidget
 	GENERATED_BODY()
 	
 public:
+	// 게임 오버 UI 표시
+	UFUNCTION(BlueprintCallable)
+	void ShowGameOverUI();
+
+    // 버튼 클릭 이벤트
+	UFUNCTION(BlueprintCallable)
+	void OnReplayClicked();
+
+	UFUNCTION(BlueprintCallable)
+	void OnExitClicked();
+
 	// 체력 업데이트: 0.0f ~ 1.0f 사이의 값
 	UFUNCTION(BlueprintCallable, Category = "HUD")
 	void UpdateHealth(float fHealthPercent);
@@ -58,6 +69,13 @@ public:
 
 protected:
 	virtual void NativeConstruct() override;
+
+	// UI 요소 바인딩
+	UPROPERTY(meta = (BindWidget))
+	class UButton* ReplayButton;
+
+	UPROPERTY(meta = (BindWidget))
+	class UButton* ExitButton;
 
 	// 체력 표시용 ProgressBar (UMG에서 BindWidget)
 	UPROPERTY(meta = (BindWidget))

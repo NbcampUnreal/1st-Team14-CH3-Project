@@ -2,6 +2,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
 #include "CCharacter.h"
+#include "Blueprint/UserWidget.h"
+#include "CHUDWidget.h"
 
 ACGameState::ACGameState()
 {
@@ -17,7 +19,51 @@ void ACGameState::BeginPlay()
     GetWorldTimerManager().SetTimer(ScoreCheckTimer, this, &ACGameState::CheckScoreForRedDoor, 1.0f, true);
     // 🔹 1초마다 중간 보스 사망 여부를 체크하는 타이머 설정
     GetWorldTimerManager().SetTimer(MidBossCheckTimer, this, &ACGameState::CheckMidBossDefeated, 1.0f, true);
+
+    // ✅ 게임 시작 시 HUD 위젯 생성 (메인 메뉴 방식과 동일)
+    APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+    if (PC && HUDWidgetClass)
+    {
+        HUDWidgetInstance = CreateWidget<UCHUDWidget>(PC, HUDWidgetClass);
+        if (HUDWidgetInstance)
+        {
+            HUDWidgetInstance->AddToViewport();
+        }
+    }
 }
+
+// ✅ 게임 오버 UI 표시 (플레이어 사망 시 호출)
+void ACGameState::ShowGameOverUI()
+{
+    APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+    if (!PC) return;
+
+    if (HUDWidgetClass)
+    {
+        UCHUDWidget* HUDWidget = CreateWidget<UCHUDWidget>(PC, HUDWidgetClass);
+        if (HUDWidget)
+        {
+            HUDWidget->AddToViewport(100);
+            HUDWidget->ShowGameOverUI();
+
+            FInputModeUIOnly InputMode;
+            InputMode.SetWidgetToFocus(HUDWidget->TakeWidget());
+            PC->SetInputMode(InputMode);  // 먼저 입력 모드를 UI로 설정
+            PC->SetShowMouseCursor(true); // 이후 마우스 커서 활성화
+
+            // ✅ UI 포커스를 강제 설정 (버튼 클릭 가능하게)
+            HUDWidget->SetUserFocus(PC);  // 먼저 유저 포커스를 설정
+            HUDWidget->SetKeyboardFocus();  // 이후 키보드 포커스를 설정
+
+            UE_LOG(LogTemp, Warning, TEXT("게임 오버 UI 표시됨, 마우스 클릭 가능"));
+        }
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("HUDWidgetClass가 설정되지 않았습니다!"));
+    }
+}
+
 
 void ACGameState::CheckScoreForRedDoor()
 {

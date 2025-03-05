@@ -9,6 +9,8 @@
 #include "Components/CStateComponent.h"
 #include "GameFramework/Actor.h"
 #include "Weapon/CWeaponStructures.h"
+#include "CPlayer.h"
+#include "CGameState.h"
 
 ACCharacter::ACCharacter()
 {
@@ -157,6 +159,17 @@ void ACCharacter::Die()
     if (MontagesComponent)
     {
         MontagesComponent->PlayDeadMode();
+    }
+
+    // 🔹 적(Enemy)인지 플레이어인지 구분
+    ACPlayer* PlayerCharacter = Cast<ACPlayer>(this); // 플레이어인지 확인
+    if (PlayerCharacter) // 플레이어가 죽었을 때만 실행
+    {
+        ACGameState* GameState = GetWorld()->GetGameState<ACGameState>();
+        if (GameState)
+        {
+            GameState->ShowGameOverUI(); // 🎯 게임 오버 UI 표시
+        }
     }
 }
 

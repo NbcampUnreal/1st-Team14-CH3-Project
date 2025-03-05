@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameState.h"
 #include "CGameInstance.h"
+#include "CHUDWidget.h"
 #include "CGameState.generated.h"
 
 UENUM(BlueprintType)
@@ -30,8 +31,14 @@ class START_API ACGameState : public AGameState
 public:
     ACGameState();
 
+    // 게임 오버 UI 호출
+    UFUNCTION(BlueprintCallable)
+    void ShowGameOverUI();
 protected:
     virtual void BeginPlay() override;
+    // 게임 오버 UI를 위한 클래스 (블루프린트에서 설정 가능)
+    UPROPERTY(EditDefaultsOnly, Category = "HUD")
+    TSubclassOf<class UCHUDWidget> HUDWidgetClass;
 
 public:
     void SetGameState(EGameState NewState);
@@ -45,4 +52,5 @@ public:
     FTimerHandle MidBossCheckTimer;
 private:
     EGameState CurrentState;
+    UCHUDWidget* HUDWidgetInstance;
 };

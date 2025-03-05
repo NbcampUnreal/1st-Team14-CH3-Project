@@ -1,32 +1,83 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-#include "CHUDWidget.h"
-#include "Components/ProgressBar.h"
+ï»¿#include "CHUDWidget.h"
+#include "Components/Button.h"
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
-#include "Engine/World.h"
+#include "Components/ProgressBar.h"
+#include "Kismet/GameplayStatics.h"
+#include "Blueprint/UserWidget.h"
 #include "TimerManager.h"
+
 
 void UCHUDWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	// ÃÊ±â »óÅÂ ¼³Á¤
+	// ì´ˆê¸° ìƒíƒœ ì„¤ì •
 	if (HealthBar)	{HealthBar->SetPercent(1.0f);}
 	if (StaminaBar) {StaminaBar->SetPercent(1.0f);}
 	if (AmmoText) {AmmoText->SetText(FText::FromString("0 / 0")); }
 	if (WeaponNameText)	{WeaponNameText->SetText(FText::FromString(""));}
 	if (ScoreText) {ScoreText->SetText(FText::AsNumber(0));}
 
-	// DamageOverlay¿Í ItemPickupText´Â ±âº»ÀûÀ¸·Î ¼û±è Ã³¸®
+	// DamageOverlayì™€ ItemPickupTextëŠ” ê¸°ë³¸ì ìœ¼ë¡œ ìˆ¨ê¹€ ì²˜ë¦¬
 	if (DamageOverlay)	{DamageOverlay->SetVisibility(ESlateVisibility::Hidden);}
 	if (ItemPickupText){ItemPickupText->SetVisibility(ESlateVisibility::Hidden);}
 
-	// ÃÊ±â »óÅÂ¿¡¼­ AmmoIconµµ ¼û±è Ã³¸®
+	// ì´ˆê¸° ìƒíƒœì—ì„œ AmmoIconë„ ìˆ¨ê¹€ ì²˜ë¦¬
 	if (AmmoIcon) { AmmoIcon->SetVisibility(ESlateVisibility::Hidden); }
+
+	// ë²„íŠ¼ í´ë¦­ ì´ë²¤íŠ¸ ë°”ì¸ë”© (ë©”ì¸ ë©”ë‰´ ë²„íŠ¼ ë°©ì‹ê³¼ ë™ì¼)
+	if (ReplayButton)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ReplayButton ë°”ì¸ë”©ë¨"));
+		ReplayButton->OnClicked.AddDynamic(this, &UCHUDWidget::OnReplayClicked);
+		ReplayButton->SetVisibility(ESlateVisibility::Hidden); // ê¸°ë³¸ì ìœ¼ë¡œ ìˆ¨ê¹€
+	}
+
+	if (ExitButton)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ExitButton ë°”ì¸ë”©ë¨"));
+		ExitButton->OnClicked.AddDynamic(this, &UCHUDWidget::OnExitClicked);
+		ExitButton->SetVisibility(ESlateVisibility::Hidden); // ê¸°ë³¸ì ìœ¼ë¡œ ìˆ¨ê¹€
+	}
 }
 
-// Ã¼·Â ¾÷µ¥ÀÌÆ®
+// ê²Œìž„ ì˜¤ë²„ UI í‘œì‹œ
+void UCHUDWidget::ShowGameOverUI()
+{
+	if (ReplayButton)
+	{
+		ReplayButton->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+		ReplayButton->SetIsEnabled(true);  // âœ… ë²„íŠ¼ì´ ë¹„í™œì„±í™”ë˜ì§€ ì•Šë„ë¡ ê°•ì œ ì„¤ì •
+	}
+	if (ExitButton)
+	{
+		ExitButton->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+		ExitButton->SetIsEnabled(true);  // âœ… ë²„íŠ¼ì´ ë¹„í™œì„±í™”ë˜ì§€ ì•Šë„ë¡ ê°•ì œ ì„¤ì •
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("ê²Œìž„ ì˜¤ë²„ UI ë²„íŠ¼ í™œì„±í™”ë¨"));
+}
+
+// ê²Œìž„ ìž¬ì‹œìž‘ ë²„íŠ¼ í´ë¦­ ì‹œ
+void UCHUDWidget::OnReplayClicked()
+{
+	UE_LOG(LogTemp, Warning, TEXT("ê²Œìž„ ìž¬ì‹œìž‘!"));
+
+	// í˜„ìž¬ ë§µ ë‹¤ì‹œ ë¡œë“œ
+	UGameplayStatics::OpenLevel(GetWorld(), FName(*GetWorld()->GetMapName()));
+}
+
+// ê²Œìž„ ì¢…ë£Œ ë²„íŠ¼ í´ë¦­ ì‹œ
+void UCHUDWidget::OnExitClicked()
+{
+	UE_LOG(LogTemp, Warning, TEXT("ê²Œìž„ ì¢…ë£Œ!"));
+
+	// ê²Œìž„ ì¢…ë£Œ
+	UKismetSystemLibrary::QuitGame(GetWorld(), nullptr, EQuitPreference::Quit, false);
+}
+
+// ì²´ë ¥ ì—…ë°ì´íŠ¸
 void UCHUDWidget::UpdateHealth(float fHealthPercent)
 {
 	if (HealthBar)
@@ -35,7 +86,7 @@ void UCHUDWidget::UpdateHealth(float fHealthPercent)
 	}
 }
 
-// ½ºÅÂ¹Ì³Ê ¾÷µ¥ÀÌÆ®
+// ìŠ¤íƒœë¯¸ë„ˆ ì—…ë°ì´íŠ¸
 void UCHUDWidget::UpdateStamina(float fStaminaPercent)
 {
 	if (StaminaBar)
@@ -44,7 +95,7 @@ void UCHUDWidget::UpdateStamina(float fStaminaPercent)
 	}
 }
 
-// Åº¾à Á¤º¸ ¾÷µ¥ÀÌÆ®
+// íƒ„ì•½ ì •ë³´ ì—…ë°ì´íŠ¸
 void UCHUDWidget::UpdateAmmo(int32 iCurrentAmmo, int32 iMaxAmmo)
 {
 	if (AmmoText)
@@ -52,14 +103,14 @@ void UCHUDWidget::UpdateAmmo(int32 iCurrentAmmo, int32 iMaxAmmo)
 		FString AmmoString = FString::Printf(TEXT("%d / %d"), iCurrentAmmo, iMaxAmmo);
 		AmmoText->SetText(FText::FromString(AmmoString));
 	}
-	// ¸¸¾à Åº¾àÀÌ 0ÀÌ¸é AmmoIconµµ ¼û±æ ¼ö ÀÖµµ·Ï
+	// ë§Œì•½ íƒ„ì•½ì´ 0ì´ë©´ AmmoIconë„ ìˆ¨ê¸¸ ìˆ˜ ìžˆë„ë¡
 	if (AmmoIcon)
 	{
 		AmmoIcon->SetVisibility(iCurrentAmmo > 0 ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
 	}
 }
 
-// ÇöÀç ¹«±â ÀÌ¸§ ¾÷µ¥ÀÌÆ®
+// í˜„ìž¬ ë¬´ê¸° ì´ë¦„ ì—…ë°ì´íŠ¸
 void UCHUDWidget::UpdateWeapon(FText WeaponName)
 {
 	if (WeaponNameText)
@@ -68,10 +119,10 @@ void UCHUDWidget::UpdateWeapon(FText WeaponName)
 	}
 }
 
-// ¹«±â Á¾·ù¿¡ µû¸¥ Åº¾à Ç¥½Ã ¿©ºÎ ¾÷µ¥ÀÌÆ® ÇÔ¼ö
+// ë¬´ê¸° ì¢…ë¥˜ì— ë”°ë¥¸ íƒ„ì•½ í‘œì‹œ ì—¬ë¶€ ì—…ë°ì´íŠ¸ í•¨ìˆ˜
 void UCHUDWidget::UpdateWeaponType(EWeaponType PrevType, EWeaponType NewType)
 {
-	// ¶óÀÌÇÃ(Rifle)°ú ÇÇ½ºÅç(Pistol)¸¸ ÃÑ¾Ë Á¤º¸¸¦ º¸¿©ÁÜ.
+	// ë¼ì´í”Œ(Rifle)ê³¼ í”¼ìŠ¤í†¨(Pistol)ë§Œ ì´ì•Œ ì •ë³´ë¥¼ ë³´ì—¬ì¤Œ.
 	bool bShowAmmo = (NewType == EWeaponType::Rifle || NewType == EWeaponType::Pistol);
 	SetAmmoVisibility(bShowAmmo);
 }
@@ -96,7 +147,7 @@ void UCHUDWidget::SetCrosshairVisibility(bool bVisible)
 	}
 }
 
-// Á¡¼ö ¾÷µ¥ÀÌÆ®
+// ì ìˆ˜ ì—…ë°ì´íŠ¸
 void UCHUDWidget::UpdateScore(int32 iNewScore)
 {
 	if (ScoreText)
@@ -105,7 +156,7 @@ void UCHUDWidget::UpdateScore(int32 iNewScore)
 	}
 }
 
-// ÇÇÇØ È¿°ú Ç¥½Ã
+// í”¼í•´ íš¨ê³¼ í‘œì‹œ
 void UCHUDWidget::ShowDamageEffect()
 {
 	if (DamageOverlay)
@@ -113,7 +164,7 @@ void UCHUDWidget::ShowDamageEffect()
 		DamageOverlay->SetVisibility(ESlateVisibility::Visible);
 
 		FTimerHandle TimerHandle;
-		// 0.5ÃÊ ÈÄ¿¡ È¿°ú ¼û±â±â
+		// 0.5ì´ˆ í›„ì— íš¨ê³¼ ìˆ¨ê¸°ê¸°
 		GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this]()
 			{
 				if (DamageOverlay)
@@ -124,7 +175,7 @@ void UCHUDWidget::ShowDamageEffect()
 	}
 }
 
-// ¾ÆÀÌÅÛ È¹µæ ¾Ë¸² Ç¥½Ã
+// ì•„ì´í…œ íšë“ ì•Œë¦¼ í‘œì‹œ
 void UCHUDWidget::ShowItemPickupNotification(const FText& ItemName)
 {
 	if (ItemPickupText)
@@ -133,7 +184,7 @@ void UCHUDWidget::ShowItemPickupNotification(const FText& ItemName)
 		ItemPickupText->SetVisibility(ESlateVisibility::Visible);
 
 		FTimerHandle TimerHandle;
-		// 2ÃÊ ÈÄ¿¡ ¾Ë¸²À» ¼û±è Ã³¸®
+		// 2ì´ˆ í›„ì— ì•Œë¦¼ì„ ìˆ¨ê¹€ ì²˜ë¦¬
 		GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this]()
 			{
 				if (ItemPickupText)
