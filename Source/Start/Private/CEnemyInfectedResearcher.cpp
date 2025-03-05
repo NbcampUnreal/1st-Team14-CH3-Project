@@ -61,10 +61,11 @@ void ACEnemyInfectedResearcher::OnComponentBeginOverlap(UPrimitiveComponent* Ove
 	bool bFromSweep, const FHitResult& SweepResult)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, FString::Printf(TEXT("Attack")));
-
+	if (OtherActor == nullptr)
+		return;
 	ACPlayer* player = Cast<ACPlayer>(OtherActor);
 	if (player == nullptr)
 		return;
 	//Hits.AddUnique(player);
-	HitData[0].SnedDamage(this, this, player);
+	HitData[0].SnedDamage((APawn*)GetOwner(), this, player);
 }
