@@ -207,6 +207,7 @@ void ACWeapon::DonAction()
 
 void ACWeapon::BeginAction()
 {
+
 	bBeginAction = true;
 }
 
