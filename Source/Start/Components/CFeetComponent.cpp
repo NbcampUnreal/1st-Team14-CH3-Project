@@ -34,13 +34,13 @@ void UCFeetComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	Data.LeftRotation = UKismetMathLibrary::RInterpTo(Data.LeftRotation, leftRotation, DeltaTime, InterpSpeed);
 	Data.RightRotation = UKismetMathLibrary::RInterpTo(Data.RightRotation, rightRotation, DeltaTime, InterpSpeed);
 
-//#ifdef LOG_UCFeetComponent
+#ifdef LOG_UCFeetComponent
 	UE_LOG(LogTemp, Warning, TEXT("%s"), *Data.LeftDistance.ToString());
 	UE_LOG(LogTemp, Warning, L"%s", *Data.RightDistance.ToString());
 	UE_LOG(LogTemp, Warning, L"%s", *Data.PelvisDistance.ToString());
 	UE_LOG(LogTemp, Warning, L"%s", *Data.LeftRotation.ToString());
 	UE_LOG(LogTemp, Warning, L"%s", *Data.RightRotation.ToString());
-//#endif
+#endif
 
 }
 
