@@ -16,7 +16,9 @@ public:
 	ACEnemyInfectedResearcher();
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category= "Animations")
-	TArray<UAnimMontage*> AttackMontages;
+	TArray<UAnimMontage*> CloseRangeAttackMontages;
+		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category= "Animations")
+	TArray<UAnimMontage*> LongRangeAttackMontages;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Component")
 	class USphereComponent* SwingAttackCollision;
 
@@ -27,6 +29,8 @@ protected:
 	virtual void BeginPlay() override;
 private:
 	UFUNCTION()
-	void OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+	virtual void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
+		bool bFromSweep, const FHitResult& SweepResult);
 
 };

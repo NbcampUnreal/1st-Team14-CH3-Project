@@ -12,15 +12,18 @@ ACEnemyInfectedResearcher::ACEnemyInfectedResearcher()
 {
 	SwingAttackCollision = CreateDefaultSubobject<USphereComponent>(TEXT("AttackCollision"));
 	SwingAttackCollision->SetCollisionProfileName("NoCollision");
+	SwingAttackCollision->SetupAttachment(GetMesh());
 }
 
 void ACEnemyInfectedResearcher::EnemyAttackStart(bool bIsCloseRangeAttack)
 {
 	if (bIsCloseRangeAttack)
 	{
-		if (AttackMontages.IsValidIndex(0))
+
+		if (CloseRangeAttackMontages.Num() > 0)
 		{
-			UAnimMontage* SelectedMontage = AttackMontages[0];
+			int32 Index = FMath::RandRange(0, CloseRangeAttackMontages.Num() - 1);
+			UAnimMontage* SelectedMontage = CloseRangeAttackMontages[Index];
 			if (SelectedMontage && GetMesh()->GetAnimInstance())
 			{
 				GetMesh()->GetAnimInstance()->Montage_Play(SelectedMontage);
@@ -29,9 +32,10 @@ void ACEnemyInfectedResearcher::EnemyAttackStart(bool bIsCloseRangeAttack)
 	}
 	else
 	{
-		if (AttackMontages.IsValidIndex(1))
+		if (LongRangeAttackMontages.IsValidIndex(1))
 		{
-			UAnimMontage* SelectedMontage = AttackMontages[1];
+			int32 Index = FMath::RandRange(0, LongRangeAttackMontages.Num() - 1);
+			UAnimMontage* SelectedMontage = LongRangeAttackMontages[Index];
 			if (SelectedMontage && GetMesh()->GetAnimInstance())
 			{
 				GetMesh()->GetAnimInstance()->Montage_Play(SelectedMontage);
@@ -43,17 +47,21 @@ void ACEnemyInfectedResearcher::EnemyAttackStart(bool bIsCloseRangeAttack)
 void ACEnemyInfectedResearcher::BeginPlay()
 {
 	Super::BeginPlay();
-	SwingAttackCollision->OnComponentHit.AddDynamic(this, &ACEnemyInfectedResearcher::OnComponentHit);
+	SwingAttackCollision->OnComponentBeginOverlap.AddDynamic(this, &ACEnemyInfectedResearcher::OnComponentBeginOverlap);
 	SwingAttackCollision->SetCollisionProfileName("NoCollision");
-	if (SwingAttackCollision && GetMesh())
-	{
-		FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, true);
-		SwingAttackCollision->AttachToComponent(GetMesh(), AttachmentRules, FName("Rifle_hand"));
-	}
+	//if (SwingAttackCollision && GetMesh())
+	//{
+	//	FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, true);
+	//	SwingAttackCollision->AttachToComponent(GetMesh(), AttachmentRules, FName("SwipingCollision"));
+	//}
 }
 
-void ACEnemyInfectedResearcher::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+void ACEnemyInfectedResearcher::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
+	bool bFromSweep, const FHitResult& SweepResult)
 {
+	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, FString::Printf(TEXT("Attack")));
+
 	if (OtherActor == nullptr)
 		return;
 	APawn* owner = Cast<APawn>(GetOwner());
@@ -62,8 +70,6 @@ void ACEnemyInfectedResearcher::OnComponentHit(UPrimitiveComponent* HitComponent
 	ACPlayer* player = Cast<ACPlayer>(OtherActor);
 	if (player == nullptr)
 		return;
-	Destroy();
-	Hits.AddUnique(player);
+	//Hits.AddUnique(player);
 	HitData[0].SnedDamage(owner, this, player);
-
 }
