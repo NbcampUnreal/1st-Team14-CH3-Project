@@ -8,7 +8,7 @@
 struct FDoActionData;
 class UProjectileMovementComponent;
 UCLASS()
-class START_API ACGrenadesItem : public ACBaseItem
+class START_API ACGrenadesItem : public AActor
 {
 	GENERATED_BODY()
 private:

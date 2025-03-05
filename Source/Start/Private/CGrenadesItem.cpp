@@ -9,7 +9,7 @@
 ACGrenadesItem::ACGrenadesItem()
 {
 	SkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
-	SkeletalMesh->SetupAttachment(InteractableCollision);
+	//SkeletalMesh->SetupAttachment(InteractableCollision);
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> asset(TEXT("/Script/Engine.SkeletalMesh'/Game/Assets/Mesh/Weapons/Meshes/G67_Grenade/SK_G67.SK_G67'"));
 	if (asset.Succeeded() == true)
 		SkeletalMesh->SetSkeletalMesh(asset.Object);
@@ -24,7 +24,7 @@ ACGrenadesItem::ACGrenadesItem()
 	ExplosiveDelay = 3;
 	ExplosiveRadius = 300;
 	ExplosiveDamage = 30;
-	ItemType = EItemType::EIT_Grenades;
+	//ItemType = EItemType::EIT_Grenades;
 	
 	MineCollision = CreateDefaultSubobject<USphereComponent>(TEXT("MineCollision"));
 	MineCollision->InitSphereRadius(ExplosiveRadius);
@@ -101,7 +101,7 @@ void ACGrenadesItem::Explode()
 			Particle,
 			GetActorLocation(),
 			GetActorRotation(),
-			FVector(1, 1, 1)  // 기본 스케일로 시도
+			ParticleScale  // 기본 스케일로 시도
 		);
 	}
 	if (Sound)
@@ -117,10 +117,9 @@ void ACGrenadesItem::Explode()
 		if (pawn != nullptr)
 			Hits.AddUnique(pawn);
 	}
-
 	
 	for (APawn* hit : Hits)
 		HitData.SnedDamage((APawn*)GetOwner(), this, hit);
 
-	//Destroy();
+	Destroy();
 }
