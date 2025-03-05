@@ -12,6 +12,73 @@ void ACGameState::BeginPlay()
 {
     Super::BeginPlay();
     SetGameState(EGameState::MenuMap); // 게임 시작 시 메뉴 상태로 초기화
+
+    // 🔹 1초마다 CheckScoreForRedDoor()를 실행하는 타이머 설정
+    GetWorldTimerManager().SetTimer(ScoreCheckTimer, this, &ACGameState::CheckScoreForRedDoor, 1.0f, true);
+    // 🔹 1초마다 중간 보스 사망 여부를 체크하는 타이머 설정
+    GetWorldTimerManager().SetTimer(MidBossCheckTimer, this, &ACGameState::CheckMidBossDefeated, 1.0f, true);
+}
+
+void ACGameState::CheckScoreForRedDoor()
+{
+    UCGameInstance* GameInstance = Cast<UCGameInstance>(GetGameInstance());
+    if (!GameInstance) return;
+
+    if (GameInstance->GetScore() >= 100)
+    {
+        TArray<AActor*> FoundDoors;
+        UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("RedDoor"), FoundDoors);
+
+        for (AActor* DoorActor : FoundDoors)
+        {
+            if (DoorActor)
+            {
+                // 🔹 블루프린트에서 만든 'Event OpenDoor' 실행
+                UFunction* OpenDoorFunction = DoorActor->FindFunction(FName("OpenDoor"));
+                if (OpenDoorFunction)
+                {
+                    DoorActor->ProcessEvent(OpenDoorFunction, nullptr);
+                    UE_LOG(LogTemp, Warning, TEXT("레드도어가 부드럽게 열리도록 블루프린트 이벤트 실행됨!"));
+                }
+                else
+                {
+                    UE_LOG(LogTemp, Error, TEXT("OpenDoor 함수가 없습니다! 블루프린트 확인 필요!"));
+                }
+            }
+        }
+    }
+}
+
+void ACGameState::CheckMidBossDefeated()
+{
+    TArray<AActor*> FoundBosses;
+    UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("MidBoss"), FoundBosses);
+
+    // 🔹 "MidBoss" 태그가 있는 액터가 남아있는지 확인
+    if (FoundBosses.Num() == 0) // 중간 보스가 전부 죽었다면
+    {
+        // 🔹 엘리베이터 문 열기
+        TArray<AActor*> FoundDoors;
+        UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("ElevatorDoor"), FoundDoors);
+
+        for (AActor* DoorActor : FoundDoors)
+        {
+            if (DoorActor)
+            {
+                // 🔹 블루프린트에서 만든 'OpenDoor' 실행
+                UFunction* OpenDoorFunction = DoorActor->FindFunction(FName("OpenDoor"));
+                if (OpenDoorFunction)
+                {
+                    DoorActor->ProcessEvent(OpenDoorFunction, nullptr);
+                    UE_LOG(LogTemp, Warning, TEXT("중간 보스가 사망하여 엘리베이터 문이 부드럽게 열립니다!"));
+                }
+                else
+                {
+                    UE_LOG(LogTemp, Error, TEXT("OpenDoor 함수가 없습니다! 블루프린트 확인 필요!"));
+                }
+            }
+        }
+    }
 }
 
 void ACGameState::SetGameState(EGameState NewState)
