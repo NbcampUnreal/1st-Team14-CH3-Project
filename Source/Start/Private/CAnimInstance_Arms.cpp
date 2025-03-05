@@ -12,6 +12,8 @@ void UCAnimInstance_Arms::NativeBeginPlay()
 		return;
 
 	Weapon = Cast<UCWeaponComponent>(OwnerCharacter->GetComponentByClass(UCWeaponComponent::StaticClass()));
+	if(Weapon == nullptr)
+		return;
 	Weapon->OnWeaponTypeChanged.AddDynamic(this, &UCAnimInstance_Arms::OnWeaponTypeChanged);
 }
 
@@ -21,6 +23,8 @@ void UCAnimInstance_Arms::NativeUpdateAnimation(float DeltaSeconds)
 
 	if (OwnerCharacter == nullptr)
 		return;
+
+	//LeftHandTransform = Weapon->GetLeftHandAimLocation();
 }
 
 void UCAnimInstance_Arms::OnWeaponTypeChanged(EWeaponType InPrevType, EWeaponType InNewType)

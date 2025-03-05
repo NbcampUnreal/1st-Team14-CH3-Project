@@ -31,3 +31,15 @@ void UCStatusComponent::UseStamina(float Amount)
 	Stamina +=(Amount *-1);
 	Stamina = FMath::Clamp(MaxStamina, 0.0f, MaxStamina);
 }
+
+void UCStatusComponent::HealHealth(float Amount)
+{
+	Health += Amount;
+	Health = FMath::Clamp(Health, 0.0f, MaxHealth);
+}
+
+void UCStatusComponent::HealStamina(float Amount)
+{
+	Stamina += Amount;
+	Stamina = FMath::Clamp(MaxStamina, 0.0f, MaxStamina);
+}

@@ -38,7 +38,7 @@ void UCWeaponComponent::TickComponent(float DeltaTime, enum ELevelTick TickType,
 
 ACWeapon* UCWeaponComponent::GetCurrentWeapon()
 {
-	if (IsUnarmedModeMode() == true)
+	if (IsUnarmedMode() == true)
 		return nullptr;
 	return Weapons[(int32)Type];
 }
@@ -119,7 +119,7 @@ void UCWeaponComponent::SetMode(EWeaponType InType)
 		SetUnarmedMode();
 		return;
 	}
-	else if(IsUnarmedModeMode() == false)
+	else if(IsUnarmedMode() == false)
 	{
 		//무기를 장착하고 있는 상태라면 현재 무기를 장착해제할 수 있는지 체크한뒤 무기 장착 해제
 		if(GetCurrentWeapon()->CanUnequip() == false)

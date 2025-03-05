@@ -103,6 +103,7 @@ void ACWeapon::BeginPlay()
 			BaseData.SocketOffset = SpringArm->SocketOffset;
 			BaseData.bEnableCameraLag = SpringArm->bEnableCameraLag;
 			BaseData.FieldOfView = camera->FieldOfView;
+			AimData.SocketOffset = SpringArm->SocketOffset;
 		}
 		else
 			BaseData.SetDataByNoneCurve(OwnerCharacter);

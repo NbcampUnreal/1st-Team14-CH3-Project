@@ -48,16 +48,16 @@ void UCAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	bIsFalling = Movement->IsFalling();
 
 	bInAim = Weapon->GetInAim();
-	bUseHandIk = Weapon->IsUnarmedModeMode() == false && Weapon->IsKnifeMode() == false;
+	bUseHandIk = Weapon->IsUnarmedMode() == false && Weapon->IsKnifeMode() == false && Weapon->IsGrenadeMode() == false;
 	LeftHandLocation = Weapon->GetLeftHandLocation();
 	LeftHandAimLocation = Weapon->GetLeftHandAimLocation();
 
-	bFeet = false;
+	/*bFeet = false;
 	if (bFeet == true)
 	{
 		bFeet = true;
 		FeetData = FeetComponent->GetData();
-	}
+	}*/
 }
 
 void UCAnimInstance::OnWeaponTypeChanged(EWeaponType InPrevType, EWeaponType InNewType)

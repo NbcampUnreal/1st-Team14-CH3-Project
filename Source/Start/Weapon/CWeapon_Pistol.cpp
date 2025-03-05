@@ -79,7 +79,7 @@ void ACWeapon_Pistol::BeginEquip()
 	ACPlayer* player = Cast<ACPlayer>(OwnerCharacter);
 	if(player == nullptr)
 		return;
-	player->GetFirstPersonMesh()->SetRelativeTransform(ArmsLeftHandTransform);
+	//player->GetFirstPersonMesh()->SetRelativeTransform(ArmsLeftHandTransform);
 }
 
 void ACWeapon_Pistol::EndEquip()
@@ -103,7 +103,7 @@ void ACWeapon_Pistol::BeginAim()
 	if(player == nullptr)
 		return;
 	player->GetMesh()->SetVisibility(false);
-	player->GetFirstPersonMesh()->SetVisibility(true);
+	//player->GetFirstPersonMesh()->SetVisibility(true);
 }
 
 void ACWeapon_Pistol::EndAim()
@@ -115,5 +115,5 @@ void ACWeapon_Pistol::EndAim()
 	if (player == nullptr)
 		return;
 	player->GetMesh()->SetVisibility(true);
-	player->GetFirstPersonMesh()->SetVisibility(false);
+	//player->GetFirstPersonMesh()->SetVisibility(false);
 }
