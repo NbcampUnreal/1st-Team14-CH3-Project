@@ -3,12 +3,13 @@
 
 #include "CEnemy.h"
 #include "CEnemyAIController.h"
+#include "Perception/AISense_Damage.h"
 #include "CGameInstance.h"
 #include "BrainComponent.h"
 #include "CSpawnComponent.h"
-#include "Components/CWeaponComponent.h"
+
 #include "Blueprint/UserWidget.h"
-#include "Weapon/CWeapon.h"
+
 #include "CGameState.h"
 #include "CCharacter.h"
 #include "CPlayer.h"
@@ -23,6 +24,9 @@
 
 ACEnemy::ACEnemy()
 {
+
+	UE_LOG(LogTemp, Warning, TEXT("CEnemy Constructor Called"));
+
 	AIControllerClass = ACEnemyAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
@@ -31,6 +35,7 @@ ACEnemy::ACEnemy()
 	OverheadHPWidget->SetWidgetSpace(EWidgetSpace::Screen);
 
 	SpawnComp = CreateDefaultSubobject<UCSpawnComponent>(TEXT("SpawnComp"));
+
 
 	BossHPWidgetClass = nullptr;
 	BossHPWidgetInstance = nullptr;
@@ -67,6 +72,8 @@ void ACEnemy::UpdateOverheadHP()
 
 
 }
+
+
 
 float ACEnemy::GetEnemyHP() const
 {
@@ -107,11 +114,14 @@ void ACEnemy::HiddenEnemyHPBar()
 	}
 }
 
-void ACEnemy::EnemyAttack()
+void ACEnemy::EnemyAttackStart()
 {
-	StateComponent->SetActionMode();
 
-	OnEnemyAttack.Broadcast();
+}
+
+void ACEnemy::EnemyAttackEnd()
+{
+
 }
 
 void ACEnemy::SetIdleMode()
@@ -166,44 +176,7 @@ void ACEnemy::SetStun(ACPlayer* Player)
 
 }
 
-void ACEnemy::Equip()
-{
-	if (!bIsEqueped)
-	{
-		WeaponComponent->SetRifleMode();
-		bIsEqueped = true;
-		ToggleAutoFire();
-	}
-}
 
-void ACEnemy::UnEquip()
-{
-	if(bIsEqueped && WeaponComponent->GetCurrentWeapon())
-	{
-		WeaponComponent->SetUnarmedMode();
-		bIsEqueped = false;
-	}
-}
-
-void ACEnemy::ToggleAutoFire()
-{
-	if (WeaponComponent->GetCurrentWeapon())
-	{
-		WeaponComponent->ToggleAutoFire();
-		GEngine->AddOnScreenDebugMessage(1, 2.0f, FColor::Green, FString::Printf(TEXT("Toggle")));
-	}
-		
-}
-
-void ACEnemy::GunAttackStart()
-{
-	WeaponComponent->Begin_Fire();
-}
-
-void ACEnemy::GunAttackEnd()
-{
-	WeaponComponent->End_Fire();
-}
 
 void ACEnemy::SpawnRandomItemAfterDie()
 {
@@ -251,7 +224,6 @@ void ACEnemy::BeginPlay()
 void ACEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	bCanAttack = StateComponent->IsActionMode();
 
 	APlayerCameraManager* CameraManager = GetWorld()->GetFirstPlayerController()->PlayerCameraManager;
 	if (CameraManager)
@@ -267,6 +239,15 @@ void ACEnemy::Tick(float DeltaTime)
 float ACEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	float TempDamageAmount = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	UAISense_Damage::ReportDamageEvent(
+		GetWorld(),
+		this,
+		DamageCauser,
+		DamageAmount,
+		GetActorLocation(),
+		GetActorLocation()
+	);
 
 	UpdateOverheadHP();
 	return TempDamageAmount;
