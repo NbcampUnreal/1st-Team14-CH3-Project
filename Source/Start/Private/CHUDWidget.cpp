@@ -50,6 +50,36 @@ void UCHUDWidget::NativeConstruct()
 		ExitButton->SetVisibility(ESlateVisibility::Hidden); // 기본적으로 숨김
 	}
 
+	// ✅ 현재 맵 이름 가져오기
+	FString CurrentMapName = GetWorld()->GetMapName();
+	UE_LOG(LogTemp, Warning, TEXT("현재 맵: %s"), *CurrentMapName);
+
+	// ✅ 연구소 맵이면 점수 UI 숨기기
+	if (CurrentMapName.Contains(TEXT("MAIN_MAP"))) // 연구소 맵
+	{
+		if (Score)
+		{
+			Score->SetVisibility(ESlateVisibility::Hidden);
+		}
+		if (ScoreText)
+		{
+			ScoreText->SetVisibility(ESlateVisibility::Hidden);
+			UE_LOG(LogTemp, Warning, TEXT("✅ 연구소 맵 - 점수 UI 숨김"));
+		}
+	}
+	else // 도시 맵이면 점수 UI 보이기
+	{
+		if (Score)
+		{
+			Score->SetVisibility(ESlateVisibility::Visible);
+		}
+		if (ScoreText)
+		{
+			ScoreText->SetVisibility(ESlateVisibility::Visible);
+			UE_LOG(LogTemp, Warning, TEXT("✅ 도시 맵 - 점수 UI 표시"));
+		}
+	}
+
 	// 🔹 UI가 완전히 로드될 때까지 기다리도록 타이머 추가
 	GetWorld()->GetTimerManager().SetTimerForNextTick(this, &UCHUDWidget::InitializeHealthBar);
 }
@@ -354,6 +384,31 @@ void UCHUDWidget::UpdateScoreDisplay()
 	{
 		int CurrentScore = GameInstance->GetScore();
 		UpdateScore(CurrentScore); // ✅ UpdateScore()를 직접 호출하여 UI 반영
+	}
+
+	// ✅ 맵 변경 시 점수 UI 상태 업데이트
+	FString CurrentMapName = GetWorld()->GetMapName();
+	if (CurrentMapName.Contains(TEXT("MAIN_MAP")))
+	{
+		if (Score)
+		{
+			Score->SetVisibility(ESlateVisibility::Hidden);
+		}
+		if (ScoreText)
+		{
+			ScoreText->SetVisibility(ESlateVisibility::Hidden);
+		}
+	}
+	else
+	{
+		if (Score)
+		{
+			Score->SetVisibility(ESlateVisibility::Visible);
+		}
+		if (ScoreText)
+		{
+			ScoreText->SetVisibility(ESlateVisibility::Visible);
+		}
 	}
 }
 
