@@ -73,31 +73,62 @@ void ACGameState::OnLevelLoaded()
 
 void ACGameState::MovePlayerToSpawn(AActor* PlayerCharacter, FName SpawnTag, int32 RetryCount)
 {
-    if (!PlayerCharacter || RetryCount <= 0) return;
+    if (!PlayerCharacter || RetryCount <= 0)
+    {
+        UE_LOG(LogTemp, Error, TEXT("❌ MovePlayerToSpawn() -> PlayerCharacter가 NULL이거나, RetryCount가 0 이하입니다."));
+        return;
+    }
+
+    UWorld* World = GetGameInstance() ? GetGameInstance()->GetWorld() : nullptr;
+    if (!World)
+    {
+        UE_LOG(LogTemp, Error, TEXT("❌ MovePlayerToSpawn() -> GameInstance의 GetWorld()도 NULL입니다!"));
+        return;
+    }
+
+    if (SpawnTag.IsNone())
+    {
+        UE_LOG(LogTemp, Error, TEXT("❌ MovePlayerToSpawn() -> SpawnTag가 None입니다! 올바른 태그를 설정해주세요."));
+        return;
+    }
 
     UE_LOG(LogTemp, Warning, TEXT("🔍 MovePlayerToSpawn() -> 사용된 SpawnTag: %s"), *SpawnTag.ToString());
 
     TArray<AActor*> FoundSpawnPoints;
-    UGameplayStatics::GetAllActorsWithTag(GetWorld(), SpawnTag, FoundSpawnPoints);
+    UGameplayStatics::GetAllActorsWithTag(World, SpawnTag, FoundSpawnPoints);
 
-    if (FoundSpawnPoints.Num() > 0)
+    if (FoundSpawnPoints.Num() == 0)
     {
-        AActor* SpawnPoint = FoundSpawnPoints[0];
-        PlayerCharacter->SetActorLocation(SpawnPoint->GetActorLocation());
-        PlayerCharacter->SetActorRotation(SpawnPoint->GetActorRotation());
+        UE_LOG(LogTemp, Warning, TEXT("⏳ [%s] 태그를 가진 스폰 포인트를 찾을 수 없습니다! (남은 재시도: %d)"), *SpawnTag.ToString(), RetryCount - 1);
 
-        UE_LOG(LogTemp, Warning, TEXT("✅ [%s]에서 플레이어 스폰 완료!"), *SpawnTag.ToString());
+        if (RetryCount - 1 > 0)  // 재시도 가능하면 다시 호출
+        {
+            FTimerHandle RetryTimer;
+            GetWorldTimerManager().SetTimer(RetryTimer, [this, PlayerCharacter, SpawnTag, RetryCount]()
+                {
+                    MovePlayerToSpawn(PlayerCharacter, SpawnTag, RetryCount - 1);
+                }, 1.0f, false);
+        }
+        else
+        {
+            UE_LOG(LogTemp, Error, TEXT("❌ MovePlayerToSpawn() -> [%s] 태그를 가진 스폰 포인트를 찾지 못하고 종료합니다."), *SpawnTag.ToString());
+        }
+        return;
     }
-    else
+
+    AActor* SpawnPoint = FoundSpawnPoints[0];
+    if (!SpawnPoint)
     {
-        UE_LOG(LogTemp, Warning, TEXT("⏳ [%s] 태그를 찾지 못함. 다시 시도 중... (남은 횟수: %d)"), *SpawnTag.ToString(), RetryCount - 1);
-        FTimerHandle RetryTimer;
-        GetWorldTimerManager().SetTimer(RetryTimer, [this, PlayerCharacter, SpawnTag, RetryCount]()
-            {
-                MovePlayerToSpawn(PlayerCharacter, SpawnTag, RetryCount - 1);
-            }, 1.0f, false);
+        UE_LOG(LogTemp, Error, TEXT("❌ MovePlayerToSpawn() -> SpawnPoint가 NULL입니다!"));
+        return;
     }
+
+    PlayerCharacter->SetActorLocation(SpawnPoint->GetActorLocation());
+    PlayerCharacter->SetActorRotation(SpawnPoint->GetActorRotation());
+
+    UE_LOG(LogTemp, Warning, TEXT("✅ [%s]에서 플레이어 스폰 완료!"), *SpawnTag.ToString());
 }
+
 
 
 // ✅ 게임 오버 UI 표시 (플레이어 사망 시 호출)
