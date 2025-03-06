@@ -5,7 +5,8 @@
 #include "Animation/AnimInstance.h"
 #include "Components/CStatusComponent.h"
 #include "Components/SphereComponent.h"
-
+#include "Components/ProgressBar.h"
+#include "Components/WidgetComponent.h"
 #include "Weapon/CWeaponStructures.h"
 #include "CPlayer.h"
 
@@ -22,7 +23,7 @@ ACEnemyInfectedResearcher::ACEnemyInfectedResearcher() :
 
 void ACEnemyInfectedResearcher::EnemyAttackStart(bool bIsCloseAttack)
 {
-	//GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, FString::Printf(TEXT("%d"), bIsCloseRangeAttack));
+	Super::EnemyAttackStart(bIsCloseRangeAttack);
 	if (bIsCloseAttack)
 	{
 		bIsCloseRangeAttack = true;
@@ -68,6 +69,35 @@ void ACEnemyInfectedResearcher::BeginPlay()
 	Super::BeginPlay();
 	SwingAttackCollision->OnComponentBeginOverlap.AddDynamic(this, &ACEnemyInfectedResearcher::OnComponentBeginOverlap);
 	SwingAttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
+void ACEnemyInfectedResearcher::UpdateOverheadHP()
+{
+	Super::UpdateOverheadHP();
+
+	if (!bIsBoss)
+		return;
+
+	if (Phase == 1)
+	{
+		if (BossHPWidgetInstance)
+		{
+			if (UProgressBar* HPBar = Cast<UProgressBar>(BossHPWidgetInstance->GetWidgetFromName(TEXT("HPBar"))))
+			{
+				HPBar->SetFillColorAndOpacity(FColor(148, 0, 0));
+			}
+		}
+	}
+	else if(Phase == 2)
+	{
+		if (BossHPWidgetInstance)
+		{
+			if (UProgressBar* HPBar = Cast<UProgressBar>(BossHPWidgetInstance->GetWidgetFromName(TEXT("HPBar"))))
+			{
+				HPBar->SetFillColorAndOpacity(FColor(49, 0, 0));
+			}
+		}
+	}
 }
 
 void ACEnemyInfectedResearcher::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,

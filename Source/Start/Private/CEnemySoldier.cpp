@@ -17,6 +17,7 @@ void ACEnemySoldier::BeginPlay()
 
 void ACEnemySoldier::EnemyAttackStart(bool bIsCloseRangeAttack)
 {
+	Super::EnemyAttackStart(bIsCloseRangeAttack);
 	if (bIsEqueped)
 	{
 		GunAttackStart();
@@ -25,6 +26,7 @@ void ACEnemySoldier::EnemyAttackStart(bool bIsCloseRangeAttack)
 
 void ACEnemySoldier::EnemyAttackEnd()
 {
+	Super::EnemyAttackEnd();
 	if (bIsEqueped)
 	{
 		GunAttackEnd();

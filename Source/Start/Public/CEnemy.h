@@ -33,6 +33,9 @@ public:
 	void SetbCanAttack(bool CanAttack) { bCanAttack = CanAttack; }
 	UFUNCTION(BlueprintCallable)
 	bool GetbCanAttack() const { return bCanAttack; }
+
+	UFUNCTION(BlueprintCallable)
+	ACPlayer* GetHittingPlayer() const {return PlayerHitting;}
 	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
@@ -57,7 +60,7 @@ protected:
 	FText EnemyName;
 
 	UFUNCTION(BlueprintCallable)
-	void UpdateOverheadHP();
+	virtual void UpdateOverheadHP();
 
 
 	UFUNCTION(BlueprintCallable)
@@ -79,6 +82,8 @@ protected:
 	void SetActionMode();
 	UFUNCTION(BlueprintCallable)
 	bool IsEnemyActionMode();
+	UFUNCTION(BlueprintCallable)
+	bool IsEnemyHitted();
 
 	UFUNCTION(BlueprintCallable)
 	void SetStun(ACPlayer* Player);
@@ -89,6 +94,10 @@ protected:
 	void ToDoAfterDie();
 
 	FTimerHandle DieTimerHandle;
+
+	ACPlayer* PlayerHitting;
+
+
 
 	virtual void Die() override;
 	virtual void BeginPlay() override;

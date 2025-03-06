@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/UserWidget.h"
 #include "TimerManager.h"
+#include "CGameInstance.h"
 
 
 void UCHUDWidget::NativeConstruct()
@@ -49,6 +50,36 @@ void UCHUDWidget::NativeConstruct()
 		ExitButton->SetVisibility(ESlateVisibility::Hidden); // 기본적으로 숨김
 	}
 
+	// ✅ 현재 맵 이름 가져오기
+	FString CurrentMapName = GetWorld()->GetMapName();
+	UE_LOG(LogTemp, Warning, TEXT("현재 맵: %s"), *CurrentMapName);
+
+	// ✅ 연구소 맵이면 점수 UI 숨기기
+	if (CurrentMapName.Contains(TEXT("MAIN_MAP"))) // 연구소 맵
+	{
+		if (Score)
+		{
+			Score->SetVisibility(ESlateVisibility::Hidden);
+		}
+		if (ScoreText)
+		{
+			ScoreText->SetVisibility(ESlateVisibility::Hidden);
+			UE_LOG(LogTemp, Warning, TEXT("✅ 연구소 맵 - 점수 UI 숨김"));
+		}
+	}
+	else // 도시 맵이면 점수 UI 보이기
+	{
+		if (Score)
+		{
+			Score->SetVisibility(ESlateVisibility::Visible);
+		}
+		if (ScoreText)
+		{
+			ScoreText->SetVisibility(ESlateVisibility::Visible);
+			UE_LOG(LogTemp, Warning, TEXT("✅ 도시 맵 - 점수 UI 표시"));
+		}
+	}
+
 	// 🔹 UI가 완전히 로드될 때까지 기다리도록 타이머 추가
 	GetWorld()->GetTimerManager().SetTimerForNextTick(this, &UCHUDWidget::InitializeHealthBar);
 }
@@ -73,8 +104,9 @@ void UCHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
-	// 매 프레임 체력 업데이트
+	// 매 프레임 체력 & 점수 업데이트
 	UpdateHealthBar();
+	UpdateScoreDisplay(); 
 }
 void UCHUDWidget::UpdateHealthBar()
 {
@@ -124,13 +156,25 @@ void UCHUDWidget::BindToPlayer(ACPlayer* Player)
 {
 	if (Player)
 	{
-		// ✅ Player에 직접 접근하여 StatusComponent 가져오기
+		// ✅ Player의 StatusComponent 가져오기
 		StatusComponent = Player->GetStatusComponent();
 
 		if (StatusComponent)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("✅ UCHUDWidget: StatusComponent 바인딩 성공!"));
-			UpdateHealthBar(); // 초기 체력 UI 업데이트
+
+			// ✅ HUD가 생성될 때 즉시 GameInstance에서 체력과 점수를 불러오기
+			UCGameInstance* GameInstance = Cast<UCGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+			if (GameInstance)
+			{
+				StatusComponent->HealHealth(GameInstance->GetPlayerHealth() - StatusComponent->GetHealth());
+				UE_LOG(LogTemp, Warning, TEXT("✅ HUD 생성 시 체력 적용: %f"), GameInstance->GetPlayerHealth());
+				UpdateHealthBar(); // ✅ 초기 체력 UI 업데이트
+				// ✅ 점수 업데이트 추가
+				int32 LoadedScore = GameInstance->GetScore();
+				UpdateScore(LoadedScore);
+				UE_LOG(LogTemp, Warning, TEXT("✅ HUD 생성 시 점수 적용: %d"), LoadedScore);
+			}
 		}
 		else
 		{
@@ -164,18 +208,82 @@ void UCHUDWidget::ShowGameOverUI()
 	UE_LOG(LogTemp, Warning, TEXT("게임 오버 UI 버튼, 배경, 블러 활성화됨"));
 }
 
-// 게임 재시작 버튼 클릭 시
 void UCHUDWidget::OnReplayClicked()
 {
 	UE_LOG(LogTemp, Warning, TEXT("게임 재시작!"));
-	// ✅ 게임오버 배경 다시 숨기기
-	if (GameoverImage)
+
+	// ✅ 게임 인스턴스 가져오기
+	UCGameInstance* GameInstance = Cast<UCGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	if (GameInstance)
 	{
-		GameoverImage->SetVisibility(ESlateVisibility::Hidden);
+		GameInstance->ResetPlayerState(); // ✅ 게임오버 후 체력 & 점수 초기화
 	}
-	// 현재 맵 다시 로드
-	UGameplayStatics::OpenLevel(GetWorld(), FName(*GetWorld()->GetMapName()));
+
+	// ✅ 게임오버 UI 숨기기
+	if (GameoverImage) { GameoverImage->SetVisibility(ESlateVisibility::Hidden); }
+
+	// ✅ 현재 맵 이름 가져오기
+	FString CurrentMapName = GetWorld()->GetMapName();
+
+	// ✅ 맵에 따라 리스폰 로직 다르게 적용
+	if (CurrentMapName.Contains(TEXT("Map_Post-Apocalyptic_NightLight")))
+	{
+		// 🔹 도시 맵에서는 기본적으로 맵을 다시 로드
+		UGameplayStatics::OpenLevel(GetWorld(), TEXT("/Game/Map/PA_UrbanCity/Maps/Map_Post-Apocalyptic_NightLight"));
+	}
+	else if (CurrentMapName.Contains(TEXT("MAIN_MAP")))
+	{
+		// ✅ 연구소 맵도 맵을 다시 로드하되, 특정 위치(`BossAreaSpawn`)에서 리스폰
+		UGameplayStatics::OpenLevel(GetWorld(), TEXT("/Game/Map/LapMap/ModSci_Engineer/Maps/MAIN_MAP"));
+	}
+	else
+	{
+		// 기본적으로 현재 맵 유지
+		UGameplayStatics::OpenLevel(GetWorld(), FName(*CurrentMapName));
+	}
 }
+
+// ✅ 특정 태그를 가진 플레이어 스타터에서 리스폰
+void UCHUDWidget::RespawnPlayerAtTaggedSpawnPoint(FName SpawnTag)
+{
+	UWorld* World = GetWorld();
+	if (!World) return;
+
+	// 🔹 태그("BossAreaSpawn")가 있는 모든 액터 찾기
+	TArray<AActor*> SpawnPoints;
+	UGameplayStatics::GetAllActorsWithTag(World, SpawnTag, SpawnPoints);
+
+	if (SpawnPoints.Num() == 0)
+	{
+		UE_LOG(LogTemp, Error, TEXT("❌ 태그가 '%s'인 플레이어 스타터를 찾을 수 없음!"), *SpawnTag.ToString());
+		return;
+	}
+
+	// 🔹 첫 번째 태그가 있는 플레이어 스타터 사용
+	AActor* ChosenSpawnPoint = SpawnPoints[0];
+	if (!ChosenSpawnPoint) return;
+
+	// 🔹 플레이어 컨트롤러 가져오기
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(World, 0);
+	if (!PlayerController) return;
+
+	// 🔹 새로운 플레이어를 특정 위치에서 스폰
+	FVector SpawnLocation = ChosenSpawnPoint->GetActorLocation();
+	FRotator SpawnRotation = ChosenSpawnPoint->GetActorRotation();
+	ACPlayer* Player = World->SpawnActor<ACPlayer>(PlayerController->GetPawn()->GetClass(), SpawnLocation, SpawnRotation);
+
+	if (Player)
+	{
+		// 🔹 컨트롤러를 새 플레이어에 연결
+		PlayerController->Possess(Player);
+		UE_LOG(LogTemp, Warning, TEXT("✅ 특정 태그(%s)가 있는 플레이어 스타터에서 스폰 완료!"), *SpawnTag.ToString());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("❌ 플레이어 스폰 실패!"));
+	}
+}
+
 
 // 게임 종료 버튼 클릭 시
 void UCHUDWidget::OnExitClicked()
@@ -257,11 +365,50 @@ void UCHUDWidget::SetCrosshairVisibility(bool bVisible)
 }
 
 // 점수 업데이트
-void UCHUDWidget::UpdateScore(int32 iNewScore)
+void UCHUDWidget::UpdateScore(int32 NewScore)
 {
 	if (ScoreText)
 	{
-		ScoreText->SetText(FText::AsNumber(iNewScore));
+		ScoreText->SetText(FText::AsNumber(NewScore));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("❌ ScoreText가 NULL임 - UI 점수 업데이트 실패"));
+	}
+}
+
+void UCHUDWidget::UpdateScoreDisplay()
+{
+	UCGameInstance* GameInstance = Cast<UCGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	if (GameInstance)
+	{
+		int CurrentScore = GameInstance->GetScore();
+		UpdateScore(CurrentScore); // ✅ UpdateScore()를 직접 호출하여 UI 반영
+	}
+
+	// ✅ 맵 변경 시 점수 UI 상태 업데이트
+	FString CurrentMapName = GetWorld()->GetMapName();
+	if (CurrentMapName.Contains(TEXT("MAIN_MAP")))
+	{
+		if (Score)
+		{
+			Score->SetVisibility(ESlateVisibility::Hidden);
+		}
+		if (ScoreText)
+		{
+			ScoreText->SetVisibility(ESlateVisibility::Hidden);
+		}
+	}
+	else
+	{
+		if (Score)
+		{
+			Score->SetVisibility(ESlateVisibility::Visible);
+		}
+		if (ScoreText)
+		{
+			ScoreText->SetVisibility(ESlateVisibility::Visible);
+		}
 	}
 }
 

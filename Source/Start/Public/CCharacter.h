@@ -11,6 +11,7 @@ class UCStatusComponent;
 class UCMontagesComponent;
 class UCMovementComponent;
 class UCWeaponComponent;
+class UCSimbioComponent;
 
 UCLASS()
 class START_API ACCharacter : public ACharacter, public IICharacter
@@ -24,6 +25,8 @@ protected:
     virtual void BeginPlay() override;
 
 private:
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Stats", meta = (AllowPrivateAccess = "true"))
+    bool bIsHit;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Stats", meta = (AllowPrivateAccess = "true"))
     float Health;
 
@@ -49,7 +52,7 @@ public:
     void Heal(float HealAmount);
 
 protected:
-    UPROPERTY(VisibleAnywhere, Category = "Component")
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
     UCStateComponent* StateComponent;
     UPROPERTY(VisibleAnywhere, Category = "Component")
     UCMovementComponent* MovementComponent;
@@ -61,6 +64,8 @@ protected:
     UCStatusComponent* StatusComponent;
     UPROPERTY(VisibleAnywhere, Category = "Component")
     UCFeetComponent* FeetComponent;
+    UPROPERTY(VisibleAnywhere, Category = "Component")
+    UCSimbioComponent* FSimbioComponent;
     UFUNCTION(BlueprintCallable)
     virtual void Die();  // 🔹 사망 처리 함수
     void Hitted();

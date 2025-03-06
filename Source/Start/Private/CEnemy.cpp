@@ -14,6 +14,7 @@
 #include "CCharacter.h"
 #include "CPlayer.h"
 #include "CPlayerController.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "Components/CStateComponent.h"
 #include "Components/CMovementComponent.h"
 #include "Components/CStatusComponent.h"
@@ -57,6 +58,7 @@ void ACEnemy::UpdateOverheadHP()
 		{
 			BossName->SetText(EnemyName);
 		}
+
 	}
 
 	if (OverheadHPWidget)
@@ -116,12 +118,12 @@ void ACEnemy::HiddenEnemyHPBar()
 
 void ACEnemy::EnemyAttackStart(bool bIsCloseRangeAttack)
 {
-
+	StateComponent->SetActionMode();
 }
 
 void ACEnemy::EnemyAttackEnd()
 {
-
+	StateComponent->SetIdleMode();
 }
 
 void ACEnemy::SetIdleMode()
@@ -142,6 +144,11 @@ void ACEnemy::SetActionMode()
 bool ACEnemy::IsEnemyActionMode()
 {
 	return StateComponent->IsActionMode();
+}
+
+bool ACEnemy::IsEnemyHitted()
+{
+	return StateComponent->IsHittedMode();
 }
 
 void ACEnemy::SetRun()
@@ -197,11 +204,20 @@ void ACEnemy::Die()
 	bCanAttack = false;
 	bIsDied = true;
 
+	HiddenEnemyHPBar();
+	//if (WeaponComponent->GetWeaponClasses().Num() > 0)
+	//{
+	//	for (ACWeapon* Weapon : WeaponComponent->GetWeaponClasses())
+	//	{
+
+	//	}
+	//}
+
 	ACEnemyAIController* AIController = Cast<ACEnemyAIController>(GetController());
 	if (AIController&& AIController->BrainComponent)
 	{
 		AIController->BrainComponent->StopLogic(TEXT("Character Died"));
-		//AIController->StopMovement();
+		AIController->StopMovement();
 	}
 	if (UGameInstance* GameInstance = GetGameInstance())
 	{
@@ -219,7 +235,7 @@ void ACEnemy::Die()
 void ACEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-
+	PlayerHitting = Cast<ACPlayer>(GetWorld()->GetFirstPlayerController()->GetPawn());
 }
 
 void ACEnemy::Tick(float DeltaTime)
@@ -242,6 +258,18 @@ float ACEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, A
 	float TempDamageAmount = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	UpdateOverheadHP();
+	if (DamageCauser)
+	{
+		ACEnemyAIController* AIController = Cast< ACEnemyAIController>(GetController());
+		if (AIController)
+		{
+			VisibleEnemyHPBar();
+			AIController->SetFocus(PlayerHitting);
+			bool bPlayerDetected = AIController->GetBlackboardComponent()->GetValueAsBool("PlayerDetected");
+			if(!bPlayerDetected)
+				AIController->MoveToActor(PlayerHitting, 100.0f, true, true, false, 0, true);
+		}
+	}
 	return TempDamageAmount;
 }
 

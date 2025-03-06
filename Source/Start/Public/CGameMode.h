@@ -15,4 +15,9 @@ class START_API ACGameMode : public AGameMode
 	GENERATED_BODY()
 public:
 	ACGameMode();
+
+	virtual void BeginPlay() override;
+
+	void ChangeLevel(FName LevelName);
+    void RestartGame();  // 게임오버 후 재시작 함수
 };

@@ -40,6 +40,9 @@ private:
 
 	void BeginAim();
 	void EndAim();
+
+	float LastSavedHealth;
+	int LastSavedScore;
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category = "Camera")
 	UCameraComponent* Camera;

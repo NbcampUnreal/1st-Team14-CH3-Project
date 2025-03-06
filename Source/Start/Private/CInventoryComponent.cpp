@@ -28,6 +28,8 @@ UCInventoryComponent::UCInventoryComponent()
     {
         UE_LOG(LogTemp, Error, TEXT("❌ C++에서 ItemDataTable을 찾을 수 없습니다. 경로를 확인하세요."));
     }
+    // ✅ 초기 총알 개수 설정 (70발)
+    InventoryItems.Add(EItemType::EIT_Bullet, 70);
 }
 
 void UCInventoryComponent::BeginPlay()
@@ -68,7 +70,7 @@ void UCInventoryComponent::BeginPlay()
         DropItemClasses.Add(EItemType::EIT_Grenades, ACGrenadesItem::StaticClass());
         UE_LOG(LogTemp, Warning, TEXT("✅ GrenadesItem 아이템이 DropItemClasses에 정상 등록됨."));
     }
-    if (ACWeapon_Pistol::StaticClass())
+  /*  if (ACWeapon_Pistol::StaticClass())
     {
         DropItemClasses.Add(EItemType::EIT_Pistol, ACWeapon_Pistol::StaticClass());
         UE_LOG(LogTemp, Warning, TEXT("✅ Pistol 아이템이 DropItemClasses에 정상 등록됨."));
@@ -77,7 +79,7 @@ void UCInventoryComponent::BeginPlay()
     {
         DropItemClasses.Add(EItemType::EIT_Rifle, ACWeapon_Rifle::StaticClass());
         UE_LOG(LogTemp, Warning, TEXT("✅ Pistol 아이템이 DropItemClasses에 정상 등록됨."));
-    }
+    }*/
   /*  if (ACWeapon_Shotgun::StaticClass())
     {
         DropItemClasses.Add(EItemType::EIT_Shotgun, ACWeapon_Shotgun::StaticClass());
@@ -146,22 +148,10 @@ bool UCInventoryComponent::AddToInventory(EItemType ItemType)
         {EItemType::EIT_HealthPotion, 10},
         {EItemType::EIT_StaminaPotion, 10},
         {EItemType::EIT_Grenades, 5},
-        {EItemType::EIT_BulletBox, 5},
-        {EItemType::EIT_Pistol, 1}  // ✅ 무기는 중복되지 않도록 함
+        {EItemType::EIT_BulletBox, 5}
     };
 
     int32 MaxStackSize = MaxStackLimits.Contains(ItemType) ? MaxStackLimits[ItemType] : 999; // 기본값 999
-
-    // ✅ 총기류는 1개만 보유 가능하도록 제한
-    if (ItemType == EItemType::EIT_Pistol)
-    {
-        if (InventoryItems.Contains(ItemType))
-        {
-            UE_LOG(LogTemp, Warning, TEXT("⚠️ 이미 보유한 무기입니다! (아이템 타입: %d)"), static_cast<int32>(ItemType));
-            GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT("⚠️ 이미 보유한 무기입니다!"));
-            return false;
-        }
-    }
 
     // ✅ 기존 아이템 개수 증가 (최대 개수 제한 확인)
     if (InventoryItems.Contains(ItemType))
@@ -343,13 +333,6 @@ bool UCInventoryComponent::UseItem(EItemType ItemType, ACPlayer* Player)
         return false;
     }
 
-    // 🔹 무기인지 확인 (무기면 장착, 아이템이면 기존 방식 사용)
-    if (ItemType == EItemType::EIT_Pistol)
-    {
-        EquipWeapon(ItemType, Player);  // 🔹 무기 장착 함수 호출
-        return true;  // ✅ 무기는 사용해도 개수 감소 X
-    }
-
     // 🔹 일반 아이템 사용 로직
     ACBaseItem* ItemInstance = GetItemInstance(ItemType);
     if (!ItemInstance)
@@ -370,7 +353,7 @@ bool UCInventoryComponent::UseItem(EItemType ItemType, ACPlayer* Player)
         return false;
     }
 
-    // 🔹 사용 후 개수 감소 (무기는 여기서 제외)
+    // 🔹 사용 후 개수 감소 
     if (InventoryItems.Contains(ItemType) && InventoryItems[ItemType] > 0)
     {
         RemoveItem(ItemType);
@@ -391,15 +374,15 @@ void UCInventoryComponent::AddBulletsToInventory(int32 BulletCount)
 {
 	if (BulletCount <= 0) return;
 
-	// 🔹 인벤토리에 총알 개수 추가
-	if (InventoryItems.Contains(EItemType::EIT_Bullet))
-	{
-		InventoryItems[EItemType::EIT_Bullet] += BulletCount;
-	}
-	else
-	{
-		InventoryItems.Add(EItemType::EIT_Bullet, BulletCount);
-	}
+    // 🔹 기존 총알 개수에 추가 (최대 300발 제한)
+    if (InventoryItems.Contains(EItemType::EIT_Bullet))
+    {
+        InventoryItems[EItemType::EIT_Bullet] = FMath::Min(InventoryItems[EItemType::EIT_Bullet] + BulletCount, 300);
+    }
+    else
+    {
+        InventoryItems.Add(EItemType::EIT_Bullet, FMath::Min(BulletCount, 300));
+    }
 
 	UE_LOG(LogTemp, Warning, TEXT("📦 %d개의 총알이 인벤토리에 추가되었습니다! (현재 총알: %d)"), 
         BulletCount, InventoryItems[EItemType::EIT_Bullet]);
@@ -435,30 +418,45 @@ int32 UCInventoryComponent::GetBulletCount() const
     return 0; // 🔹 인벤토리에 총알이 없으면 0 반환
 }
 
-void UCInventoryComponent::EquipWeapon(EItemType WeaponType, ACPlayer* Player)
+int32 UCInventoryComponent::UseBulletCount(int32 Amount)
 {
-    if (!Player)
+    if (InventoryItems.Contains(EItemType::EIT_Bullet))
     {
-        UE_LOG(LogTemp, Error, TEXT("❌ EquipWeapon 실패 - Player 또는 WeaponComponent가 없음"));
-        return;
+        InventoryItems[EItemType::EIT_Bullet] += (Amount * -1);
+        if (InventoryItems[EItemType::EIT_Bullet] <= 0)
+        {
+            InventoryItems[EItemType::EIT_Bullet] = 0;
+            return 0;
+        }
+        return InventoryItems[EItemType::EIT_Bullet]; // 🔹 현재 총알 개수 반환
     }
-
-    UCWeaponComponent* WeaponComp = Cast<UCWeaponComponent>(Player->GetComponentByClass(UCWeaponComponent::StaticClass()));
-
-    // 🔹 EItemType을 WeaponClasses 배열의 인덱스로 변환
-    int32 WeaponIndex = WeaponComp->GetWeaponIndexFromItemType(WeaponType);
-
-    // 🔹 배열 범위 초과 방지
-    if (WeaponIndex < 0 || !WeaponComp->WeaponClasses.IsValidIndex(WeaponIndex))
-    {
-        UE_LOG(LogTemp, Error, TEXT("❌ EquipWeapon 실패 - 유효하지 않은 무기 인덱스! (%d)"), WeaponIndex);
-        return;
-    }
-
-    // ✅ 변환된 인덱스를 이용해 무기 장착
-    //WeaponComp->SetMode((EWeaponType)WeaponIndex);
-
-    UE_LOG(LogTemp, Warning, TEXT("✅ 무기 장착 완료: %d (WeaponIndex: %d)"), static_cast<int32>(WeaponType), WeaponIndex);
+    return 0;
 }
+
+//void UCInventoryComponent::EquipWeapon(EItemType WeaponType, ACPlayer* Player)
+//{
+//    if (!Player)
+//    {
+//        UE_LOG(LogTemp, Error, TEXT("❌ EquipWeapon 실패 - Player 또는 WeaponComponent가 없음"));
+//        return;
+//    }
+//
+//    UCWeaponComponent* WeaponComp = Cast<UCWeaponComponent>(Player->GetComponentByClass(UCWeaponComponent::StaticClass()));
+//
+//    // 🔹 EItemType을 WeaponClasses 배열의 인덱스로 변환
+//    int32 WeaponIndex = WeaponComp->GetWeaponIndexFromItemType(WeaponType);
+//
+//    // 🔹 배열 범위 초과 방지
+//    if (WeaponIndex < 0 || !WeaponComp->WeaponClasses.IsValidIndex(WeaponIndex))
+//    {
+//        UE_LOG(LogTemp, Error, TEXT("❌ EquipWeapon 실패 - 유효하지 않은 무기 인덱스! (%d)"), WeaponIndex);
+//        return;
+//    }
+//
+//    // ✅ 변환된 인덱스를 이용해 무기 장착
+//    //WeaponComp->SetMode((EWeaponType)WeaponIndex);
+//
+//    UE_LOG(LogTemp, Warning, TEXT("✅ 무기 장착 완료: %d (WeaponIndex: %d)"), static_cast<int32>(WeaponType), WeaponIndex);
+//}
 
 

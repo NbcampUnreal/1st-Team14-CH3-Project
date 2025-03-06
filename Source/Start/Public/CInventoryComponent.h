@@ -22,7 +22,7 @@ public:
     UCWeaponComponent* WeaponComponent;  // 무기 관리 컴포넌트
 
     // 🔹 무기 장착
-    void EquipWeapon(EItemType WeaponType, ACPlayer* Player);
+    //void EquipWeapon(EItemType WeaponType, ACPlayer* Player);
 
     UCInventoryComponent();
     void BeginPlay();
@@ -64,7 +64,7 @@ public:
 
     UFUNCTION(BlueprintCallable, Category = "Inventory")
     int32 GetBulletCount() const;
-
+    int32 UseBulletCount(int32 Amount);
 protected:
     // 인벤토리 슬롯 개수 제한
     UPROPERTY(EditDefaultsOnly, Category = "Inventory")

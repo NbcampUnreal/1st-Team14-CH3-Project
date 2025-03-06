@@ -5,6 +5,7 @@
 
 UCWeaponComponent::UCWeaponComponent()
 {
+	PrimaryComponentTick.bCanEverTick = true;
 }
 
 void UCWeaponComponent::BeginPlay()
@@ -34,6 +35,8 @@ void UCWeaponComponent::TickComponent(float DeltaTime, enum ELevelTick TickType,
 	FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	if(IsRifleMode() == true || IsPistolMode() == true)
+		OnAmmoChanged.Broadcast(GetCurrentWeapon()->GetCurrentMagazineCount(),GetCurrentWeapon()->GetMaxMagazineCount() );
 }
 
 ACWeapon* UCWeaponComponent::GetCurrentWeapon()
@@ -135,9 +138,9 @@ void UCWeaponComponent::SetMode(EWeaponType InType)
 	ChangeType(InType);
 
 	// 무기 장착 시 바로 탄약 정보를 HUD에 전달
-	int32 CurrentAmmo = Weapons[(int32)InType]->GetCurrentMagazineCount();
-	int32 MaxAmmo = Weapons[(int32)InType]->GetMaxMagazineCount();
-	OnAmmoChanged.Broadcast(CurrentAmmo, MaxAmmo); // 즉시 업데이트
+	//int32 CurrentAmmo = Weapons[(int32)InType]->GetCurrentMagazineCount();
+	//int32 MaxAmmo = Weapons[(int32)InType]->GetMaxMagazineCount();
+	//OnAmmoChanged.Broadcast(CurrentAmmo, MaxAmmo); // 즉시 업데이트
 
 	// 무기 장착 시 무기 이름을 HUD에 전달
 	if (ACWeapon* CurrentWeapon = GetCurrentWeapon())
@@ -265,6 +268,14 @@ FVector UCWeaponComponent::GetLeftHandAimLocation()
 	return GetCurrentWeapon()->GetLeftHandAimLocation();
 }
 
+FTransform UCWeaponComponent::GetLeftArmsLeftHandTransform()
+{
+	if (GetCurrentWeapon() == nullptr)
+		return FTransform();
+
+	return GetCurrentWeapon()->GetLeftArmsLeftHandTransform();
+}
+
 void UCWeaponComponent::ToggleAutoFire()
 {
 	if(GetCurrentWeapon() == nullptr)
@@ -286,9 +297,9 @@ void UCWeaponComponent::PollAmmoUpdate()
 	if (GetCurrentWeapon() == nullptr)
 		return;
 	// 연발 사격 중 매 발마다 탄약 정보를 HUD에 전달
-	int32 CurrentAmmo = GetCurrentWeapon()->GetCurrentMagazineCount();
+	/*int32 CurrentAmmo = GetCurrentWeapon()->GetCurrentMagazineCount();
 	int32 MaxAmmo = GetCurrentWeapon()->GetMaxMagazineCount();
-	OnAmmoChanged.Broadcast(CurrentAmmo, MaxAmmo);
+	OnAmmoChanged.Broadcast(CurrentAmmo, MaxAmmo);*/
 }
 
 void UCWeaponComponent::Eject_Magazine()
@@ -322,9 +333,9 @@ void UCWeaponComponent::End_Magazine()
 
 	GetCurrentWeapon()->End_Magazine();
 	// 재장전 후 최신 탄약 정보 전달 (HUD 업데이트용)
-	int32 CurrentAmmo = GetCurrentWeapon()->GetCurrentMagazineCount();
+	/*int32 CurrentAmmo = GetCurrentWeapon()->GetCurrentMagazineCount();
 	int32 MaxAmmo = GetCurrentWeapon()->GetMaxMagazineCount();
-	OnAmmoChanged.Broadcast(CurrentAmmo, MaxAmmo);
+	OnAmmoChanged.Broadcast(CurrentAmmo, MaxAmmo);*/
 }
 
 void UCWeaponComponent::On_Begin_Aim(ACWeapon* InThisWeapon)
