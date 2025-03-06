@@ -42,6 +42,7 @@ private:
 	void EndAim();
 
 	float LastSavedHealth;
+	float LastSavedStamina;
 	int LastSavedScore;
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category = "Camera")

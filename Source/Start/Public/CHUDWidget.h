@@ -24,11 +24,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ShowGameOverUI();
 
-	void RespawnPlayerAtTaggedSpawnPoint(FName SpawnTag);
     // 버튼 클릭 이벤트
 	UFUNCTION(BlueprintCallable)
 	void OnReplayClicked();
-
+	void RespawnPlayerAtTaggedSpawnPoint(FName SpawnTag);
 	UFUNCTION(BlueprintCallable)
 	void OnExitClicked();
 
@@ -83,6 +82,7 @@ protected:
 	UPROPERTY()
 	UCStatusComponent* StatusComponent; // 체력 관리 컴포넌트 참조
 	void UpdateHealthBar();
+	void UpdateStaminaBar();
 	// UI 요소 바인딩
 	UPROPERTY(meta = (BindWidget))
 	class UButton* ReplayButton;

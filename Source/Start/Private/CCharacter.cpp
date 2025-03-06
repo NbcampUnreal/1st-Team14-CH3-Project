@@ -7,6 +7,7 @@
 #include "Components/CStatusComponent.h"
 #include "Components/CWeaponComponent.h"
 #include "Components/CStateComponent.h"
+#include "CSimbioComponent.h"
 #include "GameFramework/Actor.h"
 #include "Weapon/CWeaponStructures.h"
 #include "CPlayer.h"
@@ -21,10 +22,12 @@ ACCharacter::ACCharacter()
     MontagesComponent = CreateDefaultSubobject<UCMontagesComponent>(TEXT("MontagesComponent"));
     StatusComponent = CreateDefaultSubobject<UCStatusComponent>(TEXT("StatusComponent"));
     FeetComponent = CreateDefaultSubobject<UCFeetComponent>(TEXT("FeetComponent"));
+    SimbioComponent = CreateDefaultSubobject<UCSimbioComponent>(TEXT("SimbioComponent"));
     // 🔹 기본 체력 값 설정
     MaxHealth = 100.0f;
     Health = MaxHealth;
     bIsDead = false;
+
 }
 
 void ACCharacter::BeginPlay()
@@ -32,7 +35,7 @@ void ACCharacter::BeginPlay()
     Super::BeginPlay();
 
 	//LoadHealthFromGameInstance();
-
+    
     if (StateComponent)
     {
         // 🔹 델리게이트를 현재 캐릭터의 `HandleStateChanged()`에 연결

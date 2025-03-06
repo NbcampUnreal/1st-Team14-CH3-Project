@@ -11,6 +11,7 @@ class UCStatusComponent;
 class UCMontagesComponent;
 class UCMovementComponent;
 class UCWeaponComponent;
+class UCSimbioComponent;
 
 UCLASS()
 class START_API ACCharacter : public ACharacter, public IICharacter
@@ -63,6 +64,8 @@ protected:
     UCStatusComponent* StatusComponent;
     UPROPERTY(VisibleAnywhere, Category = "Component")
     UCFeetComponent* FeetComponent;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+    UCSimbioComponent* SimbioComponent;
     UFUNCTION(BlueprintCallable)
     virtual void Die();  // 🔹 사망 처리 함수
     void Hitted();

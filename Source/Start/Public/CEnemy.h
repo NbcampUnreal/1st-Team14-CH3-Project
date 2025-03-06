@@ -60,7 +60,7 @@ protected:
 	FText EnemyName;
 
 	UFUNCTION(BlueprintCallable)
-	void UpdateOverheadHP();
+	virtual void UpdateOverheadHP();
 
 
 	UFUNCTION(BlueprintCallable)

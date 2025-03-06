@@ -18,20 +18,39 @@ protected:
 private:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Stats", meta = (AllowPrivateAccess = "true"))
     float PlayerHealth;
+   
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Stats", meta = (AllowPrivateAccess = "true"))
+    float PlayerMaxHealth;  // ✅ 최대 체력 저장 추가
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Stats", meta = (AllowPrivateAccess = "true"))
+    float PlayerStamina;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Stats", meta = (AllowPrivateAccess = "true"))
+    float PlayerMaxStamina;  // ✅ 최대 체력 저장 추가
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Stats", meta = (AllowPrivateAccess = "true"))
     int Score;
 
+    FName RespawnTag = NAME_None; // 🔹 리스폰 태그 저장 변수
 public:
+    void SetRespawnTag(FName NewTag) { RespawnTag = NewTag; }
+    FName GetRespawnTag() const { return RespawnTag; }
+
     UFUNCTION(BlueprintCallable, Category = "Player Stats")
     void ResetPlayerState(); // 게임오버 시 상태 초기화
 
     UFUNCTION(BlueprintCallable, Category = "Player Stats")
     float GetPlayerHealth() const;
+    
+    UFUNCTION(BlueprintCallable, Category = "Player Stats")
+    float GetPlayerStamina() const;
 
     UFUNCTION(BlueprintCallable, Category = "Player Stats")
-    void SetPlayerHealth(float NewHealth);
-   
+    float GetPlayerMaxHealth() const { return PlayerMaxHealth; }
+
+    UFUNCTION(BlueprintCallable, Category = "Player Stats")
+    float GetPlayerMaxStamina() const { return PlayerMaxStamina; }
+
     UFUNCTION(BlueprintCallable, Category = "Player Stats")
     void ResetPlayerHealth();  // 체력 초기화 함수
 

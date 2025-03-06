@@ -13,6 +13,7 @@
 #include "CGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/CCameraComponent.h"
+#include "CSimbioComponent.h"
 
 ACPlayer::ACPlayer()
 {
@@ -50,6 +51,7 @@ void ACPlayer::BeginPlay()
 	if (GameInstance)
 	{
 		LastSavedHealth = GetStatusComponent()->GetHealth();
+		LastSavedStamina = GetStatusComponent()->GetStamina();
 		LastSavedScore = GameInstance->GetScore();
 	}
 
@@ -164,6 +166,7 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 			EnhancedInput->BindAction(PC->JumpAction, ETriggerEvent::Started, this, &ACPlayer::JumpIfNotInInventory);
 			// 🔹 시점 전환 액션 바인딩
 			EnhancedInput->BindAction(PC->SwitchViewAction, ETriggerEvent::Started, this, &ACPlayer::ToggleView);
+			EnhancedInput->BindAction(PC->SimbioAttackAction, ETriggerEvent::Triggered, SimbioComponent, &UCSimbioComponent::SimbioAttack);
 		}
 	}
 }
