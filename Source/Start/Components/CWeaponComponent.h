@@ -75,6 +75,7 @@ public:
 	bool GetInAim();
 	FVector GetLeftHandLocation();
 	FVector GetLeftHandAimLocation();
+	FTransform GetLeftArmsLeftHandTransform();
 
 	void ToggleAutoFire();
 	void Reload();
