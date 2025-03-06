@@ -24,6 +24,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ShowGameOverUI();
 
+	void RespawnPlayerAtTaggedSpawnPoint(FName SpawnTag);
     // 버튼 클릭 이벤트
 	UFUNCTION(BlueprintCallable)
 	void OnReplayClicked();

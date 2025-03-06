@@ -164,18 +164,79 @@ void UCHUDWidget::ShowGameOverUI()
 	UE_LOG(LogTemp, Warning, TEXT("게임 오버 UI 버튼, 배경, 블러 활성화됨"));
 }
 
-// 게임 재시작 버튼 클릭 시
 void UCHUDWidget::OnReplayClicked()
 {
 	UE_LOG(LogTemp, Warning, TEXT("게임 재시작!"));
-	// ✅ 게임오버 배경 다시 숨기기
-	if (GameoverImage)
+
+	// ✅ 게임오버 UI 숨기기
+	if (GameoverImage) { GameoverImage->SetVisibility(ESlateVisibility::Hidden); }
+
+	// ✅ 현재 맵 이름 가져오기
+	FString CurrentMapName = GetWorld()->GetMapName();
+
+	// ✅ 맵에 따라 리스폰 로직 다르게 적용
+	if (CurrentMapName.Contains(TEXT("Map_Post-Apocalyptic_NightLight")))
 	{
-		GameoverImage->SetVisibility(ESlateVisibility::Hidden);
+		// 🔹 도시 맵에서는 기본적으로 맵을 다시 로드
+		UGameplayStatics::OpenLevel(GetWorld(), TEXT("/Game/Map/PA_UrbanCity/Maps/Map_Post-Apocalyptic_NightLight"));
 	}
-	// 현재 맵 다시 로드
-	UGameplayStatics::OpenLevel(GetWorld(), FName(*GetWorld()->GetMapName()));
+	else if (CurrentMapName.Contains(TEXT("MAIN_MAP")))
+	{
+		// 🔹 연구소 맵에서는 특정 태그("BossAreaSpawn")를 가진 플레이어 스타터에서 리스폰
+		RespawnPlayerAtTaggedSpawnPoint(TEXT("BossAreaSpawn"));
+	}
+	else
+	{
+		// 기본적으로 현재 맵 유지
+		UGameplayStatics::OpenLevel(GetWorld(), FName(*CurrentMapName));
+	}
 }
+
+// ✅ 특정 태그를 가진 플레이어 스타터에서 리스폰
+void UCHUDWidget::RespawnPlayerAtTaggedSpawnPoint(FName SpawnTag)
+{
+	UWorld* World = GetWorld();
+	if (!World) return;
+
+	// 🔹 태그("BossAreaSpawn")가 있는 모든 액터 찾기
+	TArray<AActor*> SpawnPoints;
+	UGameplayStatics::GetAllActorsWithTag(World, SpawnTag, SpawnPoints);
+
+	if (SpawnPoints.Num() == 0)
+	{
+		UE_LOG(LogTemp, Error, TEXT("❌ 태그가 '%s'인 플레이어 스타터를 찾을 수 없음!"), *SpawnTag.ToString());
+		return;
+	}
+
+	// 🔹 첫 번째 태그가 있는 플레이어 스타터 사용
+	AActor* ChosenSpawnPoint = SpawnPoints[0];
+	if (!ChosenSpawnPoint) return;
+
+	// 🔹 플레이어 컨트롤러 가져오기
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(World, 0);
+	if (!PlayerController) return;
+
+	// 🔹 기존 플레이어 삭제 후 새로운 위치에서 스폰
+	APawn* OldPlayer = PlayerController->GetPawn();
+	if (OldPlayer) { OldPlayer->Destroy(); }
+
+	// 🔹 새로운 플레이어를 특정 위치에서 스폰
+	FVector SpawnLocation = ChosenSpawnPoint->GetActorLocation();
+	FRotator SpawnRotation = ChosenSpawnPoint->GetActorRotation();
+	APawn* NewPlayer = World->SpawnActor<APawn>(PlayerController->GetPawn()->GetClass(), SpawnLocation, SpawnRotation);
+
+	if (NewPlayer)
+	{
+		// 🔹 컨트롤러를 새 플레이어에 연결
+		PlayerController->Possess(NewPlayer);
+		UE_LOG(LogTemp, Warning, TEXT("✅ 특정 태그(%s)가 있는 플레이어 스타터에서 스폰 완료!"), *SpawnTag.ToString());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("❌ 플레이어 스폰 실패!"));
+	}
+}
+
 
 // 게임 종료 버튼 클릭 시
 void UCHUDWidget::OnExitClicked()
