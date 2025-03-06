@@ -16,7 +16,7 @@ void UCHUDWidget::NativeConstruct()
 	// 초기 상태 설정
 	if (HealthBar)	{HealthBar->SetPercent(1.0f);}
 	if (StaminaBar) {StaminaBar->SetPercent(1.0f);}
-	if (AmmoText) {AmmoText->SetText(FText::FromString("0 / 0")); }
+	if (AmmoText) {AmmoText->SetText(FText::FromString("0 / ∞")); }
 	if (WeaponNameText)	{WeaponNameText->SetText(FText::FromString(""));}
 	if (ScoreText) {ScoreText->SetText(FText::AsNumber(0));}
 
@@ -362,7 +362,7 @@ void UCHUDWidget::UpdateAmmo(int32 iCurrentAmmo, int32 iMaxAmmo)
 {
 	if (AmmoText)
 	{
-		FString AmmoString = FString::Printf(TEXT("%d / %d"), iCurrentAmmo, iMaxAmmo);
+		FString AmmoString = FString::Printf(TEXT("%d / ∞"), iCurrentAmmo, iMaxAmmo);
 		AmmoText->SetText(FText::FromString(AmmoString));
 	}
 	// 만약 탄약이 0이면 AmmoIcon도 숨길 수 있도록
