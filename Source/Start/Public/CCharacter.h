@@ -62,8 +62,7 @@ protected:
     UCMontagesComponent* MontagesComponent;
     UPROPERTY(VisibleAnywhere, Category = "Component")
     UCStatusComponent* StatusComponent;
-    UPROPERTY(VisibleAnywhere, Category = "Component")
-    UCFeetComponent* FeetComponent;
+
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
     UCSimbioComponent* SimbioComponent;
     UFUNCTION(BlueprintCallable)

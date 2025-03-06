@@ -7,7 +7,7 @@
 #include "GameFramework/Character.h"
 #include "CWeaponStructures.generated.h"
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FDoActionData
 {
 	GENERATED_BODY()
@@ -20,7 +20,7 @@ public:
 	void DoAction(class ACharacter* Owners);
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FHitData
 {
 	GENERATED_BODY()
@@ -40,7 +40,7 @@ public:
 	void PlaySound(ACharacter* InOwner);
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FActionDamageEvent : public FDamageEvent
 {
 	GENERATED_BODY()

@@ -1,7 +1,6 @@
 ﻿#include "CCharacter.h"
 #include "CGameInstance.h"
 #include "Components/CCameraComponent.h"
-#include "Components/CFeetComponent.h"
 #include "Components/CMontagesComponent.h"
 #include "Components/CMovementComponent.h"
 #include "Components/CStatusComponent.h"
@@ -21,7 +20,6 @@ ACCharacter::ACCharacter()
     WeaponComponent = CreateDefaultSubobject<UCWeaponComponent>(TEXT("WeaponComponent"));
     MontagesComponent = CreateDefaultSubobject<UCMontagesComponent>(TEXT("MontagesComponent"));
     StatusComponent = CreateDefaultSubobject<UCStatusComponent>(TEXT("StatusComponent"));
-    FeetComponent = CreateDefaultSubobject<UCFeetComponent>(TEXT("FeetComponent"));
     SimbioComponent = CreateDefaultSubobject<UCSimbioComponent>(TEXT("SimbioComponent"));
     // 🔹 기본 체력 값 설정
     MaxHealth = 100.0f;
@@ -79,8 +77,8 @@ void ACCharacter::Hitted()
     StatusComponent->Damage(HittedInfo.Power);
     if(StatusComponent->GetHealth() <= 0.0f)
 	    StateComponent->SetDeadMode();
-    else if(StatusComponent->GetHealth() > 0.0f && bIsHit == false)
-        HittedInfo.Event->HitData->PlayMontage(this);
+    else if(StatusComponent->GetHealth() > 0.0f && HittedInfo.Event != nullptr && bIsHit == false)
+		HittedInfo.Event->HitData->PlayMontage(this);
     if (bIsHit == true)
          End_Hit();
 }
@@ -167,9 +165,9 @@ float ACCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
     float damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
     if (StateComponent->IsDeadMode() == true)
         return 0;
-
-
-	HittedInfo.Event = (FActionDamageEvent*)&DamageEvent;
+    UE_LOG(LogTemp, Error, L"%s", *DamageCauser->GetName());
+    if(DamageCauser->GetName() != "BP_Goo_C_0")
+		HittedInfo.Event = (FActionDamageEvent*)&DamageEvent;
     HittedInfo.Power = damage;
     HittedInfo.Character = Cast<ACharacter>(EventInstigator->GetPawn());
     HittedInfo.Causer = DamageCauser;
