@@ -49,7 +49,7 @@ public:
     void Heal(float HealAmount);
 
 protected:
-    UPROPERTY(VisibleAnywhere, Category = "Component")
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
     UCStateComponent* StateComponent;
     UPROPERTY(VisibleAnywhere, Category = "Component")
     UCMovementComponent* MovementComponent;
