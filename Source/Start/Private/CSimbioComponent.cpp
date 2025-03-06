@@ -53,6 +53,8 @@ void UCSimbioComponent::DeActivateSimbio()
 
 void UCSimbioComponent::SimbioAttack()
 {
+	if (!Simbio)
+		return;
 	if (SimbioAttackDelegate.IsBound() == true)
 		SimbioAttackDelegate.Broadcast();
 }
