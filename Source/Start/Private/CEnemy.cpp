@@ -58,6 +58,7 @@ void ACEnemy::UpdateOverheadHP()
 		{
 			BossName->SetText(EnemyName);
 		}
+
 	}
 
 	if (OverheadHPWidget)
@@ -204,6 +205,7 @@ void ACEnemy::Die()
 	bCanAttack = false;
 	bIsDied = true;
 
+	HiddenEnemyHPBar();
 	//if (WeaponComponent->GetWeaponClasses().Num() > 0)
 	//{
 	//	for (ACWeapon* Weapon : WeaponComponent->GetWeaponClasses())
@@ -216,7 +218,7 @@ void ACEnemy::Die()
 	if (AIController&& AIController->BrainComponent)
 	{
 		AIController->BrainComponent->StopLogic(TEXT("Character Died"));
-		//AIController->StopMovement();
+		AIController->StopMovement();
 	}
 	if (UGameInstance* GameInstance = GetGameInstance())
 	{
@@ -262,8 +264,11 @@ float ACEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, A
 		ACEnemyAIController* AIController = Cast< ACEnemyAIController>(GetController());
 		if (AIController)
 		{
+			VisibleEnemyHPBar();
 			AIController->SetFocus(PlayerHitting);
-			AIController->MoveToActor(PlayerHitting, 100.0f, true, true, false, 0, true);
+			bool bPlayerDetected = AIController->GetBlackboardComponent()->GetValueAsBool("PlayerDetected");
+			if(!bPlayerDetected)
+				AIController->MoveToActor(PlayerHitting, 100.0f, true, true, false, 0, true);
 		}
 	}
 	return TempDamageAmount;

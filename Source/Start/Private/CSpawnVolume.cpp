@@ -106,6 +106,9 @@ void ASpawnVolume::SpawnActorOnce(int SpawnNum)
 {
 	for (int i = 0; i < SpawnNum; ++i)
 	{
+		FTimerHandle SpawnOnceTimerHandle;
+		GetWorldTimerManager().SetTimer(SpawnOnceTimerHandle, this, &ASpawnVolume::SpawnActorToRandomPosition, 1.0f, false);
+
 		SpawnActorToRandomPosition();
 	}
 }
