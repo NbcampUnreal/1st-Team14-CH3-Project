@@ -50,10 +50,10 @@ void ACEnemyInfectedResearcher::EnemyAttackStart(bool bIsCloseAttack)
 			{
 				SelectedMontage = LongRangeAttackMontages[1];
 			}
-			else if (Phase == 2 && bIsBoss && LongRangeAttackMontages[2])
-			{
-				SelectedMontage = LongRangeAttackMontages[2];
-			}
+			//else if (Phase == 2 && bIsBoss && LongRangeAttackMontages[2])
+			//{
+			//	SelectedMontage = LongRangeAttackMontages[2];
+			//}
 			
 			if (SelectedMontage && GetMesh()->GetAnimInstance())
 			{
