@@ -22,6 +22,11 @@ float UCGameInstance::GetPlayerHealth() const
     return PlayerHealth;
 }
 
+float UCGameInstance::GetPlayerStamina() const
+{
+    return PlayerStamina;
+}
+
 // 체력 초기화
 void UCGameInstance::ResetPlayerHealth()
 {
@@ -64,6 +69,8 @@ void UCGameInstance::SavePlayerState()
             {
                 PlayerHealth = StatusComponent->GetHealth(); // ✅ 현재 체력 저장
                 PlayerMaxHealth = StatusComponent->GetMaxHealth(); // ✅ 최대 체력 저장
+                PlayerStamina = StatusComponent->GetStamina(); // ✅ 스테미너 저장
+                PlayerMaxStamina = StatusComponent->GetMaxStamina();// ✅ 최대 스테미너 저장
                 UE_LOG(LogTemp, Warning, TEXT("✅ SavePlayerState: 저장된 체력 값: %f"), PlayerHealth);
             }
 
@@ -114,8 +121,21 @@ void UCGameInstance::LoadPlayerState()
                     PlayerHealth = PlayerMaxHealth;
                 }
 
+                // ✅ 기존 최대 스테미나 저장
+                float OldMaxStamina = PlayerMaxStamina;
+
+                // ✅ 새로운 최대 스테미나 불러오기
+                PlayerMaxStamina = StatusComponent->GetMaxStamina();
+
+                // ✅ 기존 스테미나가 최대 스테미나 같으면 보정
+                if (PlayerStamina == OldMaxStamina)
+                {
+                    PlayerStamina = PlayerMaxStamina;
+                }
+
                 UE_LOG(LogTemp, Warning, TEXT("✅ LoadPlayerState: 최대 체력 적용됨 -> %f"), PlayerMaxHealth);
-            }
+                UE_LOG(LogTemp, Warning, TEXT("✅ LoadPlayerState: 최대 스테미나 적용됨 -> %f"), PlayerMaxStamina);
+            }   
         }
     }
     
@@ -137,7 +157,7 @@ void UCGameInstance::LoadPlayerState()
     // ✅ HUD 업데이트
     NotifyHUDScoreUpdate();
 
-    UE_LOG(LogTemp, Warning, TEXT("✅ LoadPlayerState: 불러온 체력: %f, 불러온 점수: %d"), PlayerHealth, LoadedScore);
+    UE_LOG(LogTemp, Warning, TEXT("✅ LoadPlayerState: 불러온 체력: %f, 불러온 스테미나: %f, 불러온 점수: %d"), PlayerHealth, PlayerStamina, LoadedScore);
 }
 
 

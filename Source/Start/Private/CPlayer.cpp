@@ -50,6 +50,7 @@ void ACPlayer::BeginPlay()
 	if (GameInstance)
 	{
 		LastSavedHealth = GetStatusComponent()->GetHealth();
+		LastSavedStamina = GetStatusComponent()->GetStamina();
 		LastSavedScore = GameInstance->GetScore();
 	}
 

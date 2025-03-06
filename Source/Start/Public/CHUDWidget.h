@@ -82,6 +82,7 @@ protected:
 	UPROPERTY()
 	UCStatusComponent* StatusComponent; // 체력 관리 컴포넌트 참조
 	void UpdateHealthBar();
+	void UpdateStaminaBar();
 	// UI 요소 바인딩
 	UPROPERTY(meta = (BindWidget))
 	class UButton* ReplayButton;

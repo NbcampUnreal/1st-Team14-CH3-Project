@@ -106,6 +106,7 @@ void UCHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 
 	// 매 프레임 체력 & 점수 업데이트
 	UpdateHealthBar();
+	UpdateStaminaBar();
 	UpdateScoreDisplay(); 
 }
 void UCHUDWidget::UpdateHealthBar()
@@ -167,8 +168,10 @@ void UCHUDWidget::BindToPlayer(ACPlayer* Player)
 			UCGameInstance* GameInstance = Cast<UCGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 			if (GameInstance)
 			{
+				StatusComponent->UseStamina(GameInstance->GetPlayerStamina() - StatusComponent->GetStamina());
 				StatusComponent->HealHealth(GameInstance->GetPlayerHealth() - StatusComponent->GetHealth());
 				UE_LOG(LogTemp, Warning, TEXT("✅ HUD 생성 시 체력 적용: %f"), GameInstance->GetPlayerHealth());
+				UE_LOG(LogTemp, Warning, TEXT("✅ HUD 생성 시 스테미나 적용: %f"), GameInstance->GetPlayerStamina());
 				UpdateHealthBar(); // ✅ 초기 체력 UI 업데이트
 				// ✅ 점수 업데이트 추가
 				int32 LoadedScore = GameInstance->GetScore();
@@ -315,12 +318,42 @@ void UCHUDWidget::UpdateHealth(float fHealthPercent)
 	}
 }
 
-// 스태미너 업데이트
+// 스테미너 업데이트
 void UCHUDWidget::UpdateStamina(float fStaminaPercent)
 {
 	if (StaminaBar)
 	{
 		StaminaBar->SetPercent(fStaminaPercent);
+	}
+}
+
+// ✅ 스테미너 업데이트 함수 추가
+void UCHUDWidget::UpdateStaminaBar()
+{
+	if (!StaminaBar)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("🔄 StaminaBar가 NULL입니다. 다시 가져오겠습니다."));
+		StaminaBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("StaminaBar")));
+
+		if (StaminaBar)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("✅ StaminaBar 위젯 다시 찾기 성공!"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("❌ StaminaBar 위젯을 다시 찾을 수 없습니다!"));
+			return;
+		}
+	}
+
+	if (StatusComponent && StaminaBar)
+	{
+		float StaminaPercent = StatusComponent->GetStamina() / StatusComponent->GetMaxStamina();
+		StaminaBar->SetPercent(StaminaPercent);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("❌ UCHUDWidget: UpdateStaminaBar() 실행 실패 - StatusComponent 또는 StaminaBar가 없음"));
 	}
 }
 
