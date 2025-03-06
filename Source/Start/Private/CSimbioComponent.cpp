@@ -35,6 +35,8 @@ void UCSimbioComponent::CreateSimbio()
 
 void UCSimbioComponent::ActivateSimbio()
 {
+	if (!Simbio)
+		return;
 	Simbio->SetActorHiddenInGame(true);
 	Simbio->SetActorEnableCollision(false);
 	Simbio->SetActorTickEnabled(false);
@@ -42,6 +44,8 @@ void UCSimbioComponent::ActivateSimbio()
 
 void UCSimbioComponent::DeActivateSimbio()
 {
+	if (!Simbio)
+		return;
 	Simbio->SetActorHiddenInGame(false);
 	Simbio->SetActorEnableCollision(true);
 	Simbio->SetActorTickEnabled(true);
