@@ -148,7 +148,6 @@ bool ACEnemy::IsEnemyActionMode()
 
 bool ACEnemy::IsEnemyHitted()
 {
-	GEngine->AddOnScreenDebugMessage(1, 2.0f, FColor::Green, FString::Printf(TEXT("%d"), StateComponent->IsHittedMode()));
 	return StateComponent->IsHittedMode();
 }
 
