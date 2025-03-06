@@ -166,7 +166,8 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 			EnhancedInput->BindAction(PC->JumpAction, ETriggerEvent::Started, this, &ACPlayer::JumpIfNotInInventory);
 			// 🔹 시점 전환 액션 바인딩
 			EnhancedInput->BindAction(PC->SwitchViewAction, ETriggerEvent::Started, this, &ACPlayer::ToggleView);
-			EnhancedInput->BindAction(PC->SimbioAttackAction, ETriggerEvent::Triggered, SimbioComponent, &UCSimbioComponent::SimbioAttack);
+			EnhancedInput->BindAction(PC->SimbioAttackAction, ETriggerEvent::Triggered, this, &ACPlayer::SimbioAttack);
+			EnhancedInput->BindAction(PC->SimbioAttackAction, ETriggerEvent::Completed, this, &ACPlayer::EndSimbio);
 		}
 	}
 }
@@ -219,7 +220,8 @@ void ACPlayer::JumpIfNotInInventory(const FInputActionValue& Value)
 void ACPlayer::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-
+	GEngine->AddOnScreenDebugMessage(1, 3, FColor::Blue, FString::Printf(L"%f", StatusComponent->GetStamina()));
+	
 	UCGameInstance* GameInstance = Cast<UCGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	if (!GameInstance) return;
 
@@ -268,4 +270,18 @@ void ACPlayer::EndAim()
 {
 	MovementComponent->OnWark();
 	WeaponComponent->EndAim();
+}
+
+void ACPlayer::SimbioAttack()
+{
+	if(StatusComponent->GetStamina() <= 0 && Count >= 10)
+		return;
+	Count++;
+	StatusComponent->UseStamina(StaminaAmount);
+	SimbioComponent->SimbioAttack();
+}
+
+void ACPlayer::EndSimbio()
+{
+	Count = 0;
 }

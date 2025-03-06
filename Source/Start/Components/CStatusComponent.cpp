@@ -17,7 +17,7 @@ void UCStatusComponent::BeginPlay()
 
 	OwnerCharacter = Cast<ACharacter>(GetOwner());
 	Health = MaxHealth;
-	
+	Stamina = MaxStamina;
 }
 
 void UCStatusComponent::Damage(float Amount)
@@ -29,7 +29,7 @@ void UCStatusComponent::Damage(float Amount)
 void UCStatusComponent::UseStamina(float Amount)
 {
 	Stamina +=(Amount *-1);
-	Stamina = FMath::Clamp(MaxStamina, 0.0f, MaxStamina);
+	Stamina = FMath::Clamp(Stamina, 0.0f, MaxStamina);
 }
 
 void UCStatusComponent::HealHealth(float Amount)
@@ -41,5 +41,5 @@ void UCStatusComponent::HealHealth(float Amount)
 void UCStatusComponent::HealStamina(float Amount)
 {
 	Stamina += Amount;
-	Stamina = FMath::Clamp(MaxStamina, 0.0f, MaxStamina);
+	Stamina = FMath::Clamp(Stamina, 0.0f, MaxStamina);
 }
