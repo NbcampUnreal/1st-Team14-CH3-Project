@@ -25,6 +25,8 @@ protected:
 
 private:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Stats", meta = (AllowPrivateAccess = "true"))
+    bool bIsHit;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Stats", meta = (AllowPrivateAccess = "true"))
     float Health;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Stats", meta = (AllowPrivateAccess = "true"))
@@ -49,7 +51,7 @@ public:
     void Heal(float HealAmount);
 
 protected:
-    UPROPERTY(VisibleAnywhere, Category = "Component")
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
     UCStateComponent* StateComponent;
     UPROPERTY(VisibleAnywhere, Category = "Component")
     UCMovementComponent* MovementComponent;
