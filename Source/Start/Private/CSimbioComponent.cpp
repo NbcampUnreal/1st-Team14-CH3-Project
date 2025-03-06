@@ -7,7 +7,8 @@
 // Sets default values for this component's properties
 UCSimbioComponent::UCSimbioComponent() :
 	SimbioClass(nullptr),
-	Simbio(nullptr)
+	Simbio(nullptr),
+	bIsSimbioActivate(true)
 {
 	PrimaryComponentTick.bCanEverTick = true;
 }
@@ -35,20 +36,24 @@ void UCSimbioComponent::CreateSimbio()
 
 void UCSimbioComponent::ActivateSimbio()
 {
-	if (!Simbio)
-		return;
-	Simbio->SetActorHiddenInGame(true);
-	Simbio->SetActorEnableCollision(false);
-	Simbio->SetActorTickEnabled(false);
-}
-
-void UCSimbioComponent::DeActivateSimbio()
-{
+	bIsSimbioActivate = true;
 	if (!Simbio)
 		return;
 	Simbio->SetActorHiddenInGame(false);
 	Simbio->SetActorEnableCollision(true);
 	Simbio->SetActorTickEnabled(true);
+	if (FSimbioActivateDelegate.IsBound() == true)
+		FSimbioActivateDelegate.Broadcast();
+}
+
+void UCSimbioComponent::DeActivateSimbio()
+{
+	bIsSimbioActivate = false;
+	if (!Simbio)
+		return;
+	Simbio->SetActorHiddenInGame(true);
+	Simbio->SetActorEnableCollision(false);
+	Simbio->SetActorTickEnabled(false);
 }
 
 void UCSimbioComponent::SimbioAttack()
@@ -61,7 +66,6 @@ void UCSimbioComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	CreateSimbio();
-	DeActivateSimbio();
 }
 
 void UCSimbioComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

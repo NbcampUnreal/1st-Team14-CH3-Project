@@ -44,6 +44,7 @@ ACEnemy::ACEnemy()
 	bCanAttack = false;
 	bIsGunUsed = false;
 	bIsDied = false;
+	bHasScore = false;
 }
 
 void ACEnemy::UpdateOverheadHP()
@@ -71,8 +72,6 @@ void ACEnemy::UpdateOverheadHP()
 			HPBar->SetPercent(StatusComponent->GetHealth() / StatusComponent->GetMaxHealth());
 		}
 	}
-
-
 }
 
 
@@ -98,12 +97,12 @@ void ACEnemy::VisibleEnemyHPBar()
 			if (CPlayerController)
 			{
 				BossHPWidgetInstance = CreateWidget<UUserWidget>(CPlayerController, BossHPWidgetClass);
-				BossHPWidgetInstance->AddToViewport();
+				
 			}
 		}
-
-		UpdateOverheadHP();
 	}
+	BossHPWidgetInstance->AddToViewport();
+	UpdateOverheadHP();
 
 }
 
@@ -112,7 +111,6 @@ void ACEnemy::HiddenEnemyHPBar()
 	if (BossHPWidgetInstance)
 	{
 		BossHPWidgetInstance->RemoveFromParent();
-		BossHPWidgetInstance = nullptr;
 	}
 }
 
@@ -193,7 +191,7 @@ void ACEnemy::SpawnRandomItemAfterDie()
 
 void ACEnemy::ToDoAfterDie()
 {
-	Destroy();
+	//Destroy();
 	SpawnRandomItemAfterDie();
 }
 
@@ -201,17 +199,17 @@ void ACEnemy::Die()
 {
 	Super::Die();
 
+	if (OnEnemyDie.IsBound())
+	{
+		OnEnemyDie.Broadcast();
+	}
+
 	bCanAttack = false;
 	bIsDied = true;
 
 	HiddenEnemyHPBar();
-	//if (WeaponComponent->GetWeaponClasses().Num() > 0)
-	//{
-	//	for (ACWeapon* Weapon : WeaponComponent->GetWeaponClasses())
-	//	{
-
-	//	}
-	//}
+	if(BossHPWidgetInstance)
+		BossHPWidgetInstance->SetVisibility(ESlateVisibility::Hidden);
 
 	ACEnemyAIController* AIController = Cast<ACEnemyAIController>(GetController());
 	if (AIController&& AIController->BrainComponent)
@@ -222,9 +220,10 @@ void ACEnemy::Die()
 	if (UGameInstance* GameInstance = GetGameInstance())
 	{
 		UCGameInstance* CGameInstance = Cast<UCGameInstance>(GameInstance);
-		if (CGameInstance)
+		if (CGameInstance && !bHasScore)
 		{
 			CGameInstance->AddScore(StatusComponent->GetMaxHealth()/2);
+			bHasScore = true;
 		}
 	}
 
