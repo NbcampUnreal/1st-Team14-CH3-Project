@@ -114,6 +114,9 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* WeaponNameText;
 
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* Score;
+
 	// 점수를 표시할 TextBlock
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* ScoreText;
