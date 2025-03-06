@@ -14,6 +14,17 @@ enum class EWeaponType : uint8
 	Rifle, Pistol, Knife, Grenade,  Max	
 };
 
+UENUM(BlueprintType)
+enum class EReloadActionType : uint8
+{
+	Start,
+	Eject,
+	Spawn,
+	Load,
+	End,
+	Max
+};
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FWeaponTypeChanged, EWeaponType, InPrevType, EWeaponType, InNewType);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAmmoChanged, int32, CurrentAmmo, int32, MaxAmmo);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAimChanged, bool, bIsAiming);
@@ -28,12 +39,17 @@ class START_API UCWeaponComponent : public UActorComponent
 private:
 	// 연발 사격 시 HUD 업데이트용 타이머 핸들
 	FTimerHandle AmmoUpdateTimerHandle;
-
 public:
-	FORCEINLINE bool IsUnarmedMode(){return Type == EWeaponType::Max;}
-	FORCEINLINE bool IsRifleMode(){return Type == EWeaponType::Rifle;}
-	FORCEINLINE bool IsPistolMode(){return Type == EWeaponType::Pistol;}
+	FORCEINLINE bool IsStart() { return ReloadType == EReloadActionType::Start; }
+	FORCEINLINE bool IsEject() { return ReloadType == EReloadActionType::Eject; }
+	FORCEINLINE bool IsSpawn() { return ReloadType == EReloadActionType::Spawn; }
+	FORCEINLINE bool IsLoad() { return ReloadType == EReloadActionType::Load; }
+	FORCEINLINE bool IsEnd() { return ReloadType == EReloadActionType::End; }
+public:
+	/*FORCEINLINE*/ bool IsRifleMode() ;
+	/*FORCEINLINE*/ bool IsPistolMode();
 	FORCEINLINE bool IsKnifeMode(){return Type == EWeaponType::Knife;}
+	FORCEINLINE bool IsUnarmedMode(){return Type == EWeaponType::Max;}
 	FORCEINLINE bool IsGrenadeMode(){return Type == EWeaponType::Grenade;}
 	FORCEINLINE TArray<TSubclassOf<ACWeapon>> GetWeaponClasses() { return WeaponClasses; }
 public:
@@ -46,7 +62,7 @@ public:
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	ACWeapon* GetCurrentWeapon();
-	
+
 public:
 	void SetUnarmedMode();
 	void SetPistolMode();
@@ -109,5 +125,6 @@ private:
 	EWeaponType Type = EWeaponType::Max;
 	ACCharacter* Owner;
 	TArray<ACWeapon*> Weapons;
+	EReloadActionType ReloadType = EReloadActionType::Max;
 
 };

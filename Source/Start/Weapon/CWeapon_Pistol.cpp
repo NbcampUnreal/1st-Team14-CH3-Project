@@ -45,7 +45,7 @@ ACWeapon_Pistol::ACWeapon_Pistol()
 
 	//Magazine
 	{
-		ReloadMagazineCount = 5;
+		MaxMagazineCount = 5;
 		static ConstructorHelpers::FObjectFinder<UAnimMontage> montage(TEXT("/Script/Engine.AnimMontage'/Game/Assets/Montages/Pistol/Reload_Pistol_Montage.Reload_Pistol_Montage'"));
 		if (montage.Succeeded() == true)
 			ReloadMontage = montage.Object;
@@ -59,12 +59,11 @@ ACWeapon_Pistol::ACWeapon_Pistol()
 
 	//Arms
 	{
-		
-		ArmsMeshTransform.SetLocation(FVector(34.799340, -12.602374, -152.432066));
-		ArmsMeshTransform.SetRotation(FQuat(FRotator(9.874531, 1.268379, -1.302292)));
+		ArmsMeshTransform.SetLocation(FVector(-9.109815, -4.00000, -157.131590));
+		ArmsMeshTransform.SetRotation(FQuat(FRotator(7.025311, 6.262183, -1.387026)));
 
-		ArmsLeftHandTransform.SetLocation(FVector(0, 10, 0));
-		ArmsLeftHandTransform.SetRotation(FQuat(FRotator(0, 180, 180)));
+		ArmsLeftHandTransform.SetLocation(FVector(-2.009540, -0.211690, 3.811888));
+		ArmsLeftHandTransform.SetRotation(FQuat(FRotator(0.000000, 180.000000, 180.000000)));
 	}
 }
 
@@ -82,7 +81,7 @@ void ACWeapon_Pistol::BeginEquip()
 	ACPlayer* player = Cast<ACPlayer>(OwnerCharacter);
 	if(player == nullptr)
 		return;
-	//player->GetFirstPersonMesh()->SetRelativeTransform(ArmsMeshTransform);
+	player->GetFirstPersonMesh()->SetRelativeTransform(ArmsMeshTransform);
 }
 
 void ACWeapon_Pistol::EndEquip()

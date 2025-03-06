@@ -3,6 +3,15 @@
 #include "Weapon/CWeapon.h"
 #include "Weapon/CWeapon_Rifle.h"
 
+bool UCWeaponComponent::IsRifleMode()
+{
+	return Type == EWeaponType::Rifle;
+}
+
+bool UCWeaponComponent::IsPistolMode()
+{
+	return Type == EWeaponType::Pistol;
+}
 UCWeaponComponent::UCWeaponComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
@@ -174,8 +183,7 @@ void UCWeaponComponent::End_Equip()
 }
 
 void UCWeaponComponent::DoAction()
-{
-	if(GetCurrentWeapon() == nullptr)
+{if(GetCurrentWeapon() == nullptr)
 		return;
 	if (IsRifleMode() == true || IsPistolMode() == true)
 	{

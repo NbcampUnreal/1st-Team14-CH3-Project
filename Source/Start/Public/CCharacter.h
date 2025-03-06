@@ -70,7 +70,8 @@ protected:
 
     UFUNCTION()
     void HandleStateChanged(EStateType PreviousType, EStateType NewType);
-
+	UFUNCTION()
+    void HandleAnyMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 //private:
 //    void SaveHealthToGameInstance();
 //    void LoadHealthFromGameInstance();

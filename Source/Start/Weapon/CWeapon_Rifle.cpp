@@ -66,7 +66,7 @@ ACWeapon_Rifle::ACWeapon_Rifle()
 	
 	//Magazine
 	{
-		ReloadMagazineCount = 30;
+		MaxMagazineCount = 30;
 		static ConstructorHelpers::FObjectFinder<UAnimMontage> montage(TEXT("/Script/Engine.AnimMontage'/Game/Assets/Montages/Rifle/Reload/Reload_Rifle_Hip_Montage.Reload_Rifle_Hip_Montage'"));
 		if (montage.Succeeded() == true)
 			ReloadMontage = montage.Object;
@@ -83,11 +83,11 @@ ACWeapon_Rifle::ACWeapon_Rifle()
 
 	// Arms
 	{
-		ArmsMeshTransform.SetLocation(FVector(34.881184, -11.844251, -152.998531));
-		ArmsMeshTransform.SetRotation(FQuat(FRotator(20.426988, 1.013832,-1.369104)));
+		ArmsMeshTransform.SetLocation(FVector(1.731908, -11.111557, -154.8));
+		ArmsMeshTransform.SetRotation(FQuat(FRotator(6.895905, 1.764208, -1.932422)));
 
-		ArmsLeftHandTransform.SetLocation(FVector(-33, 11, -1.5f));
-		ArmsLeftHandTransform.SetRotation(FQuat(FRotator(-4, -138, 77)));
+		ArmsLeftHandTransform.SetLocation(FVector(-35.897707, 6.651270, 3.934635));
+		ArmsLeftHandTransform.SetRotation(FQuat(FRotator(-3.999989, -111.219573, 77.000010)));
 	}
 }
 
@@ -102,7 +102,7 @@ void ACWeapon_Rifle::BeginEquip()
 	ACPlayer* player = Cast<ACPlayer>(OwnerCharacter);
 	if (player == nullptr)
 		return;
-	//player->GetFirstPersonMesh()->SetRelativeTransform(ArmsMeshTransform);
+	player->GetFirstPersonMesh()->SetRelativeTransform(ArmsMeshTransform);
 }
 
 void ACWeapon_Rifle::BeginAim()

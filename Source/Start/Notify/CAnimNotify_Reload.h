@@ -4,17 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimNotifies/AnimNotify.h"
+#include "Components/CWeaponComponent.h"
 #include "CAnimNotify_Reload.generated.h"
 
-UENUM()
-enum class EReloadActionType : uint8
-{
-	Start,
-	Eject,
-	Spawn,
-	Load,
-	End
-};
+//UENUM()
+//enum class EReloadActionType : uint8
+//{
+//	Start,
+//	Eject,
+//	Spawn,
+//	Load,
+//	End
+//};
 
 UCLASS()
 class START_API UCAnimNotify_Reload : public UAnimNotify
