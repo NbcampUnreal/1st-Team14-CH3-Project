@@ -191,7 +191,7 @@ void ACEnemy::SpawnRandomItemAfterDie()
 
 void ACEnemy::ToDoAfterDie()
 {
-	//Destroy();
+	Destroy();
 	SpawnRandomItemAfterDie();
 }
 
