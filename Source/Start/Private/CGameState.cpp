@@ -138,7 +138,7 @@ void ACGameState::CheckScoreForRedDoor()
     UCGameInstance* GameInstance = Cast<UCGameInstance>(GetGameInstance());
     if (!GameInstance) return;
 
-    if (GameInstance->GetScore() >= 100)
+    if (GameInstance->GetScore() >= 200)
     {
         TArray<AActor*> FoundDoors;
         UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("RedDoor"), FoundDoors);
