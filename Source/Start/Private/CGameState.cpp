@@ -4,6 +4,7 @@
 #include "CCharacter.h"
 #include "Blueprint/UserWidget.h"
 #include "CHUDWidget.h"
+#include "GameFramework/HUD.h" 
 
 ACGameState::ACGameState()
 {
@@ -19,6 +20,21 @@ void ACGameState::BeginPlay()
     GetWorldTimerManager().SetTimer(ScoreCheckTimer, this, &ACGameState::CheckScoreForRedDoor, 1.0f, true);
     // 🔹 1초마다 중간 보스 사망 여부를 체크하는 타이머 설정
     GetWorldTimerManager().SetTimer(MidBossCheckTimer, this, &ACGameState::CheckMidBossDefeated, 1.0f, true);
+
+    // ✅ CurrentMapName을 FString으로 선언하고 현재 맵 이름을 할당
+    FString CurrentMapName = GetWorld()->GetMapName();
+
+    // ✅ 연구소 맵이면 `BossAreaSpawn`에서 자동 리스폰
+    if (CurrentMapName.Contains(TEXT("MAIN_MAP")))
+    {
+        UE_LOG(LogTemp, Warning, TEXT("연구소 맵이 다시 로드됨 - BossAreaSpawn에서 리스폰"));
+
+        UCHUDWidget* HUDWidget = Cast<UCHUDWidget>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetHUD());
+        if (HUDWidget)
+        {
+            HUDWidget->RespawnPlayerAtTaggedSpawnPoint(TEXT("BossAreaSpawn"));
+        }
+    }
 }
 
 // ✅ 게임 오버 UI 표시 (플레이어 사망 시 호출)

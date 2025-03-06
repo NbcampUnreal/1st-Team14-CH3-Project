@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/UserWidget.h"
 #include "TimerManager.h"
+#include "CGameInstance.h"
 
 
 void UCHUDWidget::NativeConstruct()
@@ -124,13 +125,22 @@ void UCHUDWidget::BindToPlayer(ACPlayer* Player)
 {
 	if (Player)
 	{
-		// ✅ Player에 직접 접근하여 StatusComponent 가져오기
+		// ✅ Player의 StatusComponent 가져오기
 		StatusComponent = Player->GetStatusComponent();
 
 		if (StatusComponent)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("✅ UCHUDWidget: StatusComponent 바인딩 성공!"));
-			UpdateHealthBar(); // 초기 체력 UI 업데이트
+
+			// ✅ HUD가 생성될 때 즉시 GameInstance에서 체력과 점수를 불러오기
+			UCGameInstance* GameInstance = Cast<UCGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+			if (GameInstance)
+			{
+				StatusComponent->HealHealth(GameInstance->GetPlayerHealth() - StatusComponent->GetHealth());
+				UE_LOG(LogTemp, Warning, TEXT("✅ HUD 생성 시 체력 적용: %f"), GameInstance->GetPlayerHealth());
+			}
+
+			UpdateHealthBar(); // ✅ 초기 체력 UI 업데이트
 		}
 		else
 		{
@@ -168,6 +178,13 @@ void UCHUDWidget::OnReplayClicked()
 {
 	UE_LOG(LogTemp, Warning, TEXT("게임 재시작!"));
 
+	// ✅ 게임 인스턴스 가져오기
+	UCGameInstance* GameInstance = Cast<UCGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	if (GameInstance)
+	{
+		GameInstance->ResetPlayerState(); // ✅ 게임오버 후 체력 & 점수 초기화
+	}
+
 	// ✅ 게임오버 UI 숨기기
 	if (GameoverImage) { GameoverImage->SetVisibility(ESlateVisibility::Hidden); }
 
@@ -182,8 +199,8 @@ void UCHUDWidget::OnReplayClicked()
 	}
 	else if (CurrentMapName.Contains(TEXT("MAIN_MAP")))
 	{
-		// 🔹 연구소 맵에서는 특정 태그("BossAreaSpawn")를 가진 플레이어 스타터에서 리스폰
-		RespawnPlayerAtTaggedSpawnPoint(TEXT("BossAreaSpawn"));
+		// ✅ 연구소 맵도 맵을 다시 로드하되, 특정 위치(`BossAreaSpawn`)에서 리스폰
+		UGameplayStatics::OpenLevel(GetWorld(), TEXT("/Game/Map/LapMap/ModSci_Engineer/Maps/MAIN_MAP"));
 	}
 	else
 	{
@@ -216,19 +233,15 @@ void UCHUDWidget::RespawnPlayerAtTaggedSpawnPoint(FName SpawnTag)
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(World, 0);
 	if (!PlayerController) return;
 
-	// 🔹 기존 플레이어 삭제 후 새로운 위치에서 스폰
-	APawn* OldPlayer = PlayerController->GetPawn();
-	if (OldPlayer) { OldPlayer->Destroy(); }
-
 	// 🔹 새로운 플레이어를 특정 위치에서 스폰
 	FVector SpawnLocation = ChosenSpawnPoint->GetActorLocation();
 	FRotator SpawnRotation = ChosenSpawnPoint->GetActorRotation();
-	APawn* NewPlayer = World->SpawnActor<APawn>(PlayerController->GetPawn()->GetClass(), SpawnLocation, SpawnRotation);
+	ACPlayer* Player = World->SpawnActor<ACPlayer>(PlayerController->GetPawn()->GetClass(), SpawnLocation, SpawnRotation);
 
-	if (NewPlayer)
+	if (Player)
 	{
 		// 🔹 컨트롤러를 새 플레이어에 연결
-		PlayerController->Possess(NewPlayer);
+		PlayerController->Possess(Player);
 		UE_LOG(LogTemp, Warning, TEXT("✅ 특정 태그(%s)가 있는 플레이어 스타터에서 스폰 완료!"), *SpawnTag.ToString());
 	}
 	else

@@ -10,6 +10,8 @@
 #include "Weapon/CWeapon.h"
 #include "CHUDWidget.h"
 #include "GameFramework/HUD.h"
+#include "CGameInstance.h"
+#include "Kismet/GameplayStatics.h"
 #include "Components/CCameraComponent.h"
 
 ACPlayer::ACPlayer()
@@ -43,6 +45,14 @@ ACPlayer::ACPlayer()
 void ACPlayer::BeginPlay()
 {
 	Super::BeginPlay();
+
+	UCGameInstance* GameInstance = Cast<UCGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	if (GameInstance)
+	{
+		LastSavedHealth = GetStatusComponent()->GetHealth();
+		LastSavedScore = GameInstance->GetScore();
+	}
+
 	APlayerController* PC = Cast<APlayerController>(GetController());
 	if (PC)
 	{
@@ -201,6 +211,23 @@ void ACPlayer::JumpIfNotInInventory(const FInputActionValue& Value)
 void ACPlayer::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+
+	UCGameInstance* GameInstance = Cast<UCGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	if (!GameInstance) return;
+
+	if (!StatusComponent) return; // ✅ 멤버 변수 직접 사용
+
+	float CurrentHealth = StatusComponent->GetHealth();
+	int CurrentScore = GameInstance->GetScore();
+
+	if (FMath::Abs(LastSavedHealth - CurrentHealth) > KINDA_SMALL_NUMBER || LastSavedScore != CurrentScore)
+	{
+		GameInstance->SavePlayerState();
+		LastSavedHealth = CurrentHealth;
+		LastSavedScore = CurrentScore;
+
+		UE_LOG(LogTemp, Warning, TEXT("✅ 상태 변화 감지 - 자동 저장 (체력: %f, 점수: %d)"), CurrentHealth, CurrentScore);
+	}
 }
 
 void ACPlayer::ToggleView()
