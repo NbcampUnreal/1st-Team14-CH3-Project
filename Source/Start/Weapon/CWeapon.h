@@ -86,6 +86,8 @@ protected:
 	float AimSpeed = 200.0f;
 	UPROPERTY(EditDefaultsOnly, category = "Aim")
 	USoundWave* BreathSound;
+	UPROPERTY(EditDefaultsOnly, category = "Aim")
+	USoundWave* BreathSound2;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Hit")
 	float HitDistance = 3000;
@@ -107,7 +109,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Fire")
 	UParticleSystem* EjectParticle;
 	UPROPERTY(EditDefaultsOnly, Category = "Fire")
-	USoundWave* FireSound;
+	USoundCue* FireSound;
 	UPROPERTY(EditDefaultsOnly, Category = "Fire")
 	float RecoilAngle;
 	UPROPERTY(EditDefaultsOnly, Category = "Fire")
@@ -257,4 +259,7 @@ protected:
 	bool bBeginAction;
 	bool bEnable;
 	float Damage;
+
+private:
+	UAudioComponent* BreathSoundComponent;
 };

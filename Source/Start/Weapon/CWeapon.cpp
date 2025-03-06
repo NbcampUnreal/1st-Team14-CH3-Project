@@ -21,8 +21,10 @@
 #include "Materials/MaterialInstanceConstant.h"
 #include "Particles/ParticleSystem.h"
 #include "Camera/CameraShakeBase.h"
+#include "Components/AudioComponent.h"
 #include "Engine/DamageEvents.h"
 #include "Components/BoxComponent.h"
+#include "Sound/SoundCue.h"
 
 void FWeaponAimData::SetData(class ACCharacter* InOwner)
 {
@@ -69,12 +71,15 @@ ACWeapon::ACWeapon()
 	static  ConstructorHelpers::FObjectFinder<UParticleSystem> ejectParticle(TEXT("/Script/Engine.ParticleSystem'/Game/Assets/Effects/P_Eject_bullet.P_Eject_bullet'"));
 	if (ejectParticle.Succeeded() == true)
 		EjectParticle = ejectParticle.Object;
-	static  ConstructorHelpers::FObjectFinder<USoundWave> fireSound(TEXT("/Script/Engine.SoundWave'/Game/Assets/Sounds/S_RifleShoot.S_RifleShoot'"));
+	static  ConstructorHelpers::FObjectFinder<USoundCue> fireSound(TEXT("/Script/Engine.SoundCue'/Game/Sound/Rifle_Fire_Cue.Rifle_Fire_Cue'"));
 	if (fireSound.Succeeded() == true)
 		FireSound = fireSound.Object;
-	static ConstructorHelpers::FObjectFinder<USoundWave> breth(TEXT("/Script/Engine.SoundWave'/Game/Sound/Sniper_Breath.Sniper_Breath'"));
+	static ConstructorHelpers::FObjectFinder<USoundWave> breth(TEXT("/Script/Engine.SoundWave'/Game/Sound/Sniper_Breath_Start.Sniper_Breath_Start'"));
 	if (breth.Succeeded() == true)
 		BreathSound = breth.Object;
+	static ConstructorHelpers::FObjectFinder<USoundWave> breth2(TEXT("/Script/Engine.SoundWave'/Game/Sound/Sniper_Breath_End.Sniper_Breath_End'"));
+	if(breth2.Succeeded() == true)
+		BreathSound2 = breth2.Object;
 	AutoFireHandle = FTimerHandle();
 }
 
@@ -431,8 +436,10 @@ void ACWeapon::BeginAim()
 	if (!Player)
 		return;
 	bInAim = true;
+	if (BreathSoundComponent != nullptr && BreathSoundComponent->IsActive())
+		BreathSoundComponent->Stop();
 	if (BreathSound != nullptr)
-		UGameplayStatics::SpawnSoundAtLocation(GetWorld(), BreathSound, OwnerCharacter->GetActorLocation());
+		BreathSoundComponent = UGameplayStatics::SpawnSoundAtLocation(GetWorld(), BreathSound, OwnerCharacter->GetActorLocation());
 	if (AimCurve != nullptr)
 	{
 		Timeline->PlayFromStart();
@@ -447,7 +454,10 @@ void ACWeapon::EndAim()
 	if (bInAim == false)
 		return;
 	bInAim = false;
-
+	if(BreathSoundComponent != nullptr && BreathSoundComponent->IsActive())
+		BreathSoundComponent->Stop();
+	if (BreathSound2 != nullptr)
+		BreathSoundComponent = UGameplayStatics::SpawnSoundAtLocation(GetWorld(), BreathSound2, OwnerCharacter->GetActorLocation());
 	if (AimCurve != nullptr)
 	{
 		Timeline->PlayFromStart();
