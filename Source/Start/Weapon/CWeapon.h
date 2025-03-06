@@ -123,6 +123,8 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Magazine;")
 	uint8 MaxMagazineCount;
+	UPROPERTY(EditDefaultsOnly, Category = "Magazine;")
+	uint8 ReloadMagazineCount;
 	UPROPERTY(EditDefaultsOnly, Category = "Magazine")
 	UAnimMontage* ReloadMontage;
 	UPROPERTY(EditDefaultsOnly, Category = "Magazine")
@@ -166,6 +168,7 @@ public:
 	FORCEINLINE bool IsAutoFire() { return bAutoFire; }
 	FORCEINLINE FVector GetLeftHandLocation() { return LeftHandLocation; }
 	FORCEINLINE FVector GetLeftHandAimLocation() { return LeftHandAimLocation; }
+	FORCEINLINE FTransform GetLeftArmsLeftHandTransform() { return ArmsLeftHandTransform; }
 	FORCEINLINE FTransform GetWeaponLeftHandAimTransform() { return WeapoLeftHandTransform; }
 
 	FORCEINLINE bool GetInAim() const { return bInAim; }
@@ -240,7 +243,7 @@ protected:
 	UCStateComponent* State;
 	UCCameraComponent* Camera;
 	UCWeaponComponent* Weapon;
-
+	UCInventoryComponent* Inventory;
 private:
 	FTimerHandle AutoFireHandle;
 	bool bEquipping;
@@ -250,10 +253,8 @@ private:
 
 protected:
 	bool bReload;
-
 	ACMagazine* Magazine;
-
-protected:
+	
 	uint8 CurrentMagazineCount;
 	bool bBeginAction;
 	bool bEnable;

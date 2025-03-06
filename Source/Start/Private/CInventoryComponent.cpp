@@ -418,6 +418,21 @@ int32 UCInventoryComponent::GetBulletCount() const
     return 0; // 🔹 인벤토리에 총알이 없으면 0 반환
 }
 
+int32 UCInventoryComponent::UseBulletCount(int32 Amount)
+{
+    if (InventoryItems.Contains(EItemType::EIT_Bullet))
+    {
+        InventoryItems[EItemType::EIT_Bullet] += (Amount * -1);
+        if (InventoryItems[EItemType::EIT_Bullet] <= 0)
+        {
+            InventoryItems[EItemType::EIT_Bullet] = 0;
+            return 0;
+        }
+        return InventoryItems[EItemType::EIT_Bullet]; // 🔹 현재 총알 개수 반환
+    }
+    return 0;
+}
+
 //void UCInventoryComponent::EquipWeapon(EItemType WeaponType, ACPlayer* Player)
 //{
 //    if (!Player)

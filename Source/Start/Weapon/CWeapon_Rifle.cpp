@@ -66,7 +66,7 @@ ACWeapon_Rifle::ACWeapon_Rifle()
 	
 	//Magazine
 	{
-		MaxMagazineCount = 30;
+		ReloadMagazineCount = 30;
 		static ConstructorHelpers::FObjectFinder<UAnimMontage> montage(TEXT("/Script/Engine.AnimMontage'/Game/Assets/Montages/Rifle/Reload/Reload_Rifle_Hip_Montage.Reload_Rifle_Hip_Montage'"));
 		if (montage.Succeeded() == true)
 			ReloadMontage = montage.Object;
@@ -83,8 +83,8 @@ ACWeapon_Rifle::ACWeapon_Rifle()
 
 	// Arms
 	{
-		ArmsMeshTransform.SetLocation(FVector(-14.25f, -5.85f, -156.935f));
-		ArmsMeshTransform.SetRotation(FQuat(FRotator(-0.5f, -11.85f, -1.2f)));
+		ArmsMeshTransform.SetLocation(FVector(34.881184, -11.844251, -152.998531));
+		ArmsMeshTransform.SetRotation(FQuat(FRotator(20.426988, 1.013832,-1.369104)));
 
 		ArmsLeftHandTransform.SetLocation(FVector(-33, 11, -1.5f));
 		ArmsLeftHandTransform.SetRotation(FQuat(FRotator(-4, -138, 77)));
@@ -94,9 +94,13 @@ ACWeapon_Rifle::ACWeapon_Rifle()
 void ACWeapon_Rifle::BeginPlay()
 {
 	Super::BeginPlay();
+}
 
+void ACWeapon_Rifle::BeginEquip()
+{
+	Super::BeginEquip();
 	ACPlayer* player = Cast<ACPlayer>(OwnerCharacter);
-	if(player == nullptr)
+	if (player == nullptr)
 		return;
 	//player->GetFirstPersonMesh()->SetRelativeTransform(ArmsMeshTransform);
 }
@@ -110,8 +114,8 @@ void ACWeapon_Rifle::BeginAim()
 	ACPlayer* player = Cast<ACPlayer>(OwnerCharacter);
 	if(player == nullptr)
 		return;
-	player->GetMesh()->SetVisibility(false);
 	player->GetFirstPersonMesh()->SetVisibility(true);
+	player->GetMesh()->SetVisibility(false);
 
 	AttachToComponent(player->GetFirstPersonMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), RightHandAimSokcetName);
 
@@ -131,7 +135,7 @@ void ACWeapon_Rifle::EndAim()
 	player->GetFirstPersonMesh()->SetVisibility(false);
 	player->GetMesh()->SetVisibility(true);
 	AttachToComponent(player->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), RightHandSokcetName);
-
+	
 	UCWeaponComponent* weapon = Cast<UCWeaponComponent>(player->GetComponentByClass(UCWeaponComponent::StaticClass()));
 	if (weapon->OnWeaponAim_Arms_End.IsBound() == true)
 		weapon->OnWeaponAim_Arms_End.Broadcast();

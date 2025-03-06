@@ -24,6 +24,7 @@ private:
 	UMaterialInstanceConstant* Material;
 	UPROPERTY(EditDefaultsOnly)
 	float LifeTime;
+
 public:
 	ACBullet();
 
