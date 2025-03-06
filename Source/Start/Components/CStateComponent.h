@@ -32,11 +32,12 @@ public:
 	FORCEINLINE bool IsHittedMode() { return Type == EStateType::Hitted; }
 	FORCEINLINE bool IsDeadMode() { return Type == EStateType::Dead; }
 	FORCEINLINE bool IsInventoryMode() { return Type == EStateType::Inventory; }
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE EStateType GetStateType() const { return Type; }  // 🔹 StateType을 반환하는 함수 추가
 
 public:	
 	UCStateComponent();
 
-	EStateType GetStateType() const { return Type; }  // 🔹 StateType을 반환하는 함수 추가
 protected:
 	virtual void BeginPlay() override;
 

@@ -64,10 +64,10 @@ void ACCharacter::Hitted()
     StatusComponent->Damage(HittedInfo.Power);
     if(StatusComponent->GetHealth() <= 0.0f)
 	    StateComponent->SetDeadMode();
-    else
-    {
+    else if(StatusComponent->GetHealth() > 0.0f && bIsHit == false)
         HittedInfo.Event->HitData->PlayMontage(this);
-    }
+    if (bIsHit == true)
+         End_Hit();
 }
 
 
@@ -95,10 +95,12 @@ void ACCharacter::End_Hit()
 {
 	IICharacter::End_Hit();
     StateComponent->SetIdleMode();
+	bIsHit = false;
 }
 
 void ACCharacter::End_Dead()
 {
+	bIsHit = false;
     Destroy();
 }
 
@@ -138,7 +140,14 @@ float ACCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
     HittedInfo.Power = damage;
     HittedInfo.Character = Cast<ACharacter>(EventInstigator->GetPawn());
     HittedInfo.Causer = DamageCauser;
-
+    
+    if (StateComponent->GetStateType() != EStateType::Idle)
+    {
+        GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Blue, FString::Printf(L"%d", StateComponent->GetStateType()));
+        bIsHit = true;
+        Hitted();
+		return DamageAmount;
+    }
     // 🔹 상태 변경 (SetHittedMode() 사용)
     StateComponent->SetHittedMode();  // 내부적으로 ChangeType(Hitted) 실행됨
 
