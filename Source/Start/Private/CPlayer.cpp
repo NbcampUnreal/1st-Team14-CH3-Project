@@ -65,6 +65,11 @@ void ACPlayer::BeginPlay()
 				HUDWidget->AddToViewport();
 				HUDWidget->BindToPlayer(this);
 				UE_LOG(LogTemp, Warning, TEXT("✅ ACPlayer: HUD 위젯 생성 및 바인딩 성공!"));
+
+				if (GameInstance)
+				{
+					GameInstance->NotifyHUDScoreUpdate(); // ✅ HUD 생성 후 점수 업데이트
+				}
 			}
 			else
 			{

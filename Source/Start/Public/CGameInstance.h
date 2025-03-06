@@ -41,12 +41,15 @@ public:
     // ✅ 점수 저장 및 불러오기 추가
     UFUNCTION(BlueprintCallable, Category = "Player Stats")
     void SetScore(int NewScore);
-
+    
     UFUNCTION(BlueprintCallable, Category = "Player Stats")
     void AddScore(int ScoreAmount);
    
     UFUNCTION(BlueprintCallable, Category = "Player Stats")
     void ResetScore();  // 점수 초기화 함수
+
+    UFUNCTION(BlueprintCallable, Category = "Player Stats")
+    void NotifyHUDScoreUpdate();
 
     // ✅ 레벨 변경 시 상태 저장/불러오기
     UFUNCTION(BlueprintCallable, Category = "Player Stats")

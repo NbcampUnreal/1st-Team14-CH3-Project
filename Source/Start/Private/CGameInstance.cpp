@@ -1,6 +1,9 @@
 ﻿#include "CGameInstance.h"
 #include "CPlayer.h"
 #include "Kismet/GameplayStatics.h"
+#include "CHUDWidget.h"
+#include "GameFramework/HUD.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Components/CStatusComponent.h"
 
 UCGameInstance::UCGameInstance()
@@ -44,8 +47,6 @@ void UCGameInstance::SetScore(int NewScore)
 void UCGameInstance::AddScore(int ScoreAmount)
 {
     Score += ScoreAmount;
-
-    GEngine->AddOnScreenDebugMessage(1, 2.0f, FColor::Green, FString::Printf(TEXT("Score : %d"), Score));
 }
 
 // 점수 초기화
@@ -94,12 +95,47 @@ void UCGameInstance::LoadPlayerState()
             }
         }
     }
-    // ✅ 저장된 점수 불러오기
+    // ✅ 점수 불러오기
     int LoadedScore = GetScore();
-    SetScore(LoadedScore);
+    Score = LoadedScore;  // ✅ Score 값을 다시 할당
+    UE_LOG(LogTemp, Warning, TEXT("✅ LoadPlayerState: 불러온 점수: %d"), LoadedScore);
+
+    // ✅ HUD 업데이트
+    NotifyHUDScoreUpdate();
 
     // ✅ 불러온 체력과 점수를 디버깅 로그로 출력
     UE_LOG(LogTemp, Warning, TEXT("✅ LoadPlayerState: 불러온 체력: %f, 불러온 점수: %d"), PlayerHealth, LoadedScore);
+}
+
+// ✅ HUD에 점수 업데이트 알림을 보냄
+void UCGameInstance::NotifyHUDScoreUpdate()
+{
+    APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+    if (PC)
+    {
+        UCHUDWidget* HUDWidget = nullptr;
+
+        // ✅ Viewport에서 UCHUDWidget을 직접 탐색
+        TArray<UUserWidget*> FoundWidgets;
+        UWidgetBlueprintLibrary::GetAllWidgetsOfClass(GetWorld(), FoundWidgets, UCHUDWidget::StaticClass(), false);
+
+        if (FoundWidgets.Num() > 0)
+        {
+            HUDWidget = Cast<UCHUDWidget>(FoundWidgets[0]);
+        }
+
+        if (HUDWidget)
+        {
+            HUDWidget->UpdateScore(Score);
+            UE_LOG(LogTemp, Warning, TEXT("✅ NotifyHUDScoreUpdate() 호출됨 - 점수: %d"), Score);
+        }
+        else
+        {
+            UE_LOG(LogTemp, Warning, TEXT("❌ HUD 위젯을 찾을 수 없음, 0.1초 후 다시 시도"));
+            FTimerHandle TimerHandle;
+            PC->GetWorldTimerManager().SetTimer(TimerHandle, this, &UCGameInstance::NotifyHUDScoreUpdate, 0.1f, false);
+        }
+    }
 }
 
 // ✅ 게임오버 후 체력과 점수 초기화

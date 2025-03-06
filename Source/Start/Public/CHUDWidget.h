@@ -50,7 +50,10 @@ public:
 
 	// 점수 업데이트
 	UFUNCTION(BlueprintCallable, Category = "HUD")
-	void UpdateScore(int32 iNewScore);
+	void UpdateScore(int32 NewScore);
+
+	UFUNCTION(BlueprintCallable, Category = "HUD")
+	void UpdateScoreDisplay();
 
 	// 피해 효과를 표시 (예: 화면 붉게 깜빡임, Blood 비네트 같은 이미지 활용)
 	UFUNCTION(BlueprintCallable, Category = "HUD")

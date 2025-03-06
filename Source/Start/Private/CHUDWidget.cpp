@@ -74,8 +74,9 @@ void UCHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
-	// 매 프레임 체력 업데이트
+	// 매 프레임 체력 & 점수 업데이트
 	UpdateHealthBar();
+	UpdateScoreDisplay(); 
 }
 void UCHUDWidget::UpdateHealthBar()
 {
@@ -138,9 +139,12 @@ void UCHUDWidget::BindToPlayer(ACPlayer* Player)
 			{
 				StatusComponent->HealHealth(GameInstance->GetPlayerHealth() - StatusComponent->GetHealth());
 				UE_LOG(LogTemp, Warning, TEXT("✅ HUD 생성 시 체력 적용: %f"), GameInstance->GetPlayerHealth());
+				UpdateHealthBar(); // ✅ 초기 체력 UI 업데이트
+				// ✅ 점수 업데이트 추가
+				int32 LoadedScore = GameInstance->GetScore();
+				UpdateScore(LoadedScore);
+				UE_LOG(LogTemp, Warning, TEXT("✅ HUD 생성 시 점수 적용: %d"), LoadedScore);
 			}
-
-			UpdateHealthBar(); // ✅ 초기 체력 UI 업데이트
 		}
 		else
 		{
@@ -331,11 +335,25 @@ void UCHUDWidget::SetCrosshairVisibility(bool bVisible)
 }
 
 // 점수 업데이트
-void UCHUDWidget::UpdateScore(int32 iNewScore)
+void UCHUDWidget::UpdateScore(int32 NewScore)
 {
 	if (ScoreText)
 	{
-		ScoreText->SetText(FText::AsNumber(iNewScore));
+		ScoreText->SetText(FText::AsNumber(NewScore));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("❌ ScoreText가 NULL임 - UI 점수 업데이트 실패"));
+	}
+}
+
+void UCHUDWidget::UpdateScoreDisplay()
+{
+	UCGameInstance* GameInstance = Cast<UCGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	if (GameInstance)
+	{
+		int CurrentScore = GameInstance->GetScore();
+		UpdateScore(CurrentScore); // ✅ UpdateScore()를 직접 호출하여 UI 반영
 	}
 }
 
