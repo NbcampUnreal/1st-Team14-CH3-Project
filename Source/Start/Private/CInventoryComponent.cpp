@@ -28,8 +28,6 @@ UCInventoryComponent::UCInventoryComponent()
     {
         UE_LOG(LogTemp, Error, TEXT("❌ C++에서 ItemDataTable을 찾을 수 없습니다. 경로를 확인하세요."));
     }
-    // ✅ 초기 총알 개수 설정 (70발)
-    InventoryItems.Add(EItemType::EIT_Bullet, 70);
 }
 
 void UCInventoryComponent::BeginPlay()

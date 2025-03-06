@@ -5,10 +5,10 @@
 #include "GameFramework/HUD.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Components/CStatusComponent.h"
+#include "CGameState.h"
 
 UCGameInstance::UCGameInstance()
 {
-    PlayerHealth = 100.0f;  // 기본 체력 값
     Score = 0;
 }
 
@@ -22,15 +22,10 @@ float UCGameInstance::GetPlayerHealth() const
     return PlayerHealth;
 }
 
-void UCGameInstance::SetPlayerHealth(float NewHealth)
-{
-    PlayerHealth = FMath::Clamp(NewHealth, 0.0f, 100.0f);
-}
-
 // 체력 초기화
 void UCGameInstance::ResetPlayerHealth()
 {
-    PlayerHealth = 100.0f;
+    PlayerHealth = PlayerMaxHealth;
 }
 
 int UCGameInstance::GetScore() const
@@ -68,20 +63,36 @@ void UCGameInstance::SavePlayerState()
             if (StatusComponent)
             {
                 PlayerHealth = StatusComponent->GetHealth(); // ✅ 현재 체력 저장
+                PlayerMaxHealth = StatusComponent->GetMaxHealth(); // ✅ 최대 체력 저장
                 UE_LOG(LogTemp, Warning, TEXT("✅ SavePlayerState: 저장된 체력 값: %f"), PlayerHealth);
             }
+
+            // ✅ 현재 위치에서 태그가 있는 스폰 지점을 찾음
+            TArray<AActor*> FoundSpawnPoints;
+            UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("LabyrinthSpawn"), FoundSpawnPoints);
+            if (FoundSpawnPoints.Contains(Player))
+            {
+                RespawnTag = FName("LabyrinthSpawn");
+            }
+            else
+            {
+                RespawnTag = FName("BossAreaSpawn");
+            }
+
+            UE_LOG(LogTemp, Warning, TEXT("✅ SavePlayerState: 저장된 RespawnTag: %s"), *RespawnTag.ToString());
         }
     }
 
     SetScore(Score); // ✅ 점수 저장
-
     UE_LOG(LogTemp, Warning, TEXT("✅ SavePlayerState: 저장된 점수: %d"), Score);
 }
+
 
 // ✅ 게임 시작 시 또는 맵 변경 후 플레이어 상태 불러오기
 void UCGameInstance::LoadPlayerState()
 {
     UE_LOG(LogTemp, Warning, TEXT("LoadPlayerState() 실행됨"));
+
     APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
     if (PC)
     {
@@ -91,50 +102,70 @@ void UCGameInstance::LoadPlayerState()
             UCStatusComponent* StatusComponent = Player->GetStatusComponent();
             if (StatusComponent)
             {
-                StatusComponent->HealHealth(PlayerHealth - StatusComponent->GetHealth());
+                // ✅ 기존 최대 체력 저장
+                float OldMaxHealth = PlayerMaxHealth;
+
+                // ✅ 새로운 최대 체력 불러오기
+                PlayerMaxHealth = StatusComponent->GetMaxHealth();
+
+                // ✅ 기존 체력이 최대 체력과 같으면 보정
+                if (PlayerHealth == OldMaxHealth)
+                {
+                    PlayerHealth = PlayerMaxHealth;
+                }
+
+                UE_LOG(LogTemp, Warning, TEXT("✅ LoadPlayerState: 최대 체력 적용됨 -> %f"), PlayerMaxHealth);
             }
         }
     }
+    
+    // ✅ 클래스 멤버 `RespawnTag`를 사용하도록 수정
+    UE_LOG(LogTemp, Warning, TEXT("🔍 LoadPlayerState() -> 불러온 RespawnTag: %s"), *this->RespawnTag.ToString());
+
+    ACGameState* GameState = GetWorld()->GetGameState<ACGameState>();
+    if (GameState)
+    {
+        // ✅ ACGameState::MovePlayerToSpawn()을 호출할 때, 올바른 인자 전달
+        GameState->MovePlayerToSpawn(PC->GetPawn(), this->RespawnTag, 5);
+    }
+
     // ✅ 점수 불러오기
     int LoadedScore = GetScore();
-    Score = LoadedScore;  // ✅ Score 값을 다시 할당
+    Score = LoadedScore;
     UE_LOG(LogTemp, Warning, TEXT("✅ LoadPlayerState: 불러온 점수: %d"), LoadedScore);
 
     // ✅ HUD 업데이트
     NotifyHUDScoreUpdate();
 
-    // ✅ 불러온 체력과 점수를 디버깅 로그로 출력
     UE_LOG(LogTemp, Warning, TEXT("✅ LoadPlayerState: 불러온 체력: %f, 불러온 점수: %d"), PlayerHealth, LoadedScore);
 }
+
 
 // ✅ HUD에 점수 업데이트 알림을 보냄
 void UCGameInstance::NotifyHUDScoreUpdate()
 {
     APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-    if (PC)
+    if (!PC) return; // ✅ NULL 체크 추가
+
+    UCHUDWidget* HUDWidget = nullptr;
+    TArray<UUserWidget*> FoundWidgets;
+    UWidgetBlueprintLibrary::GetAllWidgetsOfClass(GetWorld(), FoundWidgets, UCHUDWidget::StaticClass(), false);
+
+    if (FoundWidgets.Num() > 0)
     {
-        UCHUDWidget* HUDWidget = nullptr;
+        HUDWidget = Cast<UCHUDWidget>(FoundWidgets[0]);
+    }
 
-        // ✅ Viewport에서 UCHUDWidget을 직접 탐색
-        TArray<UUserWidget*> FoundWidgets;
-        UWidgetBlueprintLibrary::GetAllWidgetsOfClass(GetWorld(), FoundWidgets, UCHUDWidget::StaticClass(), false);
-
-        if (FoundWidgets.Num() > 0)
-        {
-            HUDWidget = Cast<UCHUDWidget>(FoundWidgets[0]);
-        }
-
-        if (HUDWidget)
-        {
-            HUDWidget->UpdateScore(Score);
-            UE_LOG(LogTemp, Warning, TEXT("✅ NotifyHUDScoreUpdate() 호출됨 - 점수: %d"), Score);
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("❌ HUD 위젯을 찾을 수 없음, 0.1초 후 다시 시도"));
-            FTimerHandle TimerHandle;
-            PC->GetWorldTimerManager().SetTimer(TimerHandle, this, &UCGameInstance::NotifyHUDScoreUpdate, 0.1f, false);
-        }
+    if (HUDWidget)
+    {
+        HUDWidget->UpdateScore(Score);
+        UE_LOG(LogTemp, Warning, TEXT("✅ NotifyHUDScoreUpdate() 호출됨 - 점수: %d"), Score);
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("❌ HUD 위젯을 찾을 수 없음, 0.2초 후 다시 시도"));
+        FTimerHandle TimerHandle;
+        PC->GetWorldTimerManager().SetTimer(TimerHandle, this, &UCGameInstance::NotifyHUDScoreUpdate, 0.2f, false);
     }
 }
 

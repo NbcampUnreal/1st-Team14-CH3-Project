@@ -21,21 +21,84 @@ void ACGameState::BeginPlay()
     // 🔹 1초마다 중간 보스 사망 여부를 체크하는 타이머 설정
     GetWorldTimerManager().SetTimer(MidBossCheckTimer, this, &ACGameState::CheckMidBossDefeated, 1.0f, true);
 
-    // ✅ CurrentMapName을 FString으로 선언하고 현재 맵 이름을 할당
     FString CurrentMapName = GetWorld()->GetMapName();
 
-    // ✅ 연구소 맵이면 `BossAreaSpawn`에서 자동 리스폰
     if (CurrentMapName.Contains(TEXT("MAIN_MAP")))
     {
-        UE_LOG(LogTemp, Warning, TEXT("연구소 맵이 다시 로드됨 - BossAreaSpawn에서 리스폰"));
-
-        UCHUDWidget* HUDWidget = Cast<UCHUDWidget>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetHUD());
-        if (HUDWidget)
+        // ✅ GameInstance에서 리스폰 태그 가져오기
+        UCGameInstance* GameInstance = Cast<UCGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+        if (GameInstance)
         {
-            HUDWidget->RespawnPlayerAtTaggedSpawnPoint(TEXT("BossAreaSpawn"));
+            FName RespawnLocation = GameInstance->GetRespawnTag();
+            if (RespawnLocation != NAME_None)
+            {
+                UE_LOG(LogTemp, Warning, TEXT("✅ 연구소 맵 - %s에서 리스폰"), *RespawnLocation.ToString());
+
+                UCHUDWidget* HUDWidget = Cast<UCHUDWidget>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetHUD());
+                if (HUDWidget)
+                {
+                    HUDWidget->RespawnPlayerAtTaggedSpawnPoint(RespawnLocation);
+                    GameInstance->SetRespawnTag(NAME_None); // ✅ 리스폰 후 태그 초기화
+                }
+            }
         }
     }
 }
+
+void ACGameState::OnLevelLoaded()
+{
+    UE_LOG(LogTemp, Warning, TEXT("🔄 레벨 로드 완료! 플레이어를 스폰 태그에 맞게 이동"));
+
+    // ✅ GameInstance에서 저장된 리스폰 태그 가져오기
+    UCGameInstance* GameInstance = Cast<UCGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+    if (!GameInstance) return;
+
+    FName RespawnTag = GameInstance->GetRespawnTag();
+    if (RespawnTag == NAME_None) return;
+
+    APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+    if (!PlayerController) return;
+
+    ACPlayer* PlayerCharacter = Cast<ACPlayer>(PlayerController->GetPawn());
+    if (!PlayerCharacter) return;
+
+    // ✅ 1초 후 MovePlayerToSpawn 실행 (레벨이 완전히 로드된 후 안전한 시점)
+    FTimerHandle RespawnTimer;
+    GetWorldTimerManager().SetTimer(RespawnTimer, [this, PlayerCharacter, RespawnTag]()
+        {
+            MovePlayerToSpawn(PlayerCharacter, RespawnTag, 5);
+
+        }, 1.0f, false); // 🔹 1초 딜레이 추가 (레벨이 완전히 로드된 후 실행)
+}
+
+void ACGameState::MovePlayerToSpawn(AActor* PlayerCharacter, FName SpawnTag, int32 RetryCount)
+{
+    if (!PlayerCharacter || RetryCount <= 0) return;
+
+    UE_LOG(LogTemp, Warning, TEXT("🔍 MovePlayerToSpawn() -> 사용된 SpawnTag: %s"), *SpawnTag.ToString());
+
+    TArray<AActor*> FoundSpawnPoints;
+    UGameplayStatics::GetAllActorsWithTag(GetWorld(), SpawnTag, FoundSpawnPoints);
+
+    if (FoundSpawnPoints.Num() > 0)
+    {
+        AActor* SpawnPoint = FoundSpawnPoints[0];
+        PlayerCharacter->SetActorLocation(SpawnPoint->GetActorLocation());
+        PlayerCharacter->SetActorRotation(SpawnPoint->GetActorRotation());
+
+        UE_LOG(LogTemp, Warning, TEXT("✅ [%s]에서 플레이어 스폰 완료!"), *SpawnTag.ToString());
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("⏳ [%s] 태그를 찾지 못함. 다시 시도 중... (남은 횟수: %d)"), *SpawnTag.ToString(), RetryCount - 1);
+        FTimerHandle RetryTimer;
+        GetWorldTimerManager().SetTimer(RetryTimer, [this, PlayerCharacter, SpawnTag, RetryCount]()
+            {
+                MovePlayerToSpawn(PlayerCharacter, SpawnTag, RetryCount - 1);
+            }, 1.0f, false);
+    }
+}
+
 
 // ✅ 게임 오버 UI 표시 (플레이어 사망 시 호출)
 void ACGameState::ShowGameOverUI()
@@ -181,12 +244,10 @@ void ACGameState::SetGameState(EGameState NewState)
         break;
 
     case EGameState::Labyrinth:
-        UE_LOG(LogTemp, Warning, TEXT("연구소 미로 맵 로드"));
         UGameplayStatics::OpenLevel(this, TEXT("/Game/Map/LapMap/ModSci_Engineer/Maps/MAIN_MAP"));
         break;
 
     case EGameState::BossArea:
-        UE_LOG(LogTemp, Warning, TEXT("보스가 있는 연구소 맵 로드"));
         UGameplayStatics::OpenLevel(this, TEXT("/Game/Map/LapMap/ModSci_Engineer/Maps/MAIN_MAP"));
         break;
 

@@ -225,7 +225,6 @@ void UCHUDWidget::OnReplayClicked()
 	// ✅ 현재 맵 이름 가져오기
 	FString CurrentMapName = GetWorld()->GetMapName();
 
-	// ✅ 맵에 따라 리스폰 로직 다르게 적용
 	if (CurrentMapName.Contains(TEXT("Map_Post-Apocalyptic_NightLight")))
 	{
 		// 🔹 도시 맵에서는 기본적으로 맵을 다시 로드
@@ -233,57 +232,70 @@ void UCHUDWidget::OnReplayClicked()
 	}
 	else if (CurrentMapName.Contains(TEXT("MAIN_MAP")))
 	{
-		// ✅ 연구소 맵도 맵을 다시 로드하되, 특정 위치(`BossAreaSpawn`)에서 리스폰
+		UE_LOG(LogTemp, Warning, TEXT("✅ 연구소 맵 감지됨 - BossAreaSpawn에서 리스폰 시도"));
+
+		// ✅ 연구소 맵이면 GameInstance에 리스폰 태그 저장
+		if (GameInstance)
+		{
+			GameInstance->SetRespawnTag(TEXT("BossAreaSpawn")); // 🔹 리스폰 태그 저장
+		}
+
+		// ✅ 연구소 맵 다시 로드
 		UGameplayStatics::OpenLevel(GetWorld(), TEXT("/Game/Map/LapMap/ModSci_Engineer/Maps/MAIN_MAP"));
 	}
 	else
 	{
-		// 기본적으로 현재 맵 유지
+		// ✅ 기본적으로 현재 맵 유지
 		UGameplayStatics::OpenLevel(GetWorld(), FName(*CurrentMapName));
 	}
 }
 
-// ✅ 특정 태그를 가진 플레이어 스타터에서 리스폰
 void UCHUDWidget::RespawnPlayerAtTaggedSpawnPoint(FName SpawnTag)
 {
 	UWorld* World = GetWorld();
 	if (!World) return;
 
-	// 🔹 태그("BossAreaSpawn")가 있는 모든 액터 찾기
-	TArray<AActor*> SpawnPoints;
-	UGameplayStatics::GetAllActorsWithTag(World, SpawnTag, SpawnPoints);
+	TArray<AActor*> FoundSpawnPoints;
+	UGameplayStatics::GetAllActorsWithTag(World, SpawnTag, FoundSpawnPoints);
 
-	if (SpawnPoints.Num() == 0)
+	if (FoundSpawnPoints.Num() == 0)
 	{
-		UE_LOG(LogTemp, Error, TEXT("❌ 태그가 '%s'인 플레이어 스타터를 찾을 수 없음!"), *SpawnTag.ToString());
+		UE_LOG(LogTemp, Error, TEXT("❌ [%s] 태그를 가진 스폰포인트를 찾을 수 없습니다."), *SpawnTag.ToString());
 		return;
 	}
 
 	// 🔹 첫 번째 태그가 있는 플레이어 스타터 사용
-	AActor* ChosenSpawnPoint = SpawnPoints[0];
-	if (!ChosenSpawnPoint) return;
+	AActor* SpawnPoint = FoundSpawnPoints[0];
+	if (!SpawnPoint)
+	{
+		UE_LOG(LogTemp, Error, TEXT("❌ 선택된 스폰포인트가 NULL 입니다."));
+		return;
+	}
 
-	// 🔹 플레이어 컨트롤러 가져오기
+	FVector SpawnLocation = SpawnPoint->GetActorLocation();
+	FRotator SpawnRotation = SpawnPoint->GetActorRotation();
+
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(World, 0);
 	if (!PlayerController) return;
 
-	// 🔹 새로운 플레이어를 특정 위치에서 스폰
-	FVector SpawnLocation = ChosenSpawnPoint->GetActorLocation();
-	FRotator SpawnRotation = ChosenSpawnPoint->GetActorRotation();
+	// 🔹 기존 플레이어 제거 후 새로 생성
+	if (PlayerController->GetPawn())
+	{
+		PlayerController->GetPawn()->Destroy();
+	}
+
 	ACPlayer* Player = World->SpawnActor<ACPlayer>(PlayerController->GetPawn()->GetClass(), SpawnLocation, SpawnRotation);
 
 	if (Player)
 	{
-		// 🔹 컨트롤러를 새 플레이어에 연결
 		PlayerController->Possess(Player);
-		UE_LOG(LogTemp, Warning, TEXT("✅ 특정 태그(%s)가 있는 플레이어 스타터에서 스폰 완료!"), *SpawnTag.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("✅ [%s] 태그에서 플레이어가 리스폰되었습니다."), *SpawnTag.ToString());
 	}
 	else
 	{
 		UE_LOG(LogTemp, Error, TEXT("❌ 플레이어 스폰 실패!"));
 	}
 }
-
 
 // 게임 종료 버튼 클릭 시
 void UCHUDWidget::OnExitClicked()

@@ -45,6 +45,8 @@ public:
 
     EGameState GetGameState() const { return CurrentState; }
 
+    void OnLevelLoaded();
+    void MovePlayerToSpawn(AActor* PlayerCharacter, FName SpawnTag, int32 RetryCount);
     void CheckScoreForRedDoor();
     void CheckMidBossDefeated();
 
