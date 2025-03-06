@@ -42,6 +42,8 @@ void UCSimbioComponent::ActivateSimbio()
 
 void UCSimbioComponent::DeActivateSimbio()
 {
+	if (!Simbio)
+		return;
 	Simbio->SetActorHiddenInGame(false);
 	Simbio->SetActorEnableCollision(true);
 	Simbio->SetActorTickEnabled(true);
@@ -49,6 +51,8 @@ void UCSimbioComponent::DeActivateSimbio()
 
 void UCSimbioComponent::SimbioAttack()
 {
+	if (!Simbio)
+		return;
 	if (SimbioAttackDelegate.IsBound() == true)
 		SimbioAttackDelegate.Broadcast();
 }
