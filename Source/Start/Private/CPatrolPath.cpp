@@ -9,7 +9,7 @@ ACPatrolPath::ACPatrolPath()
 
 AActor* ACPatrolPath::GetWaypoint(int32 index) const
 {
-	if (Waypoints.IsValidIndex(index))
+	if (Waypoints.Num() > 0 && Waypoints.IsValidIndex(index))
 	{
 		return Waypoints[index];
 	}
