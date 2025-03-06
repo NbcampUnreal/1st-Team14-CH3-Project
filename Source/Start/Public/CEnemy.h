@@ -10,7 +10,7 @@ class UWidgetComponent;
 class ACPlayer;
 
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyAttack);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyDie);
 
 UCLASS()
 class START_API ACEnemy : public ACCharacter
@@ -49,13 +49,14 @@ protected:
 	class UCSpawnComponent* SpawnComp;
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
-	FOnEnemyAttack OnEnemyAttack;
+	FOnEnemyDie OnEnemyDie;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bCanAttack;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsGunUsed;
 	bool bIsDied;
+	bool bHasScore;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	FText EnemyName;
 

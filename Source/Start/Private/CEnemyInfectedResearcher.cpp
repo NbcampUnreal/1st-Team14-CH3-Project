@@ -8,6 +8,7 @@
 #include "Components/ProgressBar.h"
 #include "Components/WidgetComponent.h"
 #include "Weapon/CWeaponStructures.h"
+#include "CSimbioComponent.h"
 #include "CPlayer.h"
 
 ACEnemyInfectedResearcher::ACEnemyInfectedResearcher() :
@@ -18,6 +19,8 @@ ACEnemyInfectedResearcher::ACEnemyInfectedResearcher() :
 	SwingAttackCollision = CreateDefaultSubobject<USphereComponent>(TEXT("AttackCollision"));
 	SwingAttackCollision->SetCollisionProfileName("NoCollision");
 	SwingAttackCollision->SetupAttachment(GetMesh());
+
+
 
 }
 
@@ -51,12 +54,14 @@ void ACEnemyInfectedResearcher::EnemyAttackStart(bool bIsCloseAttack)
 			{
 				SelectedMontage = LongRangeAttackMontages[1];
 			}
-			//else if (Phase == 2 && bIsBoss && LongRangeAttackMontages[2])
-			//{
-			//	SelectedMontage = LongRangeAttackMontages[2];
-			//}
+			else if (Phase == 2)
+			{
+				if(!SimbioComponent->GetIsSimbioActivate())
+					SimbioComponent->ActivateSimbio();
+				SimbioComponent->SimbioAttack();
+			}
 			
-			if (SelectedMontage && GetMesh()->GetAnimInstance())
+			if (SelectedMontage && GetMesh()->GetAnimInstance()&& Phase != 2)
 			{
 				GetMesh()->GetAnimInstance()->Montage_Play(SelectedMontage);
 			}
@@ -69,6 +74,7 @@ void ACEnemyInfectedResearcher::BeginPlay()
 	Super::BeginPlay();
 	SwingAttackCollision->OnComponentBeginOverlap.AddDynamic(this, &ACEnemyInfectedResearcher::OnComponentBeginOverlap);
 	SwingAttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	SimbioComponent->DeActivateSimbio();
 }
 
 void ACEnemyInfectedResearcher::UpdateOverheadHP()
@@ -137,13 +143,13 @@ void ACEnemyInfectedResearcher::ChangePhase()
 {
 	if (bIsBoss)
 	{
-		if (StatusComponent->GetHealth() <= StatusComponent->GetMaxHealth() * 0.7f && Phase < 1)
+		if (StatusComponent->GetHealth() <= StatusComponent->GetMaxHealth() * 0.8f && Phase < 1)
 		{
 			Phase = 1;
 			if(ChangePhaseMontages.Num()>0)
 				GetMesh()->GetAnimInstance()->Montage_Play(ChangePhaseMontages[0]);
 		}
-		else if (StatusComponent->GetHealth() <= StatusComponent->GetMaxHealth() * 0.4f && Phase < 2)
+		else if (StatusComponent->GetHealth() <= StatusComponent->GetMaxHealth() * 0.5f && Phase < 2)
 		{
 			Phase = 2;
 			if (ChangePhaseMontages.Num() > 0)

@@ -7,6 +7,7 @@
 #include "CSimbioComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FSimbioAttackDelegate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FSimbioActivateDelegate);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class START_API UCSimbioComponent : public UActorComponent
@@ -19,17 +20,23 @@ public:
 
 	UPROPERTY(BlueprintAssignable, VisibleAnywhere, BlueprintCallable)
 	FSimbioAttackDelegate SimbioAttackDelegate;
+	UPROPERTY(BlueprintAssignable, VisibleAnywhere, BlueprintCallable)
+	FSimbioAttackDelegate FSimbioActivateDelegate;
 
 	void SimbioAttack();
+	void ActivateSimbio();
+	void DeActivateSimbio();
+	bool GetIsSimbioActivate() const { return bIsSimbioActivate; }
 protected:
 	UPROPERTY(EditAnywhere, Category = "Simbio")
 	TSubclassOf<AActor> SimbioClass;
 	UPROPERTY(VisibleAnywhere, Category = "Simbio")
 	AActor* Simbio;
+	UPROPERTY(VisibleAnywhere, Category = "Simbio")
+	bool bIsSimbioActivate;
 
 	void CreateSimbio();
-	void ActivateSimbio();
-	void DeActivateSimbio();
+
 
 	virtual void BeginPlay() override;
 
