@@ -123,8 +123,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Magazine;")
 	uint8 MaxMagazineCount;
-	UPROPERTY(EditDefaultsOnly, Category = "Magazine;")
-	uint8 ReloadMagazineCount;
 	UPROPERTY(EditDefaultsOnly, Category = "Magazine")
 	UAnimMontage* ReloadMontage;
 	UPROPERTY(EditDefaultsOnly, Category = "Magazine")

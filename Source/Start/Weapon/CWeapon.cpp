@@ -94,9 +94,6 @@ void ACWeapon::BeginPlay()
 	ACPlayer* player = Cast<ACPlayer>(OwnerCharacter);
 	if (player != nullptr && bIsCustom == false)
 	{
-		Inventory = Cast<UCInventoryComponent>(player->GetComponentByClass(UCInventoryComponent::StaticClass()));
-		if (Inventory != nullptr)
-			MaxMagazineCount = Inventory->GetBulletCount();
 		//Aim BaseData Setting
 		USpringArmComponent* SpringArm = Cast<USpringArmComponent>(player->GetComponentByClass(USpringArmComponent::StaticClass()));
 		UCameraComponent* camera = Cast<UCameraComponent>(player->GetComponentByClass(UCameraComponent::StaticClass()));
@@ -123,7 +120,7 @@ void ACWeapon::BeginPlay()
 		Timeline->SetPlayRate(AimSpeed);
 	}
 
-	CurrentMagazineCount = ReloadMagazineCount;
+	CurrentMagazineCount = MaxMagazineCount;
 	if (OwnerCharacter)
 	{
 		InteractableCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -133,8 +130,6 @@ void ACWeapon::BeginPlay()
 void ACWeapon::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	//UE_LOG(LogTemp, Warning, TEXT("%d"), CurrentMagazineCount);
-
 }
 
 bool ACWeapon::CanEquip()
@@ -175,13 +170,6 @@ void ACWeapon::BeginEquip()
 {
 	if (RightHandSokcetName.IsValid())
 		AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), RightHandSokcetName);
-	ACPlayer* player = Cast<ACPlayer>(OwnerCharacter);
-	if(player != nullptr)
-	{
-		Inventory = Cast<UCInventoryComponent>(player->GetComponentByClass(UCInventoryComponent::StaticClass()));
-		if (Inventory != nullptr)
-			MaxMagazineCount = Inventory->GetBulletCount();
-	}
 }
 
 void ACWeapon::EndEquip()
@@ -232,9 +220,13 @@ bool ACWeapon::CanFire()
 {
 	bool b = false;
 	b |= bEquipping;
+	GEngine->AddOnScreenDebugMessage(1, 5, FColor::Blue, FString::Printf(L"equip %d, %d", bEquipping, b));
 	b |= bReload;
+	GEngine->AddOnScreenDebugMessage(1, 5, FColor::Blue, FString::Printf(L"reload %d, %d", bReload, b));
 	b |= bFiring;
+	GEngine->AddOnScreenDebugMessage(1, 5, FColor::Blue, FString::Printf(L"fire %d, %d", bFiring, b));
 	b |= CurrentMagazineCount == 0;
+	GEngine->AddOnScreenDebugMessage(1, 5, FColor::Blue, FString::Printf(L"count %d, %d", CurrentMagazineCount == 0, b));
 	//b |= State->IsInventoryMode() == true;
 	return !b;
 }
@@ -361,8 +353,7 @@ bool ACWeapon::CanReload()
 	bool b = false;
 	b |= bEquipping;
 	b |= bReload;
-	b |= CurrentMagazineCount >= ReloadMagazineCount;
-	b |= MaxMagazineCount <= 0;
+	b |= CurrentMagazineCount >= MaxMagazineCount;
 	//b |= State->IsInventoryMode() == true;
 	return !b;
 }
@@ -375,35 +366,11 @@ void ACWeapon::Reload()
 
 	if (ReloadMontage != nullptr)
 		OwnerCharacter->PlayAnimMontage(ReloadMontage, ReloadPlayRate);
+	
+	CurrentMagazineCount = MaxMagazineCount;
 
-	// ������ �Ϸ� �� CurrentMagazineCount�� �ִ� ź������ �缳��
-	if (Inventory != nullptr)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Blue, FString::Printf(L"재장전 필요 총알: %d", ReloadMagazineCount - CurrentMagazineCount));
-		GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Yellow, FString::Printf(L"재장전 전 MaxMagazineCount: %d", MaxMagazineCount));
-
-		Inventory->UseBulletCount(ReloadMagazineCount - CurrentMagazineCount);
-		MaxMagazineCount = Inventory->GetBulletCount();
-
-		GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Green, FString::Printf(L"재장전 후 MaxMagazineCount: %d", MaxMagazineCount));
-		GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, FString::Printf(L"ReloadMagazineCount: %d", ReloadMagazineCount));
-	}
-
-	// 여기에 추가 디버그 메시지
-	GEngine->AddOnScreenDebugMessage(-1, 5, FColor::White, FString::Printf(L"조건 비교: MaxMagazineCount(%d) < ReloadMagazineCount(%d): %s",
-		MaxMagazineCount, ReloadMagazineCount, MaxMagazineCount < ReloadMagazineCount ? L"True" : L"False"));
-
-	if (MaxMagazineCount < ReloadMagazineCount)
-	{
-		CurrentMagazineCount = MaxMagazineCount;
-		GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Cyan, L"첫 번째 조건문 실행");
-	}
-	else if (MaxMagazineCount >= ReloadMagazineCount)
-	{
-		CurrentMagazineCount = ReloadMagazineCount;
-		GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Magenta, L"두 번째 조건문 실행");
-	}
-	UGameplayStatics::PlaySoundAtLocation(OwnerCharacter->GetWorld(), ReloadSound, FVector::ZeroVector, FRotator::ZeroRotator);
+	if (ReloadSound != nullptr)
+		UGameplayStatics::PlaySoundAtLocation(OwnerCharacter->GetWorld(), ReloadSound, FVector::ZeroVector, FRotator::ZeroRotator);
 
 }
 
@@ -433,7 +400,7 @@ void ACWeapon::Spawn_Magazine()
 
 void ACWeapon::Load_Magazine()
 {
-	CurrentMagazineCount = ReloadMagazineCount;
+	CurrentMagazineCount = MaxMagazineCount;
 	if (MagazineBoneName.IsValid() == true)
 		Mesh->UnHideBoneByName(MagazineBoneName);
 

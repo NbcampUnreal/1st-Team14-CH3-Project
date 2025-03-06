@@ -52,12 +52,12 @@ void UCAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	LeftHandLocation = Weapon->GetLeftHandLocation();
 	LeftHandAimLocation = Weapon->GetLeftHandAimLocation();
 
-	/*bFeet = false;
-	if (bFeet == true)
+	bFeet = false;
+	if (FeetComponent != nullptr)
 	{
 		bFeet = true;
 		FeetData = FeetComponent->GetData();
-	}*/
+	}
 }
 
 void UCAnimInstance::OnWeaponTypeChanged(EWeaponType InPrevType, EWeaponType InNewType)

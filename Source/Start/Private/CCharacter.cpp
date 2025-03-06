@@ -41,6 +41,9 @@ void ACCharacter::BeginPlay()
         // 🔹 델리게이트를 현재 캐릭터의 `HandleStateChanged()`에 연결
         StateComponent->OnStateTypeChanged.AddDynamic(this, &ACCharacter::HandleStateChanged);
     }
+    UAnimInstance* instance = GetMesh()->GetAnimInstance();
+    if (instance != nullptr)
+    	instance->OnMontageEnded.AddDynamic(this, &ACCharacter::HandleAnyMontageEnded);
 }
 
 void ACCharacter::HandleStateChanged(EStateType PreviousType, EStateType NewType)
@@ -64,6 +67,15 @@ void ACCharacter::HandleStateChanged(EStateType PreviousType, EStateType NewType
 
 void ACCharacter::Hitted()
 {
+    //auto a = GetMesh()->GetAnimInstance()->GetCurrentActiveMontage();
+    UAnimInstance* instance = GetMesh()->GetAnimInstance();
+    if (instance != nullptr)
+    {
+    	instance->Montage_Stop(0.1f);
+        UAnimMontage* montage = GetMesh()->GetAnimInstance()->GetCurrentActiveMontage();
+        if (montage != nullptr)
+            HandleAnyMontageEnded(montage, true);
+    }
     StatusComponent->Damage(HittedInfo.Power);
     if(StatusComponent->GetHealth() <= 0.0f)
 	    StateComponent->SetDeadMode();
@@ -93,6 +105,24 @@ void ACCharacter::Hitted()
 //        UE_LOG(LogTemp, Warning, TEXT("체력 로드: %f"), Health);
 //    }
 //}
+
+void ACCharacter::HandleAnyMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+    if(Montage == nullptr)
+        return;
+    if(Montage->GetName() == "Equip_Rifle_Standing_Montage")
+    {
+        WeaponComponent->Begin_Equip();
+        WeaponComponent->End_Equip();
+        return;
+    }
+    if(Montage->GetName() == "Reload_Rifle_Hip_Montage")
+    {
+	    WeaponComponent->Load_Magazine();
+	    WeaponComponent->End_Magazine();
+	    return;
+    }
+}
 
 void ACCharacter::End_Hit()
 {
