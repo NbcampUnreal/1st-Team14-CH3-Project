@@ -15,6 +15,12 @@ class START_API ACEnemyDrone : public ACEnemy
 public:
 	ACEnemyDrone();
 protected:
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	TSubclassOf<AActor> LaserActor;
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	USoundBase* LaserSound;
+
+	void LaserSpawnAttack();
 	virtual void EnemyAttackStart(bool bIsCloseRangeAttack) override;
 	virtual void EnemyAttackEnd() override;
 	virtual void Die() override;

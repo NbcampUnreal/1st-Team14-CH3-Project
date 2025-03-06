@@ -22,7 +22,7 @@ ACEnemyInfectedResearcher::ACEnemyInfectedResearcher() :
 
 void ACEnemyInfectedResearcher::EnemyAttackStart(bool bIsCloseAttack)
 {
-	//GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, FString::Printf(TEXT("%d"), bIsCloseRangeAttack));
+	Super::EnemyAttackStart(bIsCloseRangeAttack);
 	if (bIsCloseAttack)
 	{
 		bIsCloseRangeAttack = true;
@@ -50,10 +50,10 @@ void ACEnemyInfectedResearcher::EnemyAttackStart(bool bIsCloseAttack)
 			{
 				SelectedMontage = LongRangeAttackMontages[1];
 			}
-			else if (Phase == 2 && bIsBoss && LongRangeAttackMontages[2])
-			{
-				SelectedMontage = LongRangeAttackMontages[2];
-			}
+			//else if (Phase == 2 && bIsBoss && LongRangeAttackMontages[2])
+			//{
+			//	SelectedMontage = LongRangeAttackMontages[2];
+			//}
 			
 			if (SelectedMontage && GetMesh()->GetAnimInstance())
 			{
