@@ -120,6 +120,11 @@ void ACCharacter::HandleAnyMontageEnded(UAnimMontage* Montage, bool bInterrupted
 	    WeaponComponent->End_Magazine();
 	    return;
     }
+    if(Montage->GetName() == "Equip_Pistol_Standing_Montage")
+    {
+        WeaponComponent->Load_Magazine();
+        WeaponComponent->End_Magazine();
+    }
 }
 
 void ACCharacter::End_Hit()
