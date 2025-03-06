@@ -66,20 +66,36 @@ void ACBulletBoxItem::Use(AActor* Target)
     ACCharacter* Character = Cast<ACCharacter>(Target);
     if (!Character) return;
 
-	ACPlayer* Player = Cast<ACPlayer>(Character);
+    ACPlayer* Player = Cast<ACPlayer>(Character);
     if (!Player) return;
 
-	UCInventoryComponent* InventoryComponent = Cast<UCInventoryComponent>(Player->GetComponentByClass(UCInventoryComponent::StaticClass()));
+    UCInventoryComponent* InventoryComponent = Cast<UCInventoryComponent>(Player->GetComponentByClass(UCInventoryComponent::StaticClass()));
     if (!InventoryComponent) return;
-
-    // 🔹 5~10개 랜덤 개수의 총알 생성
-    int32 BulletCount = UKismetMathLibrary::RandomIntegerInRange(5, 10);
-
-    // 🔹 인벤토리에 총알 추가
-    InventoryComponent->AddBulletsToInventory(BulletCount);
 
     // 🔹 현재 총알 개수 가져오기
     int32 CurrentBullets = InventoryComponent->GetBulletCount();
 
-    UE_LOG(LogTemp, Warning, TEXT("📦 %d개의 총알이 인벤토리에 추가되었습니다!"), BulletCount);
+    // 🔹 최대 총알 제한 (300발)
+    const int32 MaxBullets = 300;
+
+    // ✅ 총알이 이미 300발이면 사용 불가
+    if (CurrentBullets >= MaxBullets)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("❌ 총알이 최대 개수(%d)입니다! 불릿박스를 사용할 수 없습니다."), MaxBullets);
+        GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT("⚠️ 총알이 최대 개수입니다! 불릿박스를 사용할 수 없습니다."));
+        return;
+    }
+
+    // 🔹 추가할 총알 개수 (30발)
+    int32 BulletCount = 30;
+
+    // ✅ 현재 총알 + 추가 총알이 300을 넘지 않도록 조정
+    int32 BulletsToAdd = FMath::Min(BulletCount, MaxBullets - CurrentBullets);
+
+    // 🔹 불릿박스를 사용하여 총알 추가
+    InventoryComponent->AddBulletsToInventory(BulletsToAdd);
+
+    // 🔹 현재 총알 개수 업데이트 후 로그 출력
+    CurrentBullets = InventoryComponent->GetBulletCount();
+    UE_LOG(LogTemp, Warning, TEXT("📦 %d개의 총알이 추가되었습니다! 현재 총알: %d/%d"), BulletsToAdd, CurrentBullets, MaxBullets);
 }
