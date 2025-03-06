@@ -3,7 +3,9 @@
 
 #include "Notify/CAnimNotifyState_Combo.h"
 
+#include "Components/CStateComponent.h"
 #include "Components/CWeaponComponent.h"
+#include "GameFramework/Character.h"
 #include "Weapon/CWeapon.h"
 
 FString UCAnimNotifyState_Combo::GetNotifyName_Implementation() const
@@ -70,4 +72,28 @@ void UCAnimNotifyState_Combo::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimS
 		return;
 	}
 	curr->DisableCombo();
+}
+
+void UCAnimNotifyState_Combo::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation,
+	float FrameDeltaTime, const FAnimNotifyEventReference& EventReference)
+{
+	Super::NotifyTick(MeshComp, Animation, FrameDeltaTime, EventReference);
+	if (MeshComp == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Mesh is NULL"));
+		return;
+	}
+	if (MeshComp->GetOwner() == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Mesh's Owner is NULL"));
+		return;
+	}
+	UCStateComponent* state = Cast<UCStateComponent>(MeshComp->GetOwner()->GetComponentByClass(UCStateComponent::StaticClass()));
+	if(state == nullptr)
+	{
+		return;
+	}
+
+	if (state->IsHittedMode() == true)
+		NotifyEnd(MeshComp,Animation,EventReference);
 }

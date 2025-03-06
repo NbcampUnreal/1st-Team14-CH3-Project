@@ -32,6 +32,7 @@ ACPlayerController::ACPlayerController()
 	FireAction = nullptr;
 	ToggleAutoFireAction = nullptr;
 	ThrowAction = nullptr;
+	SimbioAttackAction = nullptr;
 	HUDWidgetClass = nullptr;
 	MainMenuWidgetClass = nullptr;
 	CurrentWidget = nullptr;

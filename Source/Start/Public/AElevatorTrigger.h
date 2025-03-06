@@ -32,7 +32,7 @@ private:
 	USoundBase* ElevatorSound;
 
 	void LoadNextLevel(EGameState NewState); // 🔹 다음 레벨 로드
-    void MovePlayerToSpawn(ACPlayer* PlayerCharacter);
+    void MovePlayerToSpawn(ACPlayer* PlayerCharacter, EGameState State, int32 RetryCount = 5);
 
     UFUNCTION()
     void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,

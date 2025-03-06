@@ -4,6 +4,7 @@
 #include "CCharacter.h"
 #include "Blueprint/UserWidget.h"
 #include "CHUDWidget.h"
+#include "GameFramework/HUD.h" 
 
 ACGameState::ACGameState()
 {
@@ -19,7 +20,116 @@ void ACGameState::BeginPlay()
     GetWorldTimerManager().SetTimer(ScoreCheckTimer, this, &ACGameState::CheckScoreForRedDoor, 1.0f, true);
     // 🔹 1초마다 중간 보스 사망 여부를 체크하는 타이머 설정
     GetWorldTimerManager().SetTimer(MidBossCheckTimer, this, &ACGameState::CheckMidBossDefeated, 1.0f, true);
+
+    FString CurrentMapName = GetWorld()->GetMapName();
+
+    if (CurrentMapName.Contains(TEXT("MAIN_MAP")))
+    {
+        // ✅ GameInstance에서 리스폰 태그 가져오기
+        UCGameInstance* GameInstance = Cast<UCGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+        if (GameInstance)
+        {
+            FName RespawnLocation = GameInstance->GetRespawnTag();
+            if (RespawnLocation != NAME_None)
+            {
+                UE_LOG(LogTemp, Warning, TEXT("✅ 연구소 맵 - %s에서 리스폰"), *RespawnLocation.ToString());
+
+                UCHUDWidget* HUDWidget = Cast<UCHUDWidget>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetHUD());
+                if (HUDWidget)
+                {
+                    HUDWidget->RespawnPlayerAtTaggedSpawnPoint(RespawnLocation);
+                    GameInstance->SetRespawnTag(NAME_None); // ✅ 리스폰 후 태그 초기화
+                }
+            }
+        }
+    }
 }
+
+void ACGameState::OnLevelLoaded()
+{
+    UE_LOG(LogTemp, Warning, TEXT("🔄 레벨 로드 완료! 플레이어를 스폰 태그에 맞게 이동"));
+
+    // ✅ GameInstance에서 저장된 리스폰 태그 가져오기
+    UCGameInstance* GameInstance = Cast<UCGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+    if (!GameInstance) return;
+
+    FName RespawnTag = GameInstance->GetRespawnTag();
+    if (RespawnTag == NAME_None) return;
+
+    APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+    if (!PlayerController) return;
+
+    ACPlayer* PlayerCharacter = Cast<ACPlayer>(PlayerController->GetPawn());
+    if (!PlayerCharacter) return;
+
+    // ✅ 1초 후 MovePlayerToSpawn 실행 (레벨이 완전히 로드된 후 안전한 시점)
+    FTimerHandle RespawnTimer;
+    GetWorldTimerManager().SetTimer(RespawnTimer, [this, PlayerCharacter, RespawnTag]()
+        {
+            MovePlayerToSpawn(PlayerCharacter, RespawnTag, 5);
+
+        }, 1.0f, false); // 🔹 1초 딜레이 추가 (레벨이 완전히 로드된 후 실행)
+}
+
+void ACGameState::MovePlayerToSpawn(AActor* PlayerCharacter, FName SpawnTag, int32 RetryCount)
+{
+    if (!PlayerCharacter || RetryCount <= 0)
+    {
+        UE_LOG(LogTemp, Error, TEXT("❌ MovePlayerToSpawn() -> PlayerCharacter가 NULL이거나, RetryCount가 0 이하입니다."));
+        return;
+    }
+
+    UWorld* World = GetGameInstance() ? GetGameInstance()->GetWorld() : nullptr;
+    if (!World)
+    {
+        UE_LOG(LogTemp, Error, TEXT("❌ MovePlayerToSpawn() -> GameInstance의 GetWorld()도 NULL입니다!"));
+        return;
+    }
+
+    if (SpawnTag.IsNone())
+    {
+        UE_LOG(LogTemp, Error, TEXT("❌ MovePlayerToSpawn() -> SpawnTag가 None입니다! 올바른 태그를 설정해주세요."));
+        return;
+    }
+
+    UE_LOG(LogTemp, Warning, TEXT("🔍 MovePlayerToSpawn() -> 사용된 SpawnTag: %s"), *SpawnTag.ToString());
+
+    TArray<AActor*> FoundSpawnPoints;
+    UGameplayStatics::GetAllActorsWithTag(World, SpawnTag, FoundSpawnPoints);
+
+    if (FoundSpawnPoints.Num() == 0)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("⏳ [%s] 태그를 가진 스폰 포인트를 찾을 수 없습니다! (남은 재시도: %d)"), *SpawnTag.ToString(), RetryCount - 1);
+
+        if (RetryCount - 1 > 0)  // 재시도 가능하면 다시 호출
+        {
+            FTimerHandle RetryTimer;
+            GetWorldTimerManager().SetTimer(RetryTimer, [this, PlayerCharacter, SpawnTag, RetryCount]()
+                {
+                    MovePlayerToSpawn(PlayerCharacter, SpawnTag, RetryCount - 1);
+                }, 1.0f, false);
+        }
+        else
+        {
+            UE_LOG(LogTemp, Error, TEXT("❌ MovePlayerToSpawn() -> [%s] 태그를 가진 스폰 포인트를 찾지 못하고 종료합니다."), *SpawnTag.ToString());
+        }
+        return;
+    }
+
+    AActor* SpawnPoint = FoundSpawnPoints[0];
+    if (!SpawnPoint)
+    {
+        UE_LOG(LogTemp, Error, TEXT("❌ MovePlayerToSpawn() -> SpawnPoint가 NULL입니다!"));
+        return;
+    }
+
+    PlayerCharacter->SetActorLocation(SpawnPoint->GetActorLocation());
+    PlayerCharacter->SetActorRotation(SpawnPoint->GetActorRotation());
+
+    UE_LOG(LogTemp, Warning, TEXT("✅ [%s]에서 플레이어 스폰 완료!"), *SpawnTag.ToString());
+}
+
+
 
 // ✅ 게임 오버 UI 표시 (플레이어 사망 시 호출)
 void ACGameState::ShowGameOverUI()
@@ -59,7 +169,7 @@ void ACGameState::CheckScoreForRedDoor()
     UCGameInstance* GameInstance = Cast<UCGameInstance>(GetGameInstance());
     if (!GameInstance) return;
 
-    if (GameInstance->GetScore() >= 100)
+    if (GameInstance->GetScore() >= 200)
     {
         TArray<AActor*> FoundDoors;
         UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("RedDoor"), FoundDoors);
@@ -165,12 +275,10 @@ void ACGameState::SetGameState(EGameState NewState)
         break;
 
     case EGameState::Labyrinth:
-        UE_LOG(LogTemp, Warning, TEXT("연구소 미로 맵 로드"));
         UGameplayStatics::OpenLevel(this, TEXT("/Game/Map/LapMap/ModSci_Engineer/Maps/MAIN_MAP"));
         break;
 
     case EGameState::BossArea:
-        UE_LOG(LogTemp, Warning, TEXT("보스가 있는 연구소 맵 로드"));
         UGameplayStatics::OpenLevel(this, TEXT("/Game/Map/LapMap/ModSci_Engineer/Maps/MAIN_MAP"));
         break;
 

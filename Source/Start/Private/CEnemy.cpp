@@ -14,6 +14,7 @@
 #include "CCharacter.h"
 #include "CPlayer.h"
 #include "CPlayerController.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "Components/CStateComponent.h"
 #include "Components/CMovementComponent.h"
 #include "Components/CStatusComponent.h"
@@ -43,6 +44,7 @@ ACEnemy::ACEnemy()
 	bCanAttack = false;
 	bIsGunUsed = false;
 	bIsDied = false;
+	bHasScore = false;
 }
 
 void ACEnemy::UpdateOverheadHP()
@@ -57,6 +59,7 @@ void ACEnemy::UpdateOverheadHP()
 		{
 			BossName->SetText(EnemyName);
 		}
+
 	}
 
 	if (OverheadHPWidget)
@@ -69,8 +72,6 @@ void ACEnemy::UpdateOverheadHP()
 			HPBar->SetPercent(StatusComponent->GetHealth() / StatusComponent->GetMaxHealth());
 		}
 	}
-
-
 }
 
 
@@ -96,12 +97,12 @@ void ACEnemy::VisibleEnemyHPBar()
 			if (CPlayerController)
 			{
 				BossHPWidgetInstance = CreateWidget<UUserWidget>(CPlayerController, BossHPWidgetClass);
-				BossHPWidgetInstance->AddToViewport();
+				
 			}
 		}
-
-		UpdateOverheadHP();
 	}
+	BossHPWidgetInstance->AddToViewport();
+	UpdateOverheadHP();
 
 }
 
@@ -110,18 +111,17 @@ void ACEnemy::HiddenEnemyHPBar()
 	if (BossHPWidgetInstance)
 	{
 		BossHPWidgetInstance->RemoveFromParent();
-		BossHPWidgetInstance = nullptr;
 	}
 }
 
 void ACEnemy::EnemyAttackStart(bool bIsCloseRangeAttack)
 {
-
+	StateComponent->SetActionMode();
 }
 
 void ACEnemy::EnemyAttackEnd()
 {
-
+	StateComponent->SetIdleMode();
 }
 
 void ACEnemy::SetIdleMode()
@@ -142,6 +142,11 @@ void ACEnemy::SetActionMode()
 bool ACEnemy::IsEnemyActionMode()
 {
 	return StateComponent->IsActionMode();
+}
+
+bool ACEnemy::IsEnemyHitted()
+{
+	return StateComponent->IsHittedMode();
 }
 
 void ACEnemy::SetRun()
@@ -194,21 +199,31 @@ void ACEnemy::Die()
 {
 	Super::Die();
 
+	if (OnEnemyDie.IsBound())
+	{
+		OnEnemyDie.Broadcast();
+	}
+
 	bCanAttack = false;
 	bIsDied = true;
+
+	HiddenEnemyHPBar();
+	if(BossHPWidgetInstance)
+		BossHPWidgetInstance->SetVisibility(ESlateVisibility::Hidden);
 
 	ACEnemyAIController* AIController = Cast<ACEnemyAIController>(GetController());
 	if (AIController&& AIController->BrainComponent)
 	{
 		AIController->BrainComponent->StopLogic(TEXT("Character Died"));
-		//AIController->StopMovement();
+		AIController->StopMovement();
 	}
 	if (UGameInstance* GameInstance = GetGameInstance())
 	{
 		UCGameInstance* CGameInstance = Cast<UCGameInstance>(GameInstance);
-		if (CGameInstance)
+		if (CGameInstance && !bHasScore)
 		{
 			CGameInstance->AddScore(StatusComponent->GetMaxHealth()/2);
+			bHasScore = true;
 		}
 	}
 
@@ -219,7 +234,7 @@ void ACEnemy::Die()
 void ACEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-
+	PlayerHitting = Cast<ACPlayer>(GetWorld()->GetFirstPlayerController()->GetPawn());
 }
 
 void ACEnemy::Tick(float DeltaTime)
@@ -242,6 +257,18 @@ float ACEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, A
 	float TempDamageAmount = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	UpdateOverheadHP();
+	if (DamageCauser)
+	{
+		ACEnemyAIController* AIController = Cast< ACEnemyAIController>(GetController());
+		if (AIController)
+		{
+			VisibleEnemyHPBar();
+			AIController->SetFocus(PlayerHitting);
+			bool bPlayerDetected = AIController->GetBlackboardComponent()->GetValueAsBool("PlayerDetected");
+			if(!bPlayerDetected)
+				AIController->MoveToActor(PlayerHitting, 100.0f, true, true, false, 0, true);
+		}
+	}
 	return TempDamageAmount;
 }
 

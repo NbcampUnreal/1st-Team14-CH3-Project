@@ -74,7 +74,8 @@ void ACWeapon_Knife::DonAction()
 	if(State->IsIdleMode() == false)
 		return;
 	Super::DonAction();
-
+	if(AttackSound != nullptr)
+		UGameplayStatics::PlaySoundAtLocation(OwnerCharacter->GetWorld(), AttackSound, FVector::ZeroVector, FRotator::ZeroRotator);
 	Data[Index].DoAction(OwnerCharacter);
 }
 
@@ -85,6 +86,8 @@ void ACWeapon_Knife::BeginAction()
 		return;
 
 	bExist = false;
+	if (AttackSound != nullptr)
+		UGameplayStatics::PlaySoundAtLocation(OwnerCharacter->GetWorld(), AttackSound, FVector::ZeroVector, FRotator::ZeroRotator);
 	Data[++Index].DoAction(OwnerCharacter);
 }
 

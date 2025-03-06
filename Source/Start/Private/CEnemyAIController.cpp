@@ -60,6 +60,7 @@ void ACEnemyAIController::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulu
 
 			ControllerEnemy->SetWalk();
 			ControllerEnemy->HiddenEnemyHPBar();
+				
 		}
 	}
 

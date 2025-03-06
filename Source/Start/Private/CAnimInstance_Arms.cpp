@@ -24,7 +24,7 @@ void UCAnimInstance_Arms::NativeUpdateAnimation(float DeltaSeconds)
 	if (OwnerCharacter == nullptr)
 		return;
 
-	//LeftHandTransform = Weapon->GetLeftHandAimLocation();
+	LeftHandTransform = Weapon->GetLeftArmsLeftHandTransform();
 }
 
 void UCAnimInstance_Arms::OnWeaponTypeChanged(EWeaponType InPrevType, EWeaponType InNewType)

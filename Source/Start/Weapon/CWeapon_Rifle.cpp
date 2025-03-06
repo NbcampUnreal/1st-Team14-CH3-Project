@@ -83,22 +83,26 @@ ACWeapon_Rifle::ACWeapon_Rifle()
 
 	// Arms
 	{
-		ArmsMeshTransform.SetLocation(FVector(-14.25f, -5.85f, -156.935f));
-		ArmsMeshTransform.SetRotation(FQuat(FRotator(-0.5f, -11.85f, -1.2f)));
+		ArmsMeshTransform.SetLocation(FVector(1.731908, -11.111557, -154.8));
+		ArmsMeshTransform.SetRotation(FQuat(FRotator(6.895905, 1.764208, -1.932422)));
 
-		ArmsLeftHandTransform.SetLocation(FVector(-33, 11, -1.5f));
-		ArmsLeftHandTransform.SetRotation(FQuat(FRotator(-4, -138, 77)));
+		ArmsLeftHandTransform.SetLocation(FVector(-35.897707, 6.651270, 3.934635));
+		ArmsLeftHandTransform.SetRotation(FQuat(FRotator(-3.999989, -111.219573, 77.000010)));
 	}
 }
 
 void ACWeapon_Rifle::BeginPlay()
 {
 	Super::BeginPlay();
+}
 
+void ACWeapon_Rifle::BeginEquip()
+{
+	Super::BeginEquip();
 	ACPlayer* player = Cast<ACPlayer>(OwnerCharacter);
-	if(player == nullptr)
+	if (player == nullptr)
 		return;
-	//player->GetFirstPersonMesh()->SetRelativeTransform(ArmsMeshTransform);
+	player->GetFirstPersonMesh()->SetRelativeTransform(ArmsMeshTransform);
 }
 
 void ACWeapon_Rifle::BeginAim()
@@ -110,8 +114,8 @@ void ACWeapon_Rifle::BeginAim()
 	ACPlayer* player = Cast<ACPlayer>(OwnerCharacter);
 	if(player == nullptr)
 		return;
-	player->GetMesh()->SetVisibility(false);
 	player->GetFirstPersonMesh()->SetVisibility(true);
+	player->GetMesh()->SetVisibility(false);
 
 	AttachToComponent(player->GetFirstPersonMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), RightHandAimSokcetName);
 
@@ -131,7 +135,7 @@ void ACWeapon_Rifle::EndAim()
 	player->GetFirstPersonMesh()->SetVisibility(false);
 	player->GetMesh()->SetVisibility(true);
 	AttachToComponent(player->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), RightHandSokcetName);
-
+	
 	UCWeaponComponent* weapon = Cast<UCWeaponComponent>(player->GetComponentByClass(UCWeaponComponent::StaticClass()));
 	if (weapon->OnWeaponAim_Arms_End.IsBound() == true)
 		weapon->OnWeaponAim_Arms_End.Broadcast();

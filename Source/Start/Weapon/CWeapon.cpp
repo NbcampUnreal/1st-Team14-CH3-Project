@@ -21,8 +21,10 @@
 #include "Materials/MaterialInstanceConstant.h"
 #include "Particles/ParticleSystem.h"
 #include "Camera/CameraShakeBase.h"
+#include "Components/AudioComponent.h"
 #include "Engine/DamageEvents.h"
 #include "Components/BoxComponent.h"
+#include "Sound/SoundCue.h"
 
 void FWeaponAimData::SetData(class ACCharacter* InOwner)
 {
@@ -69,12 +71,15 @@ ACWeapon::ACWeapon()
 	static  ConstructorHelpers::FObjectFinder<UParticleSystem> ejectParticle(TEXT("/Script/Engine.ParticleSystem'/Game/Assets/Effects/P_Eject_bullet.P_Eject_bullet'"));
 	if (ejectParticle.Succeeded() == true)
 		EjectParticle = ejectParticle.Object;
-	static  ConstructorHelpers::FObjectFinder<USoundWave> fireSound(TEXT("/Script/Engine.SoundWave'/Game/Assets/Sounds/S_RifleShoot.S_RifleShoot'"));
+	static  ConstructorHelpers::FObjectFinder<USoundWave> fireSound(TEXT("/Script/Engine.SoundWave'/Game/Assets/Mesh/MilitaryWeapSilver/Sound/Pistol/Wavs/PistolA_Fire_ST01.PistolA_Fire_ST01'"));
 	if (fireSound.Succeeded() == true)
 		FireSound = fireSound.Object;
-	static ConstructorHelpers::FObjectFinder<USoundWave> breth(TEXT("/Script/Engine.SoundWave'/Game/Sound/Sniper_Breath.Sniper_Breath'"));
+	static ConstructorHelpers::FObjectFinder<USoundWave> breth(TEXT("/Script/Engine.SoundWave'/Game/Sound/Sniper_Breath_Start.Sniper_Breath_Start'"));
 	if (breth.Succeeded() == true)
 		BreathSound = breth.Object;
+	static ConstructorHelpers::FObjectFinder<USoundWave> breth2(TEXT("/Script/Engine.SoundWave'/Game/Sound/Sniper_Breath_End.Sniper_Breath_End'"));
+	if(breth2.Succeeded() == true)
+		BreathSound2 = breth2.Object;
 	AutoFireHandle = FTimerHandle();
 }
 
@@ -92,7 +97,7 @@ void ACWeapon::BeginPlay()
 
 
 	ACPlayer* player = Cast<ACPlayer>(OwnerCharacter);
-	if (player != NULL && bIsCustom == false)
+	if (player != nullptr && bIsCustom == false)
 	{
 		//Aim BaseData Setting
 		USpringArmComponent* SpringArm = Cast<USpringArmComponent>(player->GetComponentByClass(USpringArmComponent::StaticClass()));
@@ -130,8 +135,6 @@ void ACWeapon::BeginPlay()
 void ACWeapon::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	//UE_LOG(LogTemp, Warning, TEXT("%d"), CurrentMagazineCount);
-
 }
 
 bool ACWeapon::CanEquip()
@@ -222,8 +225,13 @@ bool ACWeapon::CanFire()
 {
 	bool b = false;
 	b |= bEquipping;
+	GEngine->AddOnScreenDebugMessage(1, 5, FColor::Blue, FString::Printf(L"equip %d, %d", bEquipping, b));
 	b |= bReload;
+	GEngine->AddOnScreenDebugMessage(1, 5, FColor::Blue, FString::Printf(L"reload %d, %d", bReload, b));
 	b |= bFiring;
+	GEngine->AddOnScreenDebugMessage(1, 5, FColor::Blue, FString::Printf(L"fire %d, %d", bFiring, b));
+	b |= CurrentMagazineCount == 0;
+	GEngine->AddOnScreenDebugMessage(1, 5, FColor::Blue, FString::Printf(L"count %d, %d", CurrentMagazineCount == 0, b));
 	//b |= State->IsInventoryMode() == true;
 	return !b;
 }
@@ -302,7 +310,7 @@ void ACWeapon::OnFireing()
 		UGameplayStatics::SpawnEmitterAttached(EjectParticle, Mesh, "Eject", FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset);
 	FVector muzzleLocation = Mesh->GetSocketLocation("Muzzle");
 	if (FireSound != nullptr)
-		UGameplayStatics::SpawnSoundAtLocation(GetWorld(), FireSound, muzzleLocation);
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), FireSound, OwnerCharacter->GetMesh()->GetSocketLocation(L"pelvis"), OwnerCharacter->GetActorRotation(), 5);
 	if (CameraShak != nullptr)
 	{
 
@@ -310,9 +318,9 @@ void ACWeapon::OnFireing()
 		if (controller != nullptr)
 		{
 			if (bInAim == true && AimCameraShak != nullptr)
-				controller->PlayerCameraManager->StartCameraShake(AimCameraShak);
+				controller->PlayerCameraManager->StartCameraShake(AimCameraShak,1,ECameraShakePlaySpace::UserDefined);
 			else
-				controller->PlayerCameraManager->StartCameraShake(CameraShak);
+				controller->PlayerCameraManager->StartCameraShake(CameraShak, 1, ECameraShakePlaySpace::UserDefined);
 		}
 	}
 
@@ -333,8 +341,11 @@ void ACWeapon::OnFireing()
 	if (CurrentMagazineCount > 1)
 		CurrentMagazineCount--;
 	else
+	{
+		CurrentMagazineCount--;
 		if (CanReload() == true)
 			Reload();
+	}
 }
 
 void ACWeapon::ToggleAutoFire()
@@ -347,7 +358,7 @@ bool ACWeapon::CanReload()
 	bool b = false;
 	b |= bEquipping;
 	b |= bReload;
-	b |= CurrentMagazineCount == MaxMagazineCount;
+	b |= CurrentMagazineCount >= MaxMagazineCount;
 	//b |= State->IsInventoryMode() == true;
 	return !b;
 }
@@ -360,10 +371,11 @@ void ACWeapon::Reload()
 
 	if (ReloadMontage != nullptr)
 		OwnerCharacter->PlayAnimMontage(ReloadMontage, ReloadPlayRate);
-
-	// ������ �Ϸ� �� CurrentMagazineCount�� �ִ� ź������ �缳��
+	
 	CurrentMagazineCount = MaxMagazineCount;
-	UGameplayStatics::PlaySoundAtLocation(OwnerCharacter->GetWorld(), ReloadSound, FVector::ZeroVector, FRotator::ZeroRotator);
+
+	if (ReloadSound != nullptr)
+		UGameplayStatics::PlaySoundAtLocation(OwnerCharacter->GetWorld(), ReloadSound, FVector::ZeroVector, FRotator::ZeroRotator);
 
 }
 
@@ -424,8 +436,10 @@ void ACWeapon::BeginAim()
 	if (!Player)
 		return;
 	bInAim = true;
+	if (BreathSoundComponent != nullptr && BreathSoundComponent->IsActive())
+		BreathSoundComponent->Stop();
 	if (BreathSound != nullptr)
-		UGameplayStatics::SpawnSoundAtLocation(GetWorld(), BreathSound, OwnerCharacter->GetActorLocation());
+		BreathSoundComponent = UGameplayStatics::SpawnSoundAtLocation(GetWorld(), BreathSound, OwnerCharacter->GetActorLocation());
 	if (AimCurve != nullptr)
 	{
 		Timeline->PlayFromStart();
@@ -440,7 +454,10 @@ void ACWeapon::EndAim()
 	if (bInAim == false)
 		return;
 	bInAim = false;
-
+	if(BreathSoundComponent != nullptr && BreathSoundComponent->IsActive())
+		BreathSoundComponent->Stop();
+	if (BreathSound2 != nullptr)
+		BreathSoundComponent = UGameplayStatics::SpawnSoundAtLocation(GetWorld(), BreathSound2, OwnerCharacter->GetActorLocation());
 	if (AimCurve != nullptr)
 	{
 		Timeline->PlayFromStart();

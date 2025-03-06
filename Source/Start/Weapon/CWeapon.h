@@ -86,6 +86,8 @@ protected:
 	float AimSpeed = 200.0f;
 	UPROPERTY(EditDefaultsOnly, category = "Aim")
 	USoundWave* BreathSound;
+	UPROPERTY(EditDefaultsOnly, category = "Aim")
+	USoundWave* BreathSound2;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Hit")
 	float HitDistance = 3000;
@@ -107,7 +109,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Fire")
 	UParticleSystem* EjectParticle;
 	UPROPERTY(EditDefaultsOnly, Category = "Fire")
-	USoundWave* FireSound;
+	class USoundWave* FireSound;
 	UPROPERTY(EditDefaultsOnly, Category = "Fire")
 	float RecoilAngle;
 	UPROPERTY(EditDefaultsOnly, Category = "Fire")
@@ -166,6 +168,7 @@ public:
 	FORCEINLINE bool IsAutoFire() { return bAutoFire; }
 	FORCEINLINE FVector GetLeftHandLocation() { return LeftHandLocation; }
 	FORCEINLINE FVector GetLeftHandAimLocation() { return LeftHandAimLocation; }
+	FORCEINLINE FTransform GetLeftArmsLeftHandTransform() { return ArmsLeftHandTransform; }
 	FORCEINLINE FTransform GetWeaponLeftHandAimTransform() { return WeapoLeftHandTransform; }
 
 	FORCEINLINE bool GetInAim() const { return bInAim; }
@@ -240,7 +243,7 @@ protected:
 	UCStateComponent* State;
 	UCCameraComponent* Camera;
 	UCWeaponComponent* Weapon;
-
+	UCInventoryComponent* Inventory;
 private:
 	FTimerHandle AutoFireHandle;
 	bool bEquipping;
@@ -250,12 +253,13 @@ private:
 
 protected:
 	bool bReload;
-
 	ACMagazine* Magazine;
-
-protected:
+	
 	uint8 CurrentMagazineCount;
 	bool bBeginAction;
 	bool bEnable;
 	float Damage;
+
+private:
+	UAudioComponent* BreathSoundComponent;
 };

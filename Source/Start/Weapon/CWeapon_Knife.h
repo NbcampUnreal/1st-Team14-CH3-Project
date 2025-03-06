@@ -23,6 +23,8 @@ private:
 	UCapsuleComponent* Collision1;
 	UPROPERTY(EditAnywhere, Category = "Collision")
 	UCapsuleComponent* Collision2;
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	USoundWave* AttackSound;
 
 public:
 	ACWeapon_Knife();

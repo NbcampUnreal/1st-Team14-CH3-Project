@@ -10,7 +10,7 @@ class UWidgetComponent;
 class ACPlayer;
 
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyAttack);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyDie);
 
 UCLASS()
 class START_API ACEnemy : public ACCharacter
@@ -33,6 +33,9 @@ public:
 	void SetbCanAttack(bool CanAttack) { bCanAttack = CanAttack; }
 	UFUNCTION(BlueprintCallable)
 	bool GetbCanAttack() const { return bCanAttack; }
+
+	UFUNCTION(BlueprintCallable)
+	ACPlayer* GetHittingPlayer() const {return PlayerHitting;}
 	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
@@ -46,18 +49,19 @@ protected:
 	class UCSpawnComponent* SpawnComp;
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
-	FOnEnemyAttack OnEnemyAttack;
+	FOnEnemyDie OnEnemyDie;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bCanAttack;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsGunUsed;
 	bool bIsDied;
+	bool bHasScore;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	FText EnemyName;
 
 	UFUNCTION(BlueprintCallable)
-	void UpdateOverheadHP();
+	virtual void UpdateOverheadHP();
 
 
 	UFUNCTION(BlueprintCallable)
@@ -79,6 +83,8 @@ protected:
 	void SetActionMode();
 	UFUNCTION(BlueprintCallable)
 	bool IsEnemyActionMode();
+	UFUNCTION(BlueprintCallable)
+	bool IsEnemyHitted();
 
 	UFUNCTION(BlueprintCallable)
 	void SetStun(ACPlayer* Player);
@@ -89,6 +95,10 @@ protected:
 	void ToDoAfterDie();
 
 	FTimerHandle DieTimerHandle;
+
+	ACPlayer* PlayerHitting;
+
+
 
 	virtual void Die() override;
 	virtual void BeginPlay() override;

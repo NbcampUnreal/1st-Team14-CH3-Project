@@ -19,8 +19,7 @@ void UCAnimInstance::NativeBeginPlay()
 	Movement = OwnerCharacter->GetCharacterMovement();
 	State = Cast<UCStateComponent>(OwnerCharacter->GetComponentByClass(UCStateComponent::StaticClass()));
 	Weapon = Cast<UCWeaponComponent>(OwnerCharacter->GetComponentByClass(UCWeaponComponent::StaticClass()));
-	FeetComponent = Cast<UCFeetComponent>(OwnerCharacter->GetComponentByClass(UCFeetComponent::StaticClass()));
-	if(State == nullptr || Weapon == nullptr || FeetComponent == nullptr)
+	if(State == nullptr || Weapon == nullptr)
 		return;
 
 	Weapon->OnWeaponTypeChanged.AddDynamic(this, &UCAnimInstance::OnWeaponTypeChanged);
@@ -51,13 +50,6 @@ void UCAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	bUseHandIk = Weapon->IsUnarmedMode() == false && Weapon->IsKnifeMode() == false && Weapon->IsGrenadeMode() == false;
 	LeftHandLocation = Weapon->GetLeftHandLocation();
 	LeftHandAimLocation = Weapon->GetLeftHandAimLocation();
-
-	/*bFeet = false;
-	if (bFeet == true)
-	{
-		bFeet = true;
-		FeetData = FeetComponent->GetData();
-	}*/
 }
 
 void UCAnimInstance::OnWeaponTypeChanged(EWeaponType InPrevType, EWeaponType InNewType)

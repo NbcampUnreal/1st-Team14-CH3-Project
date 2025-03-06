@@ -10,7 +10,10 @@
 #include "Weapon/CWeapon.h"
 #include "CHUDWidget.h"
 #include "GameFramework/HUD.h"
+#include "CGameInstance.h"
+#include "Kismet/GameplayStatics.h"
 #include "Components/CCameraComponent.h"
+#include "CSimbioComponent.h"
 
 ACPlayer::ACPlayer()
 {
@@ -43,6 +46,15 @@ ACPlayer::ACPlayer()
 void ACPlayer::BeginPlay()
 {
 	Super::BeginPlay();
+
+	UCGameInstance* GameInstance = Cast<UCGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	if (GameInstance)
+	{
+		LastSavedHealth = GetStatusComponent()->GetHealth();
+		LastSavedStamina = GetStatusComponent()->GetStamina();
+		LastSavedScore = GameInstance->GetScore();
+	}
+
 	APlayerController* PC = Cast<APlayerController>(GetController());
 	if (PC)
 	{
@@ -55,6 +67,11 @@ void ACPlayer::BeginPlay()
 				HUDWidget->AddToViewport();
 				HUDWidget->BindToPlayer(this);
 				UE_LOG(LogTemp, Warning, TEXT("✅ ACPlayer: HUD 위젯 생성 및 바인딩 성공!"));
+
+				if (GameInstance)
+				{
+					GameInstance->NotifyHUDScoreUpdate(); // ✅ HUD 생성 후 점수 업데이트
+				}
 			}
 			else
 			{
@@ -149,6 +166,8 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 			EnhancedInput->BindAction(PC->JumpAction, ETriggerEvent::Started, this, &ACPlayer::JumpIfNotInInventory);
 			// 🔹 시점 전환 액션 바인딩
 			EnhancedInput->BindAction(PC->SwitchViewAction, ETriggerEvent::Started, this, &ACPlayer::ToggleView);
+			EnhancedInput->BindAction(PC->SimbioAttackAction, ETriggerEvent::Triggered, this, &ACPlayer::SimbioAttack);
+			EnhancedInput->BindAction(PC->SimbioAttackAction, ETriggerEvent::Completed, this, &ACPlayer::EndSimbio);
 		}
 	}
 }
@@ -201,6 +220,24 @@ void ACPlayer::JumpIfNotInInventory(const FInputActionValue& Value)
 void ACPlayer::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+	GEngine->AddOnScreenDebugMessage(1, 3, FColor::Blue, FString::Printf(L"%f", StatusComponent->GetStamina()));
+	
+	UCGameInstance* GameInstance = Cast<UCGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	if (!GameInstance) return;
+
+	if (!StatusComponent) return; // ✅ 멤버 변수 직접 사용
+
+	float CurrentHealth = StatusComponent->GetHealth();
+	int CurrentScore = GameInstance->GetScore();
+
+	if (FMath::Abs(LastSavedHealth - CurrentHealth) > KINDA_SMALL_NUMBER || LastSavedScore != CurrentScore)
+	{
+		GameInstance->SavePlayerState();
+		LastSavedHealth = CurrentHealth;
+		LastSavedScore = CurrentScore;
+
+		UE_LOG(LogTemp, Warning, TEXT("✅ 상태 변화 감지 - 자동 저장 (체력: %f, 점수: %d)"), CurrentHealth, CurrentScore);
+	}
 }
 
 void ACPlayer::ToggleView()
@@ -233,4 +270,18 @@ void ACPlayer::EndAim()
 {
 	MovementComponent->OnWark();
 	WeaponComponent->EndAim();
+}
+
+void ACPlayer::SimbioAttack()
+{
+	if(StatusComponent->GetStamina() <= 0 && Count >= 10)
+		return;
+	Count++;
+	StatusComponent->UseStamina(StaminaAmount);
+	SimbioComponent->SimbioAttack();
+}
+
+void ACPlayer::EndSimbio()
+{
+	Count = 0;
 }

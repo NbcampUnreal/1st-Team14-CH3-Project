@@ -1,12 +1,12 @@
 ﻿#include "CCharacter.h"
 #include "CGameInstance.h"
 #include "Components/CCameraComponent.h"
-#include "Components/CFeetComponent.h"
 #include "Components/CMontagesComponent.h"
 #include "Components/CMovementComponent.h"
 #include "Components/CStatusComponent.h"
 #include "Components/CWeaponComponent.h"
 #include "Components/CStateComponent.h"
+#include "CSimbioComponent.h"
 #include "GameFramework/Actor.h"
 #include "Weapon/CWeaponStructures.h"
 #include "CPlayer.h"
@@ -20,11 +20,12 @@ ACCharacter::ACCharacter()
     WeaponComponent = CreateDefaultSubobject<UCWeaponComponent>(TEXT("WeaponComponent"));
     MontagesComponent = CreateDefaultSubobject<UCMontagesComponent>(TEXT("MontagesComponent"));
     StatusComponent = CreateDefaultSubobject<UCStatusComponent>(TEXT("StatusComponent"));
-    FeetComponent = CreateDefaultSubobject<UCFeetComponent>(TEXT("FeetComponent"));
+    SimbioComponent = CreateDefaultSubobject<UCSimbioComponent>(TEXT("SimbioComponent"));
     // 🔹 기본 체력 값 설정
     MaxHealth = 100.0f;
     Health = MaxHealth;
     bIsDead = false;
+
 }
 
 void ACCharacter::BeginPlay()
@@ -32,12 +33,15 @@ void ACCharacter::BeginPlay()
     Super::BeginPlay();
 
 	//LoadHealthFromGameInstance();
-
+    
     if (StateComponent)
     {
         // 🔹 델리게이트를 현재 캐릭터의 `HandleStateChanged()`에 연결
         StateComponent->OnStateTypeChanged.AddDynamic(this, &ACCharacter::HandleStateChanged);
     }
+    UAnimInstance* instance = GetMesh()->GetAnimInstance();
+    if (instance != nullptr)
+    	instance->OnMontageEnded.AddDynamic(this, &ACCharacter::HandleAnyMontageEnded);
 }
 
 void ACCharacter::HandleStateChanged(EStateType PreviousType, EStateType NewType)
@@ -61,13 +65,22 @@ void ACCharacter::HandleStateChanged(EStateType PreviousType, EStateType NewType
 
 void ACCharacter::Hitted()
 {
+    //auto a = GetMesh()->GetAnimInstance()->GetCurrentActiveMontage();
+    UAnimInstance* instance = GetMesh()->GetAnimInstance();
+    if (instance != nullptr)
+    {
+    	instance->Montage_Stop(0.1f);
+        UAnimMontage* montage = GetMesh()->GetAnimInstance()->GetCurrentActiveMontage();
+        if (montage != nullptr)
+            HandleAnyMontageEnded(montage, true);
+    }
     StatusComponent->Damage(HittedInfo.Power);
     if(StatusComponent->GetHealth() <= 0.0f)
 	    StateComponent->SetDeadMode();
-    else
-    {
-        HittedInfo.Event->HitData->PlayMontage(this);
-    }
+    else if(StatusComponent->GetHealth() > 0.0f && HittedInfo.Event != nullptr && bIsHit == false)
+		HittedInfo.Event->HitData->PlayMontage(this);
+    if (bIsHit == true)
+         End_Hit();
 }
 
 
@@ -91,14 +104,39 @@ void ACCharacter::Hitted()
 //    }
 //}
 
+void ACCharacter::HandleAnyMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+    if(Montage == nullptr)
+        return;
+    if(Montage->GetName() == "Equip_Rifle_Standing_Montage")
+    {
+        WeaponComponent->Begin_Equip();
+        WeaponComponent->End_Equip();
+        return;
+    }
+    if(Montage->GetName() == "Reload_Rifle_Hip_Montage")
+    {
+	    WeaponComponent->Load_Magazine();
+	    WeaponComponent->End_Magazine();
+	    return;
+    }
+    if(Montage->GetName() == "Equip_Pistol_Standing_Montage")
+    {
+        WeaponComponent->Load_Magazine();
+        WeaponComponent->End_Magazine();
+    }
+}
+
 void ACCharacter::End_Hit()
 {
 	IICharacter::End_Hit();
     StateComponent->SetIdleMode();
+	bIsHit = false;
 }
 
 void ACCharacter::End_Dead()
 {
+	bIsHit = false;
     Destroy();
 }
 
@@ -132,13 +170,20 @@ float ACCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
     float damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
     if (StateComponent->IsDeadMode() == true)
         return 0;
-
-
-	HittedInfo.Event = (FActionDamageEvent*)&DamageEvent;
+    UE_LOG(LogTemp, Error, L"%s", *DamageCauser->GetName());
+    if(DamageCauser->GetName() != "BP_Goo_C_0")
+		HittedInfo.Event = (FActionDamageEvent*)&DamageEvent;
     HittedInfo.Power = damage;
     HittedInfo.Character = Cast<ACharacter>(EventInstigator->GetPawn());
     HittedInfo.Causer = DamageCauser;
-
+    
+    if (StateComponent->GetStateType() != EStateType::Idle)
+    {
+        GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Blue, FString::Printf(L"%d", StateComponent->GetStateType()));
+        bIsHit = true;
+        Hitted();
+		return DamageAmount;
+    }
     // 🔹 상태 변경 (SetHittedMode() 사용)
     StateComponent->SetHittedMode();  // 내부적으로 ChangeType(Hitted) 실행됨
 
