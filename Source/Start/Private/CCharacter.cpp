@@ -22,7 +22,7 @@ ACCharacter::ACCharacter()
     MontagesComponent = CreateDefaultSubobject<UCMontagesComponent>(TEXT("MontagesComponent"));
     StatusComponent = CreateDefaultSubobject<UCStatusComponent>(TEXT("StatusComponent"));
     FeetComponent = CreateDefaultSubobject<UCFeetComponent>(TEXT("FeetComponent"));
-    FSimbioComponent = CreateDefaultSubobject<UCSimbioComponent>(TEXT("SimbioComponent"));
+    SimbioComponent = CreateDefaultSubobject<UCSimbioComponent>(TEXT("SimbioComponent"));
     // 🔹 기본 체력 값 설정
     MaxHealth = 100.0f;
     Health = MaxHealth;

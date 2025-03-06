@@ -64,8 +64,8 @@ protected:
     UCStatusComponent* StatusComponent;
     UPROPERTY(VisibleAnywhere, Category = "Component")
     UCFeetComponent* FeetComponent;
-    UPROPERTY(VisibleAnywhere, Category = "Component")
-    UCSimbioComponent* FSimbioComponent;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+    UCSimbioComponent* SimbioComponent;
     UFUNCTION(BlueprintCallable)
     virtual void Die();  // 🔹 사망 처리 함수
     void Hitted();

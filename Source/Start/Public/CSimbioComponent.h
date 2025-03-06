@@ -20,7 +20,7 @@ public:
 	UPROPERTY(BlueprintAssignable, VisibleAnywhere, BlueprintCallable)
 	FSimbioAttackDelegate SimbioAttackDelegate;
 
-
+	void SimbioAttack();
 protected:
 	UPROPERTY(EditAnywhere, Category = "Simbio")
 	TSubclassOf<AActor> SimbioClass;
@@ -30,7 +30,7 @@ protected:
 	void CreateSimbio();
 	void ActivateSimbio();
 	void DeActivateSimbio();
-	void SimbioAttack();
+
 	virtual void BeginPlay() override;
 
 public:	

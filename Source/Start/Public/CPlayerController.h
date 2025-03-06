@@ -55,9 +55,12 @@ public:
 	UInputAction* ToggleZoomAction;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	UInputAction* ThrowAction;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UInputAction* SimbioAttackAction;
 	// HUD 위젯 블루프린트 클래스 (게임 플레이 시)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<UUserWidget> HUDWidgetClass;
+
 
 	// 메인 메뉴 위젯 블루프린트 클래스 (메인 메뉴 레벨 시)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
