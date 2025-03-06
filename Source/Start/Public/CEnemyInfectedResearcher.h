@@ -38,6 +38,7 @@ protected:
 	TArray<class ACharacter*> Hits;
 	virtual void EnemyAttackStart(bool bIsCloseAttack) override;
 	virtual void BeginPlay() override;
+	virtual void UpdateOverheadHP() override;
 
 
 private:
