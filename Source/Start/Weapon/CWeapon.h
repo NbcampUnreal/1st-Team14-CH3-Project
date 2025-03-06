@@ -109,7 +109,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Fire")
 	UParticleSystem* EjectParticle;
 	UPROPERTY(EditDefaultsOnly, Category = "Fire")
-	USoundCue* FireSound;
+	class USoundWave* FireSound;
 	UPROPERTY(EditDefaultsOnly, Category = "Fire")
 	float RecoilAngle;
 	UPROPERTY(EditDefaultsOnly, Category = "Fire")

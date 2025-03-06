@@ -71,7 +71,7 @@ ACWeapon::ACWeapon()
 	static  ConstructorHelpers::FObjectFinder<UParticleSystem> ejectParticle(TEXT("/Script/Engine.ParticleSystem'/Game/Assets/Effects/P_Eject_bullet.P_Eject_bullet'"));
 	if (ejectParticle.Succeeded() == true)
 		EjectParticle = ejectParticle.Object;
-	static  ConstructorHelpers::FObjectFinder<USoundCue> fireSound(TEXT("/Script/Engine.SoundCue'/Game/Sound/Rifle_Fire_Cue.Rifle_Fire_Cue'"));
+	static  ConstructorHelpers::FObjectFinder<USoundWave> fireSound(TEXT("/Script/Engine.SoundWave'/Game/Assets/Mesh/MilitaryWeapSilver/Sound/Pistol/Wavs/PistolA_Fire_ST01.PistolA_Fire_ST01'"));
 	if (fireSound.Succeeded() == true)
 		FireSound = fireSound.Object;
 	static ConstructorHelpers::FObjectFinder<USoundWave> breth(TEXT("/Script/Engine.SoundWave'/Game/Sound/Sniper_Breath_Start.Sniper_Breath_Start'"));
@@ -310,7 +310,7 @@ void ACWeapon::OnFireing()
 		UGameplayStatics::SpawnEmitterAttached(EjectParticle, Mesh, "Eject", FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset);
 	FVector muzzleLocation = Mesh->GetSocketLocation("Muzzle");
 	if (FireSound != nullptr)
-		UGameplayStatics::SpawnSoundAtLocation(GetWorld(), FireSound, muzzleLocation);
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), FireSound, OwnerCharacter->GetMesh()->GetSocketLocation(L"pelvis"), OwnerCharacter->GetActorRotation(), 5);
 	if (CameraShak != nullptr)
 	{
 
@@ -318,9 +318,9 @@ void ACWeapon::OnFireing()
 		if (controller != nullptr)
 		{
 			if (bInAim == true && AimCameraShak != nullptr)
-				controller->PlayerCameraManager->StartCameraShake(AimCameraShak);
+				controller->PlayerCameraManager->StartCameraShake(AimCameraShak,1,ECameraShakePlaySpace::UserDefined);
 			else
-				controller->PlayerCameraManager->StartCameraShake(CameraShak);
+				controller->PlayerCameraManager->StartCameraShake(CameraShak, 1, ECameraShakePlaySpace::UserDefined);
 		}
 	}
 

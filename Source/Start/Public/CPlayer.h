@@ -37,10 +37,15 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
 	USkeletalMeshComponent* FirstPersonMesh;
+protected:
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Skill")
+	float StaminaAmount = 0.001;
 
 	void BeginAim();
 	void EndAim();
 
+	void SimbioAttack();
+	void EndSimbio();
 	float LastSavedHealth;
 	float LastSavedStamina;
 	int LastSavedScore;
@@ -59,4 +64,6 @@ protected:
 	void MoveIfNotInInventory(const FInputActionValue& Value);
 	void JumpIfNotInInventory(const FInputActionValue& Value);
 	virtual void Tick(float DeltaSeconds) override;
+private:
+	int32 Count;
 };
