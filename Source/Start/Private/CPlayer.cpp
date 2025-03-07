@@ -274,14 +274,12 @@ void ACPlayer::EndAim()
 
 void ACPlayer::SimbioAttack()
 {
-	if(StatusComponent->GetStamina() <= 0 && Count >= 10)
+	if(StatusComponent->GetStamina() <= 0)
 		return;
-	Count++;
 	StatusComponent->UseStamina(StaminaAmount);
 	SimbioComponent->SimbioAttack();
 }
 
 void ACPlayer::EndSimbio()
 {
-	Count = 0;
 }

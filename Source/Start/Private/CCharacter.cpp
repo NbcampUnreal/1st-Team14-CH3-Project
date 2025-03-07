@@ -65,8 +65,7 @@ void ACCharacter::HandleStateChanged(EStateType PreviousType, EStateType NewType
 
 void ACCharacter::Hitted()
 {
-    //auto a = GetMesh()->GetAnimInstance()->GetCurrentActiveMontage();
-    UAnimInstance* instance = GetMesh()->GetAnimInstance();
+	UAnimInstance* instance = GetMesh()->GetAnimInstance();
     if (instance != nullptr)
     {
     	instance->Montage_Stop(0.1f);
@@ -121,6 +120,11 @@ void ACCharacter::HandleAnyMontageEnded(UAnimMontage* Montage, bool bInterrupted
 	    return;
     }
     if(Montage->GetName() == "Equip_Pistol_Standing_Montage")
+    {
+        WeaponComponent->Begin_Equip();
+        WeaponComponent->End_Equip();
+    }
+    if(Montage->GetName() == "Reload_Pistol_Montage")
     {
         WeaponComponent->Load_Magazine();
         WeaponComponent->End_Magazine();
