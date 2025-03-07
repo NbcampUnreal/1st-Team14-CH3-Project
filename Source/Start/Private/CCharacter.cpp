@@ -125,6 +125,14 @@ void ACCharacter::HandleAnyMontageEnded(UAnimMontage* Montage, bool bInterrupted
         WeaponComponent->Load_Magazine();
         WeaponComponent->End_Magazine();
     }
+    if(Montage->GetName() == "Grenade_Throw_Montage")
+    {
+        WeaponComponent->End_DoAction();
+    }
+    if(Montage->GetName() == "Fist_Attack_1_Montage" || Montage->GetName() =="Fist_Attack_2_Montage")
+    {
+        WeaponComponent->End_DoAction();
+    }
 }
 
 void ACCharacter::End_Hit()
@@ -171,7 +179,7 @@ float ACCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
     if (StateComponent->IsDeadMode() == true)
         return 0;
     UE_LOG(LogTemp, Error, L"%s", *DamageCauser->GetName());
-    if(DamageCauser->GetName() != "BP_Goo_C_0")
+    if(DamageCauser->GetName().Contains("BP_Goo_C") == false)
 		HittedInfo.Event = (FActionDamageEvent*)&DamageEvent;
     HittedInfo.Power = damage;
     HittedInfo.Character = Cast<ACharacter>(EventInstigator->GetPawn());
