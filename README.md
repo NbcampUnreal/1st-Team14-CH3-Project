@@ -4,6 +4,10 @@
 
 "심바이오"는 언리얼 엔진을 기반으로 제작된 FPS 슈팅 게임으로, 극한의 생존을 위해 인간과 심바이오가 정신적, 신체적으로 융합된 생존자의 이야기를 담고 있으며, 플레이어는 제한된 자원과 능력 속에서 살아남아 자신의 정체성을 지켜내야 합니다.
 
+**비디오**
+<img width="1909" height="1064" alt="image" src="https://github.com/user-attachments/assets/8ecae2ff-7121-41fc-b447-b92fac85a695" />
+https://www.youtube.com/watch?v=2nxZ4AfdJa8
+
 **프로젝트 개요 및 개발 일정**
 
 - **프로젝트 명:** 심바이오 (SymBio)
